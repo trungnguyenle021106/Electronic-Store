@@ -4483,11 +4483,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\UserService.csproj",
+      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\UserService.csproj",
       "projectName": "UserService",
-      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\UserService.csproj",
+      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\UserService.csproj",
       "packagesPath": "C:\\Users\\Nguyen Le\\.nuget\\packages\\",
-      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\obj\\",
+      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

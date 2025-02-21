@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\web1\\userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\web1\\orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\web1\\userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\web1\\userservice\\application\\usecases\\getuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\application\\usecases\\getuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|e:\\inrtern projects\\shop project\\web1\\productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|solutionrelative:productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -28,38 +24,26 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Program.cs",
-              "RelativeDocumentMoniker": "UserService\\Program.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Program.cs",
-              "RelativeToolTip": "UserService\\Program.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAACcAAAAaAAAAAAAAAA==",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Web1\\OrderService\\Program.cs",
+              "RelativeDocumentMoniker": "OrderService\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Web1\\OrderService\\Program.cs",
+              "RelativeToolTip": "OrderService\\Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-21T02:51:56.575Z",
+              "WhenOpened": "2025-02-21T08:34:22.61Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GetUserUC.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Application\\Usecases\\GetUserUC.cs",
-              "RelativeDocumentMoniker": "UserService\\Application\\Usecases\\GetUserUC.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Application\\Usecases\\GetUserUC.cs",
-              "RelativeToolTip": "UserService\\Application\\Usecases\\GetUserUC.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-20T14:18:07.686Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "UserAPI.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "RelativeDocumentMoniker": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "RelativeToolTip": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAArAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Web1\\ProductService\\Program.cs",
+              "RelativeDocumentMoniker": "ProductService\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Web1\\ProductService\\Program.cs",
+              "RelativeToolTip": "ProductService\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-20T14:06:07.909Z",
+              "WhenOpened": "2025-02-21T08:34:09.321Z",
               "EditorCaption": ""
             }
           ]
