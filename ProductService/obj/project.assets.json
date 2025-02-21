@@ -4483,11 +4483,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Web1\\ProductService\\ProductService.csproj",
+      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\ProductService.csproj",
       "projectName": "ProductService",
-      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\ProductService\\ProductService.csproj",
+      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\ProductService.csproj",
       "packagesPath": "C:\\Users\\Nguyen Le\\.nuget\\packages\\",
-      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\ProductService\\obj\\",
+      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

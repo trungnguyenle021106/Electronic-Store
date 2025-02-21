@@ -4527,11 +4527,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Web1\\OrderService\\OrderService.csproj",
+      "projectUniqueName": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\OrderService.csproj",
       "projectName": "OrderService",
-      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\OrderService\\OrderService.csproj",
+      "projectPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\OrderService.csproj",
       "packagesPath": "C:\\Users\\Nguyen Le\\.nuget\\packages\\",
-      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Web1\\OrderService\\obj\\",
+      "outputPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

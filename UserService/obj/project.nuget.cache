@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LDFeAy+lJ14=",
+  "dgSpecHash": "tw50stj4ltk=",
   "success": true,
-  "projectFilePath": "E:\\Inrtern Projects\\Shop Project\\Web1\\UserService\\UserService.csproj",
+  "projectFilePath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\UserService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nguyen Le\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Nguyen Le\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
