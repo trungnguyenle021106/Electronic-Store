@@ -21,11 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Usecases\" />
-    <Folder Include="Application\UnitOfWorks\" />
     <Folder Include="Infrastructure\Migrations\" />
-    <Folder Include="Infrastructure\Repositories\" />
-    <Folder Include="Interface Adapters\APIs\" />
   </ItemGroup>
 
 </Project>
