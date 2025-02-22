@@ -17,7 +17,9 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.AccountRepository().Add(account);
+                Account newAccount = await this.unitOfWork.AccountRepository().Add(account);
+                await this.unitOfWork.Commit();
+                return newAccount;
             }
             catch (Exception ex)
             {
@@ -30,7 +32,9 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.CustomerRepository().Add(customer);
+                Customer newCustomer = await this.unitOfWork.CustomerRepository().Add(customer);
+                await this.unitOfWork.Commit();
+                return newCustomer;
             }
             catch (Exception ex)
             {

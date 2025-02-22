@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService", "ProductSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\UserService.csproj", "{2DDE87CD-9F3A-477F-A947-75760F3FB25E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BannerService", "BannerService\BannerService.csproj", "{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2DDE87CD-9F3A-477F-A947-75760F3FB25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DDE87CD-9F3A-477F-A947-75760F3FB25E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DDE87CD-9F3A-477F-A947-75760F3FB25E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
