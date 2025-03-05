@@ -1,0 +1,56 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customers/{customerID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "customers"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/api/accounts/{accountID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "accounts"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "customers",
+      "Config": [
+        {
+          "Name": "Customers API",
+          "Version": "v1",
+          "Url": "http://localhost:5273/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "accounts",
+      "Config": [
+        {
+          "Name": "Accounts API",
+          "Version": "v1",
+          "Url": "http://localhost:5273/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration"
+  }
+}
