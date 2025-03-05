@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\bannerservice\\domain\\entities\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|solutionrelative:bannerservice\\domain\\entities\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\interface adapters\\apis\\orderapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\interface adapters\\apis\\orderapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|e:\\inrtern projects\\shop project\\electronic-store\\apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|solutionrelative:apigateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\bannerservice\\application\\usecases\\createbanneruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|solutionrelative:bannerservice\\application\\usecases\\createbanneruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|e:\\inrtern projects\\shop project\\electronic-store\\apigateway\\configuration.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|solutionrelative:apigateway\\configuration.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\bannerservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|solutionrelative:bannerservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|e:\\inrtern projects\\shop project\\electronic-store\\apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|solutionrelative:apigateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|e:\\inrtern projects\\shop project\\electronic-store\\apigateway\\apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}|APIGateway\\APIGateway.csproj|solutionrelative:apigateway\\apigateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,63 +34,81 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserAPI.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "RelativeDocumentMoniker": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "RelativeToolTip": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-28T10:24:31.959Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Program.cs",
-              "RelativeDocumentMoniker": "BannerService\\Program.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Program.cs",
-              "RelativeToolTip": "BannerService\\Program.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
+              "RelativeDocumentMoniker": "UserService\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
+              "RelativeToolTip": "UserService\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-22T02:19:23.92Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-28T10:11:01.053Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\appsettings.json",
+              "RelativeDocumentMoniker": "APIGateway\\appsettings.json",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\appsettings.json",
+              "RelativeToolTip": "APIGateway\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-27T10:41:51.869Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "APIGateway.csproj",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\APIGateway.csproj",
+              "RelativeDocumentMoniker": "APIGateway\\APIGateway.csproj",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\APIGateway.csproj",
+              "RelativeToolTip": "APIGateway\\APIGateway.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-02-25T09:49:34.411Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CreateBannerUC.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Application\\Usecases\\CreateBannerUC.cs",
-              "RelativeDocumentMoniker": "BannerService\\Application\\Usecases\\CreateBannerUC.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Application\\Usecases\\CreateBannerUC.cs",
-              "RelativeToolTip": "BannerService\\Application\\Usecases\\CreateBannerUC.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAoAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-22T02:11:24.882Z",
-              "EditorCaption": ""
+              "Title": "configuration.json",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\configuration.json",
+              "RelativeDocumentMoniker": "APIGateway\\configuration.json",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\configuration.json",
+              "RelativeToolTip": "APIGateway\\configuration.json",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAAEAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-25T07:43:07.322Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "OrderAPI.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Interface Adapters\\APIs\\OrderAPI.cs",
-              "RelativeDocumentMoniker": "OrderService\\Interface Adapters\\APIs\\OrderAPI.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Interface Adapters\\APIs\\OrderAPI.cs",
-              "RelativeToolTip": "OrderService\\Interface Adapters\\APIs\\OrderAPI.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE8AAAASAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\Program.cs",
+              "RelativeDocumentMoniker": "APIGateway\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\APIGateway\\Program.cs",
+              "RelativeToolTip": "APIGateway\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-22T02:10:57.315Z",
+              "WhenOpened": "2025-02-25T07:25:12.317Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Banner.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Domain\\Entities\\Banner.cs",
-              "RelativeDocumentMoniker": "BannerService\\Domain\\Entities\\Banner.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Domain\\Entities\\Banner.cs",
-              "RelativeToolTip": "BannerService\\Domain\\Entities\\Banner.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-22T02:02:35.849Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

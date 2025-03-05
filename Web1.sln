@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BannerService", "BannerService\BannerService.csproj", "{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Frontend", "Frontend\Frontend.esproj", "{462EE049-9FE1-B47D-1B3E-22BACA5D9185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway.csproj", "{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +37,21 @@ Global
 		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB103C1-C434-4BE6-8A3A-9DFDD9E6C846}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9614893F-92CB-46BD-B524-20D8C26261EF}
 	EndGlobalSection
 EndGlobal
