@@ -295,3 +295,6 @@ E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\obj\Debug\net8.0\r
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\obj\Debug\net8.0\UserService.pdb
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\obj\Debug\net8.0\UserService.genruntimeconfig.cache
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\obj\Debug\net8.0\ref\UserService.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\MyJWTHandler.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\MyJWTHandler.pdb

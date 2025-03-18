@@ -1,7 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using UserService.Application.Usecases;
 using UserService.Domain.Entities;
+using UserService.Domain.Request;
+using UserService.Domain.Response;
 using UserService.Infrastructure.DBContext;
+using MyJWTHandler;
 
 namespace UserService.Interface_Adapters.APIs
 {
@@ -34,7 +42,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapPost("/customers", async (UserContext userContext, [FromBody] Customer newCustomer) =>
             {
                 return Results.Ok(await new CreateUserUC(userContext).CreateCustomer(newCustomer));
-            });
+            }).RequireAuthorization();
         }
         #endregion
 
@@ -49,10 +57,10 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapGetCustomerByID(this WebApplication app)
         {
-            app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID) =>
+            app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID, HttpContext httpContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetCustomerByID(customerID));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetAccountByID(this WebApplication app)
@@ -60,7 +68,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts/{accountID}", async (UserContext userContext, int accountID) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAccountByID(accountID));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetAccount(this WebApplication app)
@@ -68,7 +76,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts", async (UserContext userContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetUser(this WebApplication app)
@@ -76,7 +84,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/customers", async (UserContext userContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            });
+            }).RequireAuthorization();
         }
         #endregion
 
@@ -89,12 +97,12 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapUpdateCustomerInformation(this WebApplication app)
         {
-            app.MapPatch("/customers/{customerID}", async (UserContext context, 
+            app.MapPatch("/customers/{customerID}", async (UserContext context,
                 int customerID, Customer newCustomer) =>
             {
                 return Results.Ok(await new UpdateUserUC(context).
                     UpdateCustomerInformation(customerID, newCustomer));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapUpdateAccount(this WebApplication app)
@@ -104,8 +112,30 @@ namespace UserService.Interface_Adapters.APIs
             {
                 return Results.Ok(await new UpdateUserUC(context).
                     UpdateAccount(accountID, newAccount));
+            }).RequireAuthorization();
+        }
+        #endregion
+
+        #region Login Logout SignUp USECASE
+        public static void MapLoginLogoutSignUpUseCaseAPIs(this WebApplication app)
+        {
+            MapLogin(app);
+        }
+
+        public static void MapLogin(this WebApplication app)
+        {
+            app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest) =>
+            {
+                LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password);
+                if (result.statusCode == 1) return Results.Ok(JWTHandler.GenerateToken
+                    (app.Configuration["issuer"],
+                    app.Configuration["audience"],
+                    app.Configuration["key"],
+                    result.idAccount, result.role));
+                return Results.Ok(result.Message);
             });
         }
+
         #endregion
     }
 }
