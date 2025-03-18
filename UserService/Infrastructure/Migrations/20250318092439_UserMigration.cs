@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace UserService.Infrastructure.Migrations
+namespace UserService.Migrations
 {
     /// <inheritdoc />
-    public partial class UserServiceMigration10 : Migration
+    public partial class UserMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,9 +32,10 @@ namespace UserService.Infrastructure.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountID = table.Column<int>(type: "int", nullable: false),
+                    AccountID = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,14 +45,15 @@ namespace UserService.Infrastructure.Migrations
                         column: x => x.AccountID,
                         principalTable: "Accounts",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_AccountID",
                 table: "Customers",
                 column: "AccountID",
-                unique: true);
+                unique: true,
+                filter: "[AccountID] IS NOT NULL");
         }
 
         /// <inheritdoc />

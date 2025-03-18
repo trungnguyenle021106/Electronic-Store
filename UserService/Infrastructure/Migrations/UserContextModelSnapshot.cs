@@ -8,7 +8,7 @@ using UserService.Infrastructure.DBContext;
 
 #nullable disable
 
-namespace UserService.Infrastructure.Migrations
+namespace UserService.Migrations
 {
     [DbContext(typeof(UserContext))]
     partial class UserContextModelSnapshot : ModelSnapshot
@@ -59,6 +59,10 @@ namespace UserService.Infrastructure.Migrations
 
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

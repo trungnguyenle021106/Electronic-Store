@@ -9,11 +9,11 @@ using UserService.Infrastructure.DBContext;
 
 #nullable disable
 
-namespace UserService.Infrastructure.Migrations
+namespace UserService.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20250220030631_UserServiceMigration1.1")]
-    partial class UserServiceMigration11
+    [Migration("20250318092439_UserMigration")]
+    partial class UserMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,10 @@ namespace UserService.Infrastructure.Migrations
 
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
