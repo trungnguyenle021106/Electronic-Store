@@ -1,4 +1,5 @@
-﻿using UserService.Application.UnitOfWorks;
+﻿using Microsoft.EntityFrameworkCore;
+using UserService.Application.UnitOfWorks;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;
 using UserService.Infrastructure.DBContext;
@@ -43,7 +44,9 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return (List<Customer>)await this.unitOfWork.CustomerRepository().GetAll();
+                IQueryable<Customer> customersQuery = this.unitOfWork.CustomerRepository().GetAll();
+                List<Customer> customersList = await customersQuery.ToListAsync();
+                return customersList;
             }
             catch (Exception ex)
             {
@@ -56,7 +59,9 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return (List<Account>) await this.unitOfWork.AccountRepository().GetAll();
+                IQueryable<Account> accountsQuery = this.unitOfWork.AccountRepository().GetAll();
+                List<Account> accountsList = await accountsQuery.ToListAsync();
+                return accountsList;
             }
             catch (Exception ex)
             {

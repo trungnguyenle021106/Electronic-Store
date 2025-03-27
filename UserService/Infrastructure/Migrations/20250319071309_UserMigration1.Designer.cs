@@ -12,8 +12,8 @@ using UserService.Infrastructure.DBContext;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20250318092439_UserMigration")]
-    partial class UserMigration
+    [Migration("20250319071309_UserMigration1")]
+    partial class UserMigration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,10 @@ namespace UserService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -42,10 +46,6 @@ namespace UserService.Migrations
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -62,10 +62,6 @@ namespace UserService.Migrations
 
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
