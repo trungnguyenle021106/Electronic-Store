@@ -1,7 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using UserService.Application.Usecases;
 using UserService.Domain.Entities;
+using UserService.Domain.Request;
+using UserService.Domain.Response;
 using UserService.Infrastructure.DBContext;
+using MyJWTHandler;
+using System.Text.Json;
+using UserService.Infrastructure.Verify_Email;
+using UserService.Application.UnitOfWorks;
+using UserService.Domain.Interface.UnitOfWork;
 
 namespace UserService.Interface_Adapters.APIs
 {
@@ -12,6 +24,7 @@ namespace UserService.Interface_Adapters.APIs
             MapCreateUserUseCaseAPIs(app);
             MapGetUserUseCaseAPIs(app);
             MapUpdateUserUseCaseAPIs(app);
+            MapLoginLogoutSignUpUseCaseAPIs(app);
         }
 
         #region Create User USECASE
@@ -23,18 +36,43 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapCreateAccount(this WebApplication app)
         {
-            app.MapPost("/accounts", async (UserContext userContext, [FromBody] Account newAccount) =>
+            app.MapPost("/accounts", async (IUnitOfWork unitOfWork
+                , [FromBody] Account newAccount, [FromHeader(Name = "Authorization")] string? token) =>
             {
-                return Results.Ok(new CreateUserUC(userContext).CreateAccount(newAccount));
+                if (!string.IsNullOrEmpty(token)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+
+                EmailValidatorResponse emailValidator = await EmailValidator.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
+                if (!emailValidator.Status)
+                {
+                    return Results.BadRequest(emailValidator.Message);
+                }
+
+                Account? createdAccount = await new CreateUserUC(unitOfWork).CreateAccount(newAccount).ConfigureAwait(false);
+                if (createdAccount != null)
+                {
+                    return Results.Ok(createdAccount);
+                }
+                return Results.BadRequest("Email đã được đăng ký");
             });
         }
 
         public static void MapCreateCustomer(this WebApplication app)
         {
-            app.MapPost("/customers", async (UserContext userContext, [FromBody] Customer newCustomer) =>
+            app.MapPost("/customers", async (IUnitOfWork userContext,
+                [FromHeader(Name = "Authorization")] string? token, [FromBody] Customer newCustomer) =>
             {
-                return Results.Ok(await new CreateUserUC(userContext).CreateCustomer(newCustomer));
-            });
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadJwtToken(token.Replace("Bearer ", ""));
+                var nameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                string name = nameClaim?.Value ?? "";
+
+                if (!name.Equals(""))
+                {
+                    return Results.StatusCode(403);
+                }
+
+                return Results.Ok(await new CreateUserUC(userContext).CreateCustomer(newCustomer).ConfigureAwait(false));
+            }).RequireAuthorization();
         }
         #endregion
 
@@ -49,10 +87,10 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapGetCustomerByID(this WebApplication app)
         {
-            app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID) =>
+            app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID, HttpContext httpContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetCustomerByID(customerID));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetAccountByID(this WebApplication app)
@@ -60,7 +98,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts/{accountID}", async (UserContext userContext, int accountID) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAccountByID(accountID));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetAccount(this WebApplication app)
@@ -68,7 +106,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts", async (UserContext userContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetUser(this WebApplication app)
@@ -76,7 +114,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/customers", async (UserContext userContext) =>
             {
                 return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            });
+            }).RequireAuthorization();
         }
         #endregion
 
@@ -89,12 +127,12 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapUpdateCustomerInformation(this WebApplication app)
         {
-            app.MapPatch("/customers/{customerID}", async (UserContext context, 
+            app.MapPatch("/customers/{customerID}", async (UserContext context,
                 int customerID, Customer newCustomer) =>
             {
                 return Results.Ok(await new UpdateUserUC(context).
                     UpdateCustomerInformation(customerID, newCustomer));
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapUpdateAccount(this WebApplication app)
@@ -104,6 +142,61 @@ namespace UserService.Interface_Adapters.APIs
             {
                 return Results.Ok(await new UpdateUserUC(context).
                     UpdateAccount(accountID, newAccount));
+            }).RequireAuthorization();
+        }
+        #endregion
+
+        #region Login Logout SignUp USECASE
+        public static void MapLoginLogoutSignUpUseCaseAPIs(this WebApplication app)
+        {
+            MapLogin(app);
+        }
+
+        public static void MapLogin(this WebApplication app)
+        {
+            app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest) =>
+            {
+                LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
+
+                if (result.statusCode == 1)
+                {
+                    int customerId = result.customer != null ? result.customer.ID : 0;
+                    string customerName = result.customer != null ? result.customer.Name : "";
+                    string customerPhone = result.customer != null ? result.customer.Phone : "";
+
+                    string issuer = app.Configuration["Jwt:Issuer"] ?? "";
+                    string audience = app.Configuration["Jwt:Audience"] ?? "";
+                    string key = app.Configuration["Jwt:Key"] ?? "";
+
+                    return Results.Ok(JWTHandler.GenerateAccessToken
+                    (issuer, audience, key
+                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId));
+                }
+                return Results.Ok(result.Message);
+            });
+        }
+
+        public static void MapSignUpToken(this WebApplication app)
+        {
+            app.MapPost("/users/signup/token", async (UserContext userContext, [FromBody] LoginRequest loginRequest) =>
+            {
+                LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
+
+                if (result.statusCode == 1)
+                {
+                    int customerId = result.customer != null ? result.customer.ID : 0;
+                    string customerName = result.customer != null ? result.customer.Name : "";
+                    string customerPhone = result.customer != null ? result.customer.Phone : "";
+
+                    string issuer = app.Configuration["Jwt:Issuer"] ?? "";
+                    string audience = app.Configuration["Jwt:Audience"] ?? "";
+                    string key = app.Configuration["Jwt:Key"] ?? "";
+
+                    return Results.Ok(JWTHandler.GenerateAccessToken
+                    (issuer, audience, key
+                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId));
+                }
+                return Results.Ok(result.Message);
             });
         }
         #endregion
