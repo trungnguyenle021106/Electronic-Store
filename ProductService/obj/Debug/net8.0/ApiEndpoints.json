@@ -1,0 +1,203 @@
+[
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CCreateProductProperty\u003Eb__4_0",
+    "RelativePath": "productProperties",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productProperty",
+        "Type": "ProductService.Domain.Entities.ProductProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CGetAllProductProperties\u003Eb__8_0",
+    "RelativePath": "productProperties",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CUpdateProductProperty\u003Eb__11_0",
+    "RelativePath": "productProperties/{productPropertyID}",
+    "HttpMethod": "PATCH",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productPropertyID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "newProductProperty",
+        "Type": "ProductService.Domain.Entities.ProductProperty",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CDeleteProduct\u003Eb__13_0",
+    "RelativePath": "productPropertyDetails",
+    "HttpMethod": "DELETE",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productPropertyDetail",
+        "Type": "ProductService.Domain.Entities.ProductPropertyDetail",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CCreateProduct\u003Eb__2_0",
+    "RelativePath": "products",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "product",
+        "Type": "ProductService.Domain.Entities.Product",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CGetAllProducts\u003Eb__7_0",
+    "RelativePath": "products",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CGetProductByID\u003Eb__6_0",
+    "RelativePath": "products/{productID}",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CUpdateProduct\u003Eb__10_0",
+    "RelativePath": "products/{productID}",
+    "HttpMethod": "PATCH",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "newProduct",
+        "Type": "ProductService.Domain.Entities.Product",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductService.Interface_Adapters.APIs.ProductAPI\u002B\u003C\u003Ec",
+    "Method": "\u003CAddPropertiesToProduct\u003Eb__3_0",
+    "RelativePath": "products/{productId}/productProperties",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "productProperties",
+        "Type": "System.Collections.Generic.List\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  }
+]

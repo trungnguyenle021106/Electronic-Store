@@ -23,9 +23,9 @@ namespace UserService.Infrastructure.Repository
             _Context.Set<T>().Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return await _Context.Set<T>().ToListAsync();
+            return _Context.Set<T>().AsQueryable();
         }
 
         public async Task<T> GetById(int id)
