@@ -298,3 +298,7 @@ E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\obj\Debug\net8.0\r
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\MyJWTHandler.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\MyJWTHandler.pdb
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Flurl.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Flurl.Http.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Newtonsoft.Json.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Verifalia.Api.dll

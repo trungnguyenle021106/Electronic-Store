@@ -1,7 +1,7 @@
 [
   {
-    "ContainingType": "UserService.Interface_Adapters.APIs.UserAPI\u002B\u003C\u003Ec",
-    "Method": "\u003CMapCreateAccount\u003Eb__2_0",
+    "ContainingType": "UserService.Interface_Adapters.APIs.UserAPI\u002B\u003C\u003Ec__DisplayClass2_0",
+    "Method": "\u003CMapCreateAccount\u003Eb__0",
     "RelativePath": "accounts",
     "HttpMethod": "POST",
     "IsController": false,
@@ -11,6 +11,11 @@
         "Name": "newAccount",
         "Type": "UserService.Domain.Entities.Account",
         "IsRequired": true
+      },
+      {
+        "Name": "Authorization",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -95,6 +100,11 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Authorization",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "newCustomer",
         "Type": "UserService.Domain.Entities.Customer",
         "IsRequired": true
@@ -162,6 +172,28 @@
       {
         "Name": "newCustomer",
         "Type": "UserService.Domain.Entities.Customer",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "UserService.Interface_Adapters.APIs.UserAPI\u002B\u003C\u003Ec__DisplayClass13_0",
+    "Method": "\u003CMapLogin\u003Eb__0",
+    "RelativePath": "users/login",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginRequest",
+        "Type": "UserService.Domain.Request.LoginRequest",
         "IsRequired": true
       }
     ],

@@ -19,12 +19,12 @@ namespace UserService.Application.Usecases
             this.unitOfWork = new UserUnitOfWork(userContext);
         }
 
-        public async Task<LoginResponse> LoginAccount(string userName, string passWord)
+        public async Task<LoginResponse> LoginAccount(string email, string passWord)
         {
-            IQueryable<Account> accounts = (IQueryable<Account>)this.unitOfWork.AccountRepository().GetAll();
+            IQueryable<Account> accounts = this.unitOfWork.AccountRepository().GetAll();
             Account? account = await (from a in accounts
-                                      where a.UserName == userName
-                                      select a).FirstOrDefaultAsync();
+                                      where a.Email == email
+                                      select a).FirstOrDefaultAsync().ConfigureAwait(false);
             if (account == null)
             {
                 return new LoginResponse(0, "Tài khoản không hợp lệ", null, null, null, null);

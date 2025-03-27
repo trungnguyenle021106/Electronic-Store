@@ -1,7 +1,12 @@
-﻿
-namespace UserService.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MyJWTHandler.Domain
 {
-    public class Account
+    class Account
     {
         public int ID { get; set; }
         public string Email { get; set; }
