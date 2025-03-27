@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|solutionrelative:productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\infrastructure\\dbcontext\\usercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\infrastructure\\dbcontext\\usercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\application\\usecases\\createuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\application\\usecases\\createuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\application\\usecases\\getuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\application\\usecases\\getuseruc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +34,80 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Program.cs",
-              "RelativeDocumentMoniker": "OrderService\\Program.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Program.cs",
-              "RelativeToolTip": "OrderService\\Program.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "UserContext.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Infrastructure\\DBContext\\UserContext.cs",
+              "RelativeDocumentMoniker": "UserService\\Infrastructure\\DBContext\\UserContext.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Infrastructure\\DBContext\\UserContext.cs",
+              "RelativeToolTip": "UserService\\Infrastructure\\DBContext\\UserContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-21T08:34:22.61Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-21T04:08:48.294Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\appsettings.json",
+              "RelativeDocumentMoniker": "UserService\\appsettings.json",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\appsettings.json",
+              "RelativeToolTip": "UserService\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-03-20T15:14:41.151Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Program.cs",
-              "RelativeDocumentMoniker": "ProductService\\Program.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Program.cs",
-              "RelativeToolTip": "ProductService\\Program.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "Title": "UserAPI.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "RelativeDocumentMoniker": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "RelativeToolTip": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAAAFwAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-21T08:34:09.321Z"
+              "WhenOpened": "2025-03-17T09:03:20.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
+              "RelativeDocumentMoniker": "UserService\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
+              "RelativeToolTip": "UserService\\Program.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAADwv0YAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-19T08:10:20.375Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "GetUserUC.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Application\\Usecases\\GetUserUC.cs",
+              "RelativeDocumentMoniker": "UserService\\Application\\Usecases\\GetUserUC.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Application\\Usecases\\GetUserUC.cs",
+              "RelativeToolTip": "UserService\\Application\\Usecases\\GetUserUC.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-18T15:20:41.573Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CreateUserUC.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Application\\Usecases\\CreateUserUC.cs",
+              "RelativeDocumentMoniker": "UserService\\Application\\Usecases\\CreateUserUC.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Application\\Usecases\\CreateUserUC.cs",
+              "RelativeToolTip": "UserService\\Application\\Usecases\\CreateUserUC.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAiwB0AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-18T15:04:35.101Z"
             }
           ]
         }
