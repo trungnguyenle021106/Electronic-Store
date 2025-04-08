@@ -33,6 +33,11 @@ namespace UserService.Infrastructure.Repository
            return await _Context.Set<T>().FindAsync(id);
         }
 
+        public IQueryable<T> GetByIdQueryable(int id)
+        {
+            return _Context.Set<T>().Where(entity => EF.Property<int>(entity, "ID") == id);
+        }
+
         public T Update(T entity)
         {
             _Context.Set<T>().Update(entity);

@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthorizationPolicy\AuthorizationPolicy.csproj" />
     <ProjectReference Include="..\MyJWTHandler\MyJWTHandler.csproj" />
   </ItemGroup>
 

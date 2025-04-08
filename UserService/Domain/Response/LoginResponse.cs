@@ -7,7 +7,6 @@ namespace UserService.Domain.Response
     string Message,
     int? idAccount,
     bool? role,
-    string? AccessToken,
     Customer? customer);
 
 }

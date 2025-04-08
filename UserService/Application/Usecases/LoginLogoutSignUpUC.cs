@@ -25,17 +25,23 @@ namespace UserService.Application.Usecases
             Account? account = await (from a in accounts
                                       where a.Email == email
                                       select a).FirstOrDefaultAsync().ConfigureAwait(false);
+
             if (account == null)
             {
-                return new LoginResponse(0, "Tài khoản không hợp lệ", null, null, null, null);
+                return new LoginResponse(0, "Tài khoản không hợp lệ", null, null, null);
             }
 
             if (!account.Password.Equals(passWord))
             {
-                return new LoginResponse(2, "Sai mật khẩu", null, null, null, null);
+                return new LoginResponse(2, "Sai mật khẩu", null, null, null);
             }
 
-            return new LoginResponse(1, "Đăng nhập thành công", account.ID, account.Role, null, null);
+            IQueryable<Customer> customers = this.unitOfWork.CustomerRepository().GetAll();
+            Customer? customer = await (from c in customers
+                                        where c.AccountID == account.ID
+                                        select c).FirstOrDefaultAsync().ConfigureAwait(false);
+
+            return new LoginResponse(1, "Đăng nhập thành công", account.ID, account.Role, customer);
         }
     }
 }

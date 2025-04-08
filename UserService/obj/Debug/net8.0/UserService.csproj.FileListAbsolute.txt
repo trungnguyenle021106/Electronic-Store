@@ -302,3 +302,5 @@ E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\F
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Flurl.Http.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Newtonsoft.Json.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Verifalia.Api.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\AuthorizationPolicy.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\AuthorizationPolicy.pdb
