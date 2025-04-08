@@ -195,6 +195,11 @@
         "Name": "loginRequest",
         "Type": "UserService.Domain.Request.LoginRequest",
         "IsRequired": true
+      },
+      {
+        "Name": "Authorization",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
