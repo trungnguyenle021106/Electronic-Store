@@ -222,9 +222,6 @@
           },
           "status": {
             "type": "boolean"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/Customer"
           }
         },
         "additionalProperties": false
@@ -248,9 +245,6 @@
           "phone": {
             "type": "string",
             "nullable": true
-          },
-          "account": {
-            "$ref": "#/components/schemas/Account"
           }
         },
         "additionalProperties": false

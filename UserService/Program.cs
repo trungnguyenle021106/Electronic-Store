@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AuthorizationPolicy;
+using AuthorizationPolicy.AdminOrSelfUserId;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -14,7 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddDbContext<UserContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
+
 builder.Services.AddScoped<IUnitOfWork, UserUnitOfWork>();
+builder.Services.AddSingleton<IAuthorizationHandler, AdminOrSelfAccountIDHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, SelfAccountIDHandler>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -67,12 +73,19 @@ builder.Services
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOrAClaim", policy =>
+    options.AddPolicy("OnlyAdmin", policy =>
     {
-        policy.RequireAssertion(context =>
-        {
-            return context.User.IsInRole("admin") || context.User.HasClaim("A", "true");
-        });
+        policy.RequireRole("True");
+    });
+
+    options.AddPolicy("AdminOrSelfAccountId", policy =>
+    {
+        policy.Requirements.Add(new AdminOrSelfAccountIDReq());
+    });
+
+    options.AddPolicy("SelfAccountId", policy =>
+    {
+        policy.Requirements.Add(new AdminOrSelfAccountIDReq());
     });
 });
 

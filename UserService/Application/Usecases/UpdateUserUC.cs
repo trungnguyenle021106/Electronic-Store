@@ -20,7 +20,7 @@ namespace UserService.Application.Usecases
                 Customer customer = await this.unitOfWork.CustomerRepository().GetById(customerID);
                 customer.Phone = newCustomer.Phone;
                 customer.Name = newCustomer.Name;
-                await this.unitOfWork.Commit();
+                await unitOfWork.Commit().ConfigureAwait(false);
                 return customer;
             }
             catch (Exception ex)
@@ -34,11 +34,11 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                Account account = await this.unitOfWork.AccountRepository().GetById(accountID);
+                Account account = await unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false);
                 account.Status = newAccount.Status;
                 account.Role = newAccount.Role;
                 account.Password = newAccount.Password;
-                await this.unitOfWork.Commit();
+                await unitOfWork.Commit().ConfigureAwait(false);
                 return account;
             }
             catch (Exception ex)

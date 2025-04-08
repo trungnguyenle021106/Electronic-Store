@@ -14,6 +14,11 @@ using System.Text.Json;
 using UserService.Infrastructure.Verify_Email;
 using UserService.Application.UnitOfWorks;
 using UserService.Domain.Interface.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
+using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client;
+using System.Net.Http;
 
 namespace UserService.Interface_Adapters.APIs
 {
@@ -89,15 +94,35 @@ namespace UserService.Interface_Adapters.APIs
         {
             app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID, HttpContext httpContext) =>
             {
-                return Results.Ok(await new GetUserUC(userContext).GetCustomerByID(customerID));
+
+                Customer? customer = await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false);
+                int accountID = customer?.AccountID ?? 0;
+
+                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
+
+                if (!authorizationResult.Succeeded)
+                {
+                    return Results.Forbid();
+                }
+
+                return Results.Ok(await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false));
             }).RequireAuthorization();
         }
 
         public static void MapGetAccountByID(this WebApplication app)
         {
-            app.MapGet("/accounts/{accountID}", async (UserContext userContext, int accountID) =>
+            app.MapGet("/accounts/{accountID}", async (HttpContext httpContext, UserContext userContext, int accountID) =>
             {
-                return Results.Ok(await new GetUserUC(userContext).GetAccountByID(accountID));
+                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
+
+                if (!authorizationResult.Succeeded)
+                {
+                    return Results.Forbid();
+                }
+
+                return Results.Ok(await new GetUserUC(userContext).GetAccountByID(accountID).ConfigureAwait(false));
             }).RequireAuthorization();
         }
 
@@ -105,16 +130,16 @@ namespace UserService.Interface_Adapters.APIs
         {
             app.MapGet("/accounts", async (UserContext userContext) =>
             {
-                return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            }).RequireAuthorization();
+                return Results.Ok(await new GetUserUC(userContext).GetAllAccount().ConfigureAwait(false));
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetUser(this WebApplication app)
         {
             app.MapGet("/customers", async (UserContext userContext) =>
             {
-                return Results.Ok(await new GetUserUC(userContext).GetAllAccount());
-            }).RequireAuthorization();
+                return Results.Ok(await new GetUserUC(userContext).GetAllAccount().ConfigureAwait(false));
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -127,21 +152,41 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapUpdateCustomerInformation(this WebApplication app)
         {
-            app.MapPatch("/customers/{customerID}", async (UserContext context,
+            app.MapPatch("/customers/{customerID}", async (HttpContext httpContext, UserContext userContext,
                 int customerID, Customer newCustomer) =>
             {
-                return Results.Ok(await new UpdateUserUC(context).
-                    UpdateCustomerInformation(customerID, newCustomer));
+                Customer? customer = await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false);
+                int accountID = customer?.AccountID ?? 0;
+
+                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "SelfAccountId").ConfigureAwait(false);
+
+                if (!authorizationResult.Succeeded)
+                {
+                    return Results.Forbid();
+                }
+
+                return Results.Ok(await new UpdateUserUC(userContext).
+                    UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false));
             }).RequireAuthorization();
         }
 
         public static void MapUpdateAccount(this WebApplication app)
         {
-            app.MapPatch("/accounts/{accountID}", async (UserContext context,
+            app.MapPatch("/accounts/{accountID}", async (HttpContext httpContext, UserContext context,
                 int accountID, Account newAccount) =>
             {
+
+                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "SelfAccountId").ConfigureAwait(false);
+
+                if (!authorizationResult.Succeeded)
+                {
+                    return Results.Forbid();
+                }
+
                 return Results.Ok(await new UpdateUserUC(context).
-                    UpdateAccount(accountID, newAccount));
+                    UpdateAccount(accountID, newAccount).ConfigureAwait(false));
             }).RequireAuthorization();
         }
         #endregion
@@ -154,7 +199,8 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapLogin(this WebApplication app)
         {
-            app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest) =>
+            app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest
+                , [FromHeader(Name = "Authorization")] string? token) =>
             {
                 LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
 

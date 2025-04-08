@@ -16,10 +16,8 @@ namespace UserService.Infrastructure.DBContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>()
-                .HasOne(c => c.Account)
-                .WithOne(a => a.Customer)
-                .HasForeignKey<Customer>(c => c.AccountID)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasOne<Account>()
+                .WithOne();
         }
     }
 }
