@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\interface adapters\\apis\\userapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|e:\\inrtern projects\\shop project\\electronic-store\\authorizationpolicy\\adminorselfuseridhandler .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|solutionrelative:authorizationpolicy\\adminorselfuseridhandler .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|e:\\inrtern projects\\shop project\\electronic-store\\authorizationpolicy\\adminorselfuseridreq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|solutionrelative:authorizationpolicy\\adminorselfuseridreq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2DDE87CD-9F3A-477F-A947-75760F3FB25E}|UserService\\UserService.csproj|solutionrelative:userservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|e:\\inrtern projects\\shop project\\electronic-store\\authorizationpolicy\\selfaccountid\\selfaccountidreq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|solutionrelative:authorizationpolicy\\selfaccountid\\selfaccountidreq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|e:\\inrtern projects\\shop project\\electronic-store\\authorizationpolicy\\selfaccountid\\selfaccountidhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFE94ED9-03A1-4FDB-B0A7-7D8C8C102491}|AuthorizationPolicy\\AuthorizationPolicy.csproj|solutionrelative:authorizationpolicy\\selfaccountid\\selfaccountidhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9848D2F7-6E2A-4865-8812-C726EC99C958}|MyJWTHandler\\MyJWTHandler.csproj|e:\\inrtern projects\\shop project\\electronic-store\\myjwthandler\\jwthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,20 +34,33 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AdminOrSelfUserIdReq.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\AdminOrSelfUserIdReq.cs",
-              "RelativeDocumentMoniker": "AuthorizationPolicy\\AdminOrSelfUserIdReq.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\AdminOrSelfUserIdReq.cs",
-              "RelativeToolTip": "AuthorizationPolicy\\AdminOrSelfUserIdReq.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "SelfAccountIDReq.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\SelfAccountID\\SelfAccountIDReq.cs",
+              "RelativeDocumentMoniker": "AuthorizationPolicy\\SelfAccountID\\SelfAccountIDReq.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\SelfAccountID\\SelfAccountIDReq.cs",
+              "RelativeToolTip": "AuthorizationPolicy\\SelfAccountID\\SelfAccountIDReq.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-08T01:30:03.8Z",
+              "WhenOpened": "2025-04-08T09:45:08.054Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
+              "Title": "SelfAccountIDHandler.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\SelfAccountID\\SelfAccountIDHandler.cs",
+              "RelativeDocumentMoniker": "AuthorizationPolicy\\SelfAccountID\\SelfAccountIDHandler.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\SelfAccountID\\SelfAccountIDHandler.cs",
+              "RelativeToolTip": "AuthorizationPolicy\\SelfAccountID\\SelfAccountIDHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-08T09:44:03.353Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "UpdateUserUC.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Application\\Usecases\\UpdateUserUC.cs",
               "RelativeDocumentMoniker": "UserService\\Application\\Usecases\\UpdateUserUC.cs",
@@ -64,46 +73,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AdminOrSelfUserIdHandler .cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\AdminOrSelfUserIdHandler .cs",
-              "RelativeDocumentMoniker": "AuthorizationPolicy\\AdminOrSelfUserIdHandler .cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\AuthorizationPolicy\\AdminOrSelfUserIdHandler .cs",
-              "RelativeToolTip": "AuthorizationPolicy\\AdminOrSelfUserIdHandler .cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-04T09:14:53.048Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserAPI.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "RelativeDocumentMoniker": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "RelativeToolTip": "UserService\\Interface Adapters\\APIs\\UserAPI.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAADwv5QAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T04:01:14.97Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
               "RelativeDocumentMoniker": "UserService\\Program.cs",
               "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\UserService\\Program.cs",
               "RelativeToolTip": "UserService\\Program.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAAAEwAAAAHAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-29T04:01:07.394Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "JWTHandler.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\MyJWTHandler\\JWTHandler.cs",
               "RelativeDocumentMoniker": "MyJWTHandler\\JWTHandler.cs",

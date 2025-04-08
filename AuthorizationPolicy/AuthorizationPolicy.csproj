@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SelfAccountID\" />
-  </ItemGroup>
-
 </Project>

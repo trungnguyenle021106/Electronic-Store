@@ -19,6 +19,7 @@ using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace UserService.Interface_Adapters.APIs
 {
@@ -42,9 +43,9 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapCreateAccount(this WebApplication app)
         {
             app.MapPost("/accounts", async (IUnitOfWork unitOfWork
-                , [FromBody] Account newAccount, [FromHeader(Name = "Authorization")] string? token) =>
+                , [FromBody] Account newAccount, HttpContext httpContext) =>
             {
-                if (!string.IsNullOrEmpty(token)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
 
                 EmailValidatorResponse emailValidator = await EmailValidator.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
                 if (!emailValidator.Status)
@@ -64,14 +65,9 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapCreateCustomer(this WebApplication app)
         {
             app.MapPost("/customers", async (IUnitOfWork userContext,
-                [FromHeader(Name = "Authorization")] string? token, [FromBody] Customer newCustomer) =>
+                 HttpContext httpContext, [FromBody] Customer newCustomer) =>
             {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadJwtToken(token.Replace("Bearer ", ""));
-                var nameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
-                string name = nameClaim?.Value ?? "";
-
-                if (!name.Equals(""))
+                if (!HaveAName(httpContext))
                 {
                     return Results.StatusCode(403);
                 }
@@ -200,23 +196,14 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapLogin(this WebApplication app)
         {
             app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest
-                , [FromHeader(Name = "Authorization")] string? token) =>
+                , HttpContext httpContext) =>
             {
+                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
                 LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
 
                 if (result.statusCode == 1)
                 {
-                    int customerId = result.customer != null ? result.customer.ID : 0;
-                    string customerName = result.customer != null ? result.customer.Name : "";
-                    string customerPhone = result.customer != null ? result.customer.Phone : "";
-
-                    string issuer = app.Configuration["Jwt:Issuer"] ?? "";
-                    string audience = app.Configuration["Jwt:Audience"] ?? "";
-                    string key = app.Configuration["Jwt:Key"] ?? "";
-
-                    return Results.Ok(JWTHandler.GenerateAccessToken
-                    (issuer, audience, key
-                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId));
+                    return Results.Ok(GenerateToken(result, app));
                 }
                 return Results.Ok(result.Message);
             });
@@ -224,26 +211,59 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapSignUpToken(this WebApplication app)
         {
-            app.MapPost("/users/signup/token", async (UserContext userContext, [FromBody] LoginRequest loginRequest) =>
+            app.MapPost("/users/signup/token", async (UserContext userContext, [FromBody] LoginRequest loginRequest
+                , HttpContext httpContext) =>
             {
+                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
                 LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
 
                 if (result.statusCode == 1)
-                {
-                    int customerId = result.customer != null ? result.customer.ID : 0;
-                    string customerName = result.customer != null ? result.customer.Name : "";
-                    string customerPhone = result.customer != null ? result.customer.Phone : "";
-
-                    string issuer = app.Configuration["Jwt:Issuer"] ?? "";
-                    string audience = app.Configuration["Jwt:Audience"] ?? "";
-                    string key = app.Configuration["Jwt:Key"] ?? "";
-
-                    return Results.Ok(JWTHandler.GenerateAccessToken
-                    (issuer, audience, key
-                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId));
+                {       
+                    return Results.Ok(GenerateToken(result, app));
                 }
                 return Results.Ok(result.Message);
             });
+        }
+
+
+        #endregion
+
+        #region Other Methods
+        private static string GenerateToken(LoginResponse result, WebApplication app)
+        {
+            int customerId = result.customer != null ? result.customer.ID : 0;
+            string customerName = result.customer != null ? result.customer.Name : "";
+            string customerPhone = result.customer != null ? result.customer.Phone : "";
+
+            string issuer = app.Configuration["Jwt:Issuer"] ?? "";
+            string audience = app.Configuration["Jwt:Audience"] ?? "";
+            string key = app.Configuration["Jwt:Key"] ?? "";
+            return JWTHandler.GenerateAccessToken
+                    (issuer, audience, key
+                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId);
+        }
+
+        private static bool HaveAName(HttpContext httpContext)
+        {
+            var user = httpContext.User; // Lấy thông tin người dùng từ HttpContext
+            var nameClaim = user.FindFirst(ClaimTypes.Name);
+            string name = nameClaim?.Value ?? "";
+
+            if (string.IsNullOrEmpty(name))
+            {
+                return true; 
+            }
+
+            return false;
+        }
+
+        private static bool IsLogOut(HttpContext httpContext)
+        {
+            if (httpContext.User.Identity.IsAuthenticated)
+            {
+                return false; 
+            }
+            return true;
         }
         #endregion
     }
