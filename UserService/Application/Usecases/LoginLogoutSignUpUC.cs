@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using System.Security.Claims;
-using System.Text;
 using UserService.Application.UnitOfWorks;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;

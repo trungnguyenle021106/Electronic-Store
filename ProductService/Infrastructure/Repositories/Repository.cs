@@ -23,14 +23,19 @@ namespace ProductService.Infrastructure.Repository
             _Context.Set<T>().Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public  IQueryable<T> GetAll()
         {
-            return await _Context.Set<T>().ToListAsync();
+            return  _Context.Set<T>().AsQueryable();
         }
 
         public async Task<T> GetById(int id)
         {
            return await _Context.Set<T>().FindAsync(id);
+        }
+
+        public IQueryable<T> GetByIdQueryable(int id)
+        {
+            return _Context.Set<T>().Where(entity => EF.Property<int>(entity, "ID") == id);
         }
 
         public T Update(T entity)
