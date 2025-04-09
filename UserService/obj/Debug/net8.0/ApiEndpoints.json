@@ -11,11 +11,6 @@
         "Name": "newAccount",
         "Type": "UserService.Domain.Entities.Account",
         "IsRequired": true
-      },
-      {
-        "Name": "Authorization",
-        "Type": "System.String",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -99,11 +94,6 @@
     "IsController": false,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "Authorization",
-        "Type": "System.String",
-        "IsRequired": false
-      },
       {
         "Name": "newCustomer",
         "Type": "UserService.Domain.Entities.Customer",
@@ -195,11 +185,6 @@
         "Name": "loginRequest",
         "Type": "UserService.Domain.Request.LoginRequest",
         "IsRequired": true
-      },
-      {
-        "Name": "Authorization",
-        "Type": "System.String",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": [

@@ -1,4 +1,5 @@
-﻿using ProductService.Application.UnitOfWork;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductService.Application.UnitOfWork;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
 using ProductService.Infrastructure.DBContext;
@@ -18,7 +19,11 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.ProductRepository().GetById(id);
+                IQueryable<Product> query = this.unitOfWork.ProductRepository().GetByIdQueryable(id);
+                Product? product = await query.FirstOrDefaultAsync();
+                if(product == null) {return null;}
+
+                return product;
             }
             catch (Exception ex) {
                 Console.WriteLine($"Lỗi lấy sản phẩm có id : {id}, lỗi : {ex.Message}");
@@ -30,7 +35,9 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                return (List<Product>) await  this.unitOfWork.ProductRepository().GetAll();
+                IQueryable<Product> productsQuery = this.unitOfWork.ProductRepository().GetAll();
+                List<Product> productsList = await productsQuery.ToListAsync().ConfigureAwait(false);
+                return productsList;
             }
             catch (Exception ex)
             {
@@ -43,7 +50,9 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                return (List<ProductProperty>)await this.unitOfWork.ProductPropertyRepository().GetAll();
+                IQueryable<ProductProperty> productPropertiesQuery = this.unitOfWork.ProductPropertyRepository().GetAll();
+                List<ProductProperty> productPropertiesList = await productPropertiesQuery.ToListAsync().ConfigureAwait(false);
+                return productPropertiesList;
             }
             catch (Exception ex)
             {

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "ProductService",
-    "version": "1.0"
+    "title": "Your API Name",
+    "version": "v1"
   },
   "paths": {
     "/products": {
@@ -248,12 +248,13 @@
           "status": {
             "type": "boolean"
           },
-          "productPropertyDetails": {
+          "productProperties": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ProductPropertyDetail"
+              "$ref": "#/components/schemas/ProductProperty"
             },
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -273,12 +274,13 @@
             "type": "string",
             "nullable": true
           },
-          "productPropertyDetails": {
+          "products": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ProductPropertyDetail"
+              "$ref": "#/components/schemas/Product"
             },
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -297,6 +299,18 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "scheme": "Bearer"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

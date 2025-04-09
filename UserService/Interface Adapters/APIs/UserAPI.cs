@@ -45,7 +45,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapPost("/accounts", async (IUnitOfWork unitOfWork
                 , [FromBody] Account newAccount, HttpContext httpContext) =>
             {
-                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
 
                 EmailValidatorResponse emailValidator = await EmailValidator.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
                 if (!emailValidator.Status)
@@ -198,7 +198,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest
                 , HttpContext httpContext) =>
             {
-                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
                 LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
 
                 if (result.statusCode == 1)
@@ -214,7 +214,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapPost("/users/signup/token", async (UserContext userContext, [FromBody] LoginRequest loginRequest
                 , HttpContext httpContext) =>
             {
-                if (IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
                 LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
 
                 if (result.statusCode == 1)

@@ -295,3 +295,4 @@ E:\Inrtern Projects\Shop Project\Electronic-Store\ProductService\obj\Debug\net8.
 E:\Inrtern Projects\Shop Project\Electronic-Store\ProductService\obj\Debug\net8.0\ProductService.pdb
 E:\Inrtern Projects\Shop Project\Electronic-Store\ProductService\obj\Debug\net8.0\ProductService.genruntimeconfig.cache
 E:\Inrtern Projects\Shop Project\Electronic-Store\ProductService\obj\Debug\net8.0\ref\ProductService.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\ProductService\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

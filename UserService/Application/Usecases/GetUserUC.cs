@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using UserService.Application.UnitOfWorks;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;
@@ -18,7 +19,14 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.AccountRepository().GetById(accountID);
+                IQueryable<Account> query = this.unitOfWork.AccountRepository().GetByIdQueryable(accountID);
+                Account? account = await query.FirstOrDefaultAsync().ConfigureAwait(false);
+                if (account == null)
+                {
+                    return null;
+                }
+
+                return account;
             }
             catch (Exception ex)
             {
@@ -31,7 +39,13 @@ namespace UserService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.CustomerRepository().GetById(customerID);
+                IQueryable<Customer> query = this.unitOfWork.CustomerRepository().GetByIdQueryable(customerID);
+                Customer? customer = await query.FirstOrDefaultAsync().ConfigureAwait(false);
+                if (customer == null)
+                {
+                    return null;
+                }
+                return customer;
             }
             catch (Exception ex)
             {
@@ -45,7 +59,7 @@ namespace UserService.Application.Usecases
             try
             {
                 IQueryable<Customer> customersQuery = this.unitOfWork.CustomerRepository().GetAll();
-                List<Customer> customersList = await customersQuery.ToListAsync();
+                List<Customer> customersList = await customersQuery.ToListAsync().ConfigureAwait(false);
                 return customersList;
             }
             catch (Exception ex)
@@ -60,7 +74,7 @@ namespace UserService.Application.Usecases
             try
             {
                 IQueryable<Account> accountsQuery = this.unitOfWork.AccountRepository().GetAll();
-                List<Account> accountsList = await accountsQuery.ToListAsync();
+                List<Account> accountsList = await accountsQuery.ToListAsync().ConfigureAwait(false);
                 return accountsList;
             }
             catch (Exception ex)
