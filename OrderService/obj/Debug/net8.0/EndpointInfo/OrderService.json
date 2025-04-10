@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OrderService",
-    "version": "1.0"
+    "title": "Your API Name",
+    "version": "v1"
   },
   "paths": {
     "/orders": {
@@ -189,35 +189,6 @@
           "status": {
             "type": "string",
             "nullable": true
-          },
-          "orderDetails": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrderDetail"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "OrderDetail": {
-        "type": "object",
-        "properties": {
-          "orderID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "productID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPrice": {
-            "type": "number",
-            "format": "float"
           }
         },
         "additionalProperties": false
@@ -240,6 +211,18 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "scheme": "Bearer"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

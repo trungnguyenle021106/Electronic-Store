@@ -8,7 +8,5 @@ namespace OrderService.Domain.Entities
         public int ProductID { get; set; }
         public int Quantity { get; set; }
         public float TotalPrice { get; set; }
-        [JsonIgnore]
-        public Order Order { get; set; }
     }
 }

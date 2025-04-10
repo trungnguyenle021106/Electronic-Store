@@ -1,4 +1,5 @@
-﻿using OrderService.Application.UnitOfWork;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderService.Application.UnitOfWork;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interface.UnitOfWork;
 using OrderService.Infrastructure.DBContext;
@@ -18,13 +19,19 @@ namespace OrderService.Application.Usecases
         {
             try
             {
-                Order order = await this.unitOfWork.OrderRepository().GetById(orderID);
-                order.Status = status;  
+                IQueryable<Order> query = this.unitOfWork.OrderRepository().GetByIdQueryable(orderID);
+
+                Order? order = await query.FirstOrDefaultAsync();
+                if (order == null) { return null; }
+
+                order.Status = status;
                 this.unitOfWork.OrderRepository().Update(order);
                 await this.unitOfWork.Commit();
+
                 return order;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine($"Lỗi cập nhật Order: {ex.Message}");
                 return null;
             }

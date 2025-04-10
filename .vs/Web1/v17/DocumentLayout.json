@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\productservice\\interface adapters\\apis\\productapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|solutionrelative:productservice\\interface adapters\\apis\\productapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\infrastructure\\dbcontext\\ordercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\infrastructure\\dbcontext\\ordercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC3A8F32-21BD-486F-B775-639FA86B46BC}|ProductService\\ProductService.csproj|solutionrelative:productservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\domain\\entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\domain\\entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\domain\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\domain\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\application\\usecases\\getorderuc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\application\\usecases\\getorderuc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +30,71 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Program.cs",
-              "RelativeDocumentMoniker": "ProductService\\Program.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Program.cs",
-              "RelativeToolTip": "ProductService\\Program.cs",
-              "ViewState": "AgIAACYAAAAAAAAAAAAcwC4AAAAAAAAAAAAAAA==",
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "OrderService\\Domain\\Entities\\OrderDetail.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\OrderDetail.cs",
+              "RelativeToolTip": "OrderService\\Domain\\Entities\\OrderDetail.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-09T03:12:18.68Z",
+              "WhenOpened": "2025-04-10T03:24:54.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Order.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\Order.cs",
+              "RelativeDocumentMoniker": "OrderService\\Domain\\Entities\\Order.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\Order.cs",
+              "RelativeToolTip": "OrderService\\Domain\\Entities\\Order.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T03:24:53.262Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ProductAPI.cs",
-              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Interface Adapters\\APIs\\ProductAPI.cs",
-              "RelativeDocumentMoniker": "ProductService\\Interface Adapters\\APIs\\ProductAPI.cs",
-              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\ProductService\\Interface Adapters\\APIs\\ProductAPI.cs",
-              "RelativeToolTip": "ProductService\\Interface Adapters\\APIs\\ProductAPI.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAAEkAAAAPAAAAAAAAAA==",
+              "Title": "OrderContext.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
+              "RelativeDocumentMoniker": "OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
+              "RelativeToolTip": "OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAABsAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-09T03:03:11.08Z",
+              "WhenOpened": "2025-04-10T03:18:57.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GetOrderUC.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Application\\Usecases\\GetOrderUC.cs",
+              "RelativeDocumentMoniker": "OrderService\\Application\\Usecases\\GetOrderUC.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Application\\Usecases\\GetOrderUC.cs",
+              "RelativeToolTip": "OrderService\\Application\\Usecases\\GetOrderUC.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAADEAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T03:02:35.071Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Program.cs",
+              "RelativeDocumentMoniker": "OrderService\\Program.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Program.cs",
+              "RelativeToolTip": "OrderService\\Program.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T14:55:33.998Z",
               "EditorCaption": ""
             }
           ]
