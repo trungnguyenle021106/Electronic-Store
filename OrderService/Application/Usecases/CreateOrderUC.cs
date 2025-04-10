@@ -18,7 +18,7 @@ namespace OrderService.Application.Usecases
         {
             DateTime OrderDate = DateTime.Now;
             float Total = listOrderItem.Sum(item => item.Price * item.Quantity);
-            string Status = "Chưa xử lý";
+            string Status = "Pending";
             try
             {
                 Order order = await this._UnitOfWork.OrderRepository().Add(new Order
@@ -28,19 +28,23 @@ namespace OrderService.Application.Usecases
                     Total = Total,
                     Status = Status
                 });
-                await this._UnitOfWork.Commit();
 
                 int OrderID = order.ID;
-                foreach (OrderItem orderItem in listOrderItem)
+                List<Task> tasks = new List<Task>();
+
+                foreach (var orderItem in listOrderItem)
                 {
-                    await this._UnitOfWork.OrderDetailRepository().Add(new OrderDetail
+                    var orderDetail = new OrderDetail
                     {
-                        OrderID = OrderID,
+                        OrderID = order.ID,
                         ProductID = orderItem.ID,
                         Quantity = orderItem.Quantity,
                         TotalPrice = orderItem.Price * orderItem.Quantity
-                    });
+                    };
+                    tasks.Add(this._UnitOfWork.OrderDetailRepository().Add(orderDetail));
                 }
+
+                await Task.WhenAll(tasks);
                 await this._UnitOfWork.Commit();
 
                 return order;

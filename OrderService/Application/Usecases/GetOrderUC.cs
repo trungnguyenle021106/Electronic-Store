@@ -1,4 +1,5 @@
-﻿using OrderService.Application.UnitOfWork;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderService.Application.UnitOfWork;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interface.UnitOfWork;
 using OrderService.Infrastructure.DBContext;
@@ -18,7 +19,11 @@ namespace OrderService.Application.Usecases
         {
             try
             {
-                return await this._UnitOfWork.OrderRepository().GetById(id);
+                IQueryable<Order> query = this._UnitOfWork.OrderRepository().GetByIdQueryable(id);
+                Order order = await query.FirstOrDefaultAsync();
+
+                if (order == null) { return null; }
+                return order;
             }
             catch (Exception ex)
             {
@@ -31,7 +36,8 @@ namespace OrderService.Application.Usecases
         {
             try
             {
-                List<Order> listOrder = (List<Order>)await this._UnitOfWork.OrderRepository().GetAll();
+                IQueryable<Order> query = this._UnitOfWork.OrderRepository().GetAll();
+                List<Order> listOrder = await query.ToListAsync();
                 return listOrder.Where(order => order.CustomerID == id).ToList();
             }
             catch (Exception ex)
@@ -45,7 +51,11 @@ namespace OrderService.Application.Usecases
         {
             try
             {
-                return (List<Order>)await this._UnitOfWork.OrderRepository().GetAll();
+                IQueryable<Order> query = this._UnitOfWork.OrderRepository().GetAll();
+                List<Order> listOrder = await query.ToListAsync();
+
+                if(listOrder == null) { return null; }
+                return listOrder;
             }
             catch (Exception ex)
             {
