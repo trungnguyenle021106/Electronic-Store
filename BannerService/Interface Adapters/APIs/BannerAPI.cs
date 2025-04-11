@@ -33,7 +33,7 @@ namespace BannerService.Interface_Adapters.APIs
                 {
                     return Results.BadRequest(ex.Message);
                 }
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -56,7 +56,7 @@ namespace BannerService.Interface_Adapters.APIs
                 {
                     return Results.BadRequest(ex.Message);
                 }
-            });
+            }).RequireAuthorization();
         }
 
         public static void MapGetAllBanners(this WebApplication app)
@@ -71,7 +71,7 @@ namespace BannerService.Interface_Adapters.APIs
                 {
                     return Results.BadRequest(ex.Message);
                 }
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -93,7 +93,7 @@ namespace BannerService.Interface_Adapters.APIs
                 {
                     return Results.BadRequest(ex.Message);
                 }
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
     }

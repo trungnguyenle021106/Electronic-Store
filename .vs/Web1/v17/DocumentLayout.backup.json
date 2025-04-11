@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\bannerservice\\domain\\entities\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{31765F0B-A1C8-45E1-AE3A-1E57D8F3F7BA}|BannerService\\BannerService.csproj|solutionrelative:bannerservice\\domain\\entities\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|e:\\inrtern projects\\shop project\\electronic-store\\orderservice\\infrastructure\\dbcontext\\ordercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{72D2CED5-D830-4B60-B43B-E012A4505F82}|OrderService\\OrderService.csproj|solutionrelative:orderservice\\infrastructure\\dbcontext\\ordercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -30,11 +34,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Banner.cs",
+              "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Domain\\Entities\\Banner.cs",
+              "RelativeDocumentMoniker": "BannerService\\Domain\\Entities\\Banner.cs",
+              "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\BannerService\\Domain\\Entities\\Banner.cs",
+              "RelativeToolTip": "BannerService\\Domain\\Entities\\Banner.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T03:47:21.625Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "OrderDetail.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\OrderDetail.cs",
               "RelativeDocumentMoniker": "OrderService\\Domain\\Entities\\OrderDetail.cs",
@@ -47,7 +64,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Order.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Domain\\Entities\\Order.cs",
               "RelativeDocumentMoniker": "OrderService\\Domain\\Entities\\Order.cs",
@@ -60,20 +77,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "OrderContext.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
               "RelativeDocumentMoniker": "OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
               "ToolTip": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
               "RelativeToolTip": "OrderService\\Infrastructure\\DBContext\\OrderContext.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAABsAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-10T03:18:57.37Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "GetOrderUC.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Application\\Usecases\\GetOrderUC.cs",
               "RelativeDocumentMoniker": "OrderService\\Application\\Usecases\\GetOrderUC.cs",
@@ -86,7 +103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\Inrtern Projects\\Shop Project\\Electronic-Store\\OrderService\\Program.cs",
               "RelativeDocumentMoniker": "OrderService\\Program.cs",
