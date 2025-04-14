@@ -56,7 +56,7 @@ namespace BannerService.Interface_Adapters.APIs
                 {
                     return Results.BadRequest(ex.Message);
                 }
-            }).RequireAuthorization();
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetAllBanners(this WebApplication app)

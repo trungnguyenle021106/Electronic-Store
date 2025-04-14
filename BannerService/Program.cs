@@ -74,6 +74,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+DotNetEnv.Env.Load();
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DBCon");
+
 
 var app = builder.Build();
 
@@ -84,6 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapBannerEndpoints();   
+app.MapBannerEndpoints();
+
 app.Run();
 

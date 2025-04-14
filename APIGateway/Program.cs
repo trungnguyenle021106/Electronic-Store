@@ -7,6 +7,15 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System.Text;
 
+
+DotNetEnv.Env.Load();
+var MyConnectionString = Environment.GetEnvironmentVariable("MyConnectionString");
+var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key");
+var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer");
+var JwtAudience = Environment.GetEnvironmentVariable("Jwt__Audience");
+
+var key = Encoding.UTF8.GetBytes(JwtKey);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,8 +34,7 @@ builder.Configuration
 //builder.Services.AddSwaggerGen();
 builder.Services.AddOcelot(builder.Configuration);
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 
     .AddJwtBearer(options => 
@@ -37,8 +45,8 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Issuer"],
-            ValidAudience = builder.Configuration["Audience"],
+            ValidIssuer = JwtIssuer,
+            ValidAudience = JwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
     });
