@@ -38,6 +38,16 @@ namespace BannerService.Infrastructure.Repository
            return await _Context.Set<T>().FindAsync(id);
         }
 
+        public IQueryable<T> GetByFieldQueryable<TField>(string fieldName, TField value)
+        {
+            // Kiểm tra null hoặc chuỗi trống
+            if (string.IsNullOrWhiteSpace(fieldName))
+                throw new ArgumentException("Field name cannot be null or empty.", nameof(fieldName));
+
+            // Sử dụng Entity Framework để tìm kiếm theo trường
+            return _Context.Set<T>().Where(entity => EF.Property<TField>(entity, fieldName).Equals(value));
+        }
+
         public T Update(T entity)
         {
             _Context.Set<T>().Update(entity);

@@ -304,3 +304,5 @@ E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\N
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Verifalia.Api.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\AuthorizationPolicy.dll
 E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\AuthorizationPolicy.pdb
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\DotNetEnv.dll
+E:\Inrtern Projects\Shop Project\Electronic-Store\UserService\bin\Debug\net8.0\Sprache.dll

@@ -11,12 +11,20 @@ using UserService.Domain.Interface.UnitOfWork;
 using UserService.Infrastructure.DBContext;
 using UserService.Interface_Adapters.APIs;
 
+DotNetEnv.Env.Load();
+var MyConnectionString = Environment.GetEnvironmentVariable("MyConnectionString");
+var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key");
+var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer");
+var JwtAudience = Environment.GetEnvironmentVariable("Jwt__Audience");
+
+var key = Encoding.UTF8.GetBytes(JwtKey);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddDbContext<UserContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
+    options.UseSqlServer(MyConnectionString));
 
 builder.Services.AddScoped<IUnitOfWork, UserUnitOfWork>();
 builder.Services.AddSingleton<IAuthorizationHandler, AdminOrSelfAccountIDHandler>();
@@ -53,8 +61,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // tham số trong này chính là scheme
     .AddJwtBearer(options => // AddJWTBearer là authentication handler
@@ -65,8 +71,8 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = JwtIssuer,
+            ValidAudience = JwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
     });

@@ -7,3 +7,4 @@ bin/
 *.user
 *.cache
 *.backup.json
+.env
