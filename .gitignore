@@ -35,7 +35,7 @@ yarn-error.log
 .settings/
 *.sublime-workspace
 
-Frontend/ .vscode/*
+Frontend/.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
