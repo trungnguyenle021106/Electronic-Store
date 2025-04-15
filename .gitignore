@@ -9,7 +9,7 @@ bin/
 *.backup.json
 .env
 /node_modules
-/angular
+.angular/cache/
 /dist
 /build
 .vscode/
