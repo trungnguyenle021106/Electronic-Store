@@ -12,3 +12,4 @@ bin/
 /angular
 /dist
 /build
+.vscode/
