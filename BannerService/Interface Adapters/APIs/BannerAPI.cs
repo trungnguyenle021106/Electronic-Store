@@ -59,6 +59,21 @@ namespace BannerService.Interface_Adapters.APIs
             }).RequireAuthorization("OnlyAdmin");
         }
 
+        public static void MapGetBannerByPosition(this WebApplication app)
+        {
+            app.MapGet("/banners/{bannerId}", async (BannerContext bannerContext, string position) =>
+            {
+                try
+                {
+                    return Results.Ok(await new GetBannerUC(bannerContext).GetBannerByPosition(position));
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            }).RequireAuthorization();
+        }
+
         public static void MapGetAllBanners(this WebApplication app)
         {
             app.MapGet("/banners", async (BannerContext bannerContext) =>

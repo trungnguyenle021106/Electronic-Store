@@ -20,12 +20,28 @@ namespace BannerService.Application.Usecases
             {
                 IQueryable<Banner> query = this.unitOfWork.BannerRepository().GetByIdQueryable(bannerID);
                 Banner? banner = await query.FirstOrDefaultAsync();
-                if(banner == null) {return null;}
+                if (banner == null) { return null; }
                 return banner;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy banner id : {bannerID} lỗi : {ex}");
+                return null;
+            }
+        }
+
+        public async Task<Banner?> GetBannerByPosition(string position)
+        {
+            try
+            {
+                IQueryable<Banner> query = this.unitOfWork.BannerRepository().GetByFieldQueryable("Position", position);
+                Banner? banner = await query.FirstOrDefaultAsync();
+                if (banner == null) { return null; }
+                return banner;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy banner tại position : {position} lỗi : {ex}");
                 return null;
             }
         }
@@ -44,5 +60,7 @@ namespace BannerService.Application.Usecases
                 return null;
             }
         }
+
+
     }
 }
