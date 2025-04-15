@@ -8,3 +8,7 @@ bin/
 *.cache
 *.backup.json
 .env
+/node_modules
+/angular
+/dist
+/build
