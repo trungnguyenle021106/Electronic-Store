@@ -1,11 +1,26 @@
-import { Component } from '@angular/core';
-
+import {Component} from '@angular/core';
+import {HomeComponent} from './home/home.component';
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  standalone: false,
-  styleUrl: './app.component.css'
+  standalone : false,
+  templateUrl:'./app.component.html',
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'Frontend';
+  title = 'homes';
+  isSidebarOpen = false;
+
+  categories = [
+    'Laptop', 'Laptop Gaming', 'PC GVN',
+    'Main, CPU, VGA', 'Case, Nguồn, Tản',
+    'Ổ cứng, RAM, Thẻ nhớ', 'Loa, Micro, Webcam',
+    'Màn hình', 'Bàn phím', 'Chuột + Lót chuột',
+    'Tai Nghe', 'Ghế - Bàn', 'Phần mềm, mạng',
+    'Handheld, Console', 'Phụ kiện (Hub, sạc...)',
+    'Dịch vụ và thông tin khác'
+  ];
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

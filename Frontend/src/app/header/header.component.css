@@ -1,0 +1,10 @@
+.containerHeader {
+    width: 100%;
+}
+
+.containerHeader img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
