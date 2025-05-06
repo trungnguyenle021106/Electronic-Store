@@ -10,16 +10,9 @@ using UserService.Domain.Request;
 using UserService.Domain.Response;
 using UserService.Infrastructure.DBContext;
 using MyJWTHandler;
-using System.Text.Json;
 using UserService.Infrastructure.Verify_Email;
-using UserService.Application.UnitOfWorks;
 using UserService.Domain.Interface.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
-using System.Reflection.Metadata;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Identity.Client;
-using System.Net.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace UserService.Interface_Adapters.APIs
 {
