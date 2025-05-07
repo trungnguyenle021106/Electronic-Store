@@ -1,0 +1,108 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/customers/{customerID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/accounts/{accountID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/accounts",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/customers",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/accounts",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/customers",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/customers/{customerID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/accounts/{accountID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "usersapi"
+    }
+  ]
+}

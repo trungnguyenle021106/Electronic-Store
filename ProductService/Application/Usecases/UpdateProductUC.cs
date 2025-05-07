@@ -2,6 +2,7 @@
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
 using ProductService.Infrastructure.DBContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductService.Application.Usecases
 {
@@ -17,13 +18,17 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                Product p = await this.unitOfWork.ProductRepository().GetById(productID);
+                IQueryable<Product> productQuery = this.unitOfWork.ProductRepository().GetByIdQueryable(productID);
+                Product? p = await productQuery.FirstOrDefaultAsync();
+                if (p == null) return null;
+
                 p.Description = newProduct.Description;
                 p.Price = newProduct.Price;
                 p.Quantity = newProduct.Quantity;
                 p.Status = newProduct.Status;
                 p.Name = newProduct.Name;
 
+                
                 await this.unitOfWork.Commit();
                 return p;
             }
@@ -38,7 +43,10 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                ProductProperty productProperty = await this.unitOfWork.ProductPropertyRepository().GetById(productPropertyID);
+                IQueryable<ProductProperty> ProductPropertyQuery = this.unitOfWork.ProductPropertyRepository().GetByIdQueryable(productPropertyID);
+                ProductProperty? productProperty = await ProductPropertyQuery.FirstOrDefaultAsync();
+                if (productProperty == null) return null;
+
                 productProperty.Description = newproductProperty.Description;
                 productProperty.Name = newproductProperty.Name;
                 await this.unitOfWork.Commit();

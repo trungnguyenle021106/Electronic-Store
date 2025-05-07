@@ -1,6 +1,6 @@
 [
   {
-    "Name": "New Profile",
+    "Name": "BE_FE",
     "Projects": [
       {
         "Path": "OrderService\\OrderService.csproj",
@@ -12,6 +12,31 @@
       },
       {
         "Path": "UserService\\UserService.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "BannerService\\BannerService.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Backend",
+    "Projects": [
+      {
+        "Path": "UserService\\UserService.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "APIGateway\\APIGateway.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "OrderService\\OrderService.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ProductService\\ProductService.csproj",
         "Action": "Start"
       },
       {

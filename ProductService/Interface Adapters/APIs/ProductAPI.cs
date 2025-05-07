@@ -28,7 +28,7 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapPost("/products", async (ProductContext context, Product product) =>
             {
                 return Results.Ok(await new CreateProductUC(context).CreateProduct(product));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void AddPropertiesToProduct(this WebApplication app)
@@ -38,7 +38,7 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 return Results.Ok(await new CreateProductUC(context).
                     AddPropertiesToProduct(productId, productProperties));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void CreateProductProperty(this WebApplication app)
@@ -46,7 +46,7 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapPost("/productProperties", async (ProductContext context, ProductProperty productProperty) =>
             {
                 return Results.Ok(await new CreateProductUC(context).CreateProductProperty(productProperty));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -79,7 +79,7 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapGet("/productProperties", async (ProductContext context) =>
             {
                 return Results.Ok(await new GetProductUC(context).GetAllProductProperties());
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -96,7 +96,7 @@ namespace ProductService.Interface_Adapters.APIs
                 [FromBody] Product newProduct) =>
             {
                 return Results.Ok(await new UpdateProductUC(context).UpdateProduct(productID, newProduct));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void UpdateProductProperty(this WebApplication app)
@@ -106,7 +106,7 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 return Results.Ok(await new UpdateProductUC(context).
                     UpdateProductProperty(productPropertyID, newProductProperty));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -123,7 +123,7 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 return Results.Ok(await new DeleteProductUC(context).
                    DeletePropertyDetail(productPropertyDetail));
-            });
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
     }

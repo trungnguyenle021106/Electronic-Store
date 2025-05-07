@@ -2,6 +2,7 @@
 using BannerService.Domain.Entities;
 using BannerService.Domain.Interface.UnitOfWork;
 using BannerService.Infrastructure.DBContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace BannerService.Application.Usecases
 {
@@ -17,7 +18,10 @@ namespace BannerService.Application.Usecases
         {
             try
             {
-                return await this.unitOfWork.BannerRepository().GetById(bannerID);
+                IQueryable<Banner> query = this.unitOfWork.BannerRepository().GetByIdQueryable(bannerID);
+                Banner? banner = await query.FirstOrDefaultAsync();
+                if (banner == null) { return null; }
+                return banner;
             }
             catch (Exception ex)
             {
@@ -26,11 +30,29 @@ namespace BannerService.Application.Usecases
             }
         }
 
+        public async Task<Banner?> GetBannerByPosition(string position)
+        {
+            try
+            {
+                IQueryable<Banner> query = this.unitOfWork.BannerRepository().GetByFieldQueryable("Position", position);
+                Banner? banner = await query.FirstOrDefaultAsync();
+                if (banner == null) { return null; }
+                return banner;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy banner tại position : {position} lỗi : {ex}");
+                return null;
+            }
+        }
+
         public async Task<List<Banner>?> GetAllBanner()
         {
             try
             {
-                return (List<Banner>)await this.unitOfWork.BannerRepository().GetAll();
+                IQueryable<Banner> query = this.unitOfWork.BannerRepository().GetAll();
+                List<Banner> list = await query.ToListAsync();
+                return list;
             }
             catch (Exception ex)
             {
@@ -38,5 +60,7 @@ namespace BannerService.Application.Usecases
                 return null;
             }
         }
+
+
     }
 }
