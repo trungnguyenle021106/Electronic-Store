@@ -23,9 +23,14 @@ namespace BannerService.Infrastructure.Repository
             _Context.Set<T>().Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return await _Context.Set<T>().ToListAsync();
+            return _Context.Set<T>().AsQueryable();
+        }
+
+        public IQueryable<T> GetByIdQueryable(int id)
+        {
+            return _Context.Set<T>().Where(entity => EF.Property<int>(entity, "ID") == id);
         }
 
         public async Task<T> GetById(int id)
@@ -33,10 +38,21 @@ namespace BannerService.Infrastructure.Repository
            return await _Context.Set<T>().FindAsync(id);
         }
 
+        public IQueryable<T> GetByFieldQueryable<TField>(string fieldName, TField value)
+        {
+            // Kiểm tra null hoặc chuỗi trống
+            if (string.IsNullOrWhiteSpace(fieldName))
+                throw new ArgumentException("Field name cannot be null or empty.", nameof(fieldName));
+
+            // Sử dụng Entity Framework để tìm kiếm theo trường
+            return _Context.Set<T>().Where(entity => EF.Property<TField>(entity, fieldName).Equals(value));
+        }
+
         public T Update(T entity)
         {
             _Context.Set<T>().Update(entity);
             return entity;
         }
+
     }
 }
