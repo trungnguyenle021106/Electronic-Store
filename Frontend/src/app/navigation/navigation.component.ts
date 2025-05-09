@@ -7,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './navigation.component.css'
 })
 export class NavigationComponent {
+  isClickedCategory : boolean = false;
 
+   ClickCategory(isClicked : boolean) : void{
+    this.isClickedCategory = isClicked;
+  }
 }
