@@ -8,19 +8,4 @@ import {HomeComponent} from './home/home.component';
 })
 export class AppComponent {
   title = 'homes';
-  isSidebarOpen = false;
-
-  categories = [
-    'Laptop', 'Laptop Gaming', 'PC GVN',
-    'Main, CPU, VGA', 'Case, Nguồn, Tản',
-    'Ổ cứng, RAM, Thẻ nhớ', 'Loa, Micro, Webcam',
-    'Màn hình', 'Bàn phím', 'Chuột + Lót chuột',
-    'Tai Nghe', 'Ghế - Bàn', 'Phần mềm, mạng',
-    'Handheld, Console', 'Phụ kiện (Hub, sạc...)',
-    'Dịch vụ và thông tin khác'
-  ];
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
 }

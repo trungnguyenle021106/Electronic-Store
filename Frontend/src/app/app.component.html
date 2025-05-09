@@ -1,11 +1,3 @@
 <app-header></app-header>
 <app-navigation> </app-navigation>
-<div class="overlay"></div>
-<div class="sidebar" [class.active]="isSidebarOpen">
-    <ul>
-      <li *ngFor="let item of categories">
-        <span class="icon">📦</span> {{ item }}
-      </li>
-    </ul>
-  </div>
 <router-outlet></router-outlet>

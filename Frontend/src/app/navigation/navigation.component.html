@@ -1,11 +1,23 @@
+
+
 <div class="navbar">
+  <div class="overlay" *ngIf="isClickedCategory" (click)="ClickCategory(false)"></div>
   <div class="navbar-logo">
     <img src="https://file.hstatic.net/200000636033/file/logo_fd11946b31524fbe98765f34f3de0628.svg" alt="Logo">
   </div>
 
-  <div class="navbar-menu-button">
+  <div class="navbar-menu-button" (click)="ClickCategory(true)">
     <i class="fas fa-bars"></i>
     <span>Danh mục</span>
+
+    <div class="sidebar" *ngIf="isClickedCategory">
+      <div class="menu-item"><span><i>💻</i> Laptop</span> ➤</div>
+      <div class="menu-item"><span><i class="fa-solid fa-desktop"></i> Màn hình</span> ➤</div>
+      <div class="menu-item"><span><i>🎧</i> Tai Nghe</span> ➤</div>
+      <div class="menu-item"><span><i>⌨️</i> Bàn phím</span> ➤</div>
+      <div class="menu-item"><span><i>🖱️</i> Chuột</span> ➤</div>
+    </div>
+
   </div>
 
   <div class="navbar-search">
@@ -18,6 +30,7 @@
     <div class="navbar-icon"><i class="fas fa-shopping-cart"></i> <span>Giỏ<br>hàng</span></div>
     <div class="navbar-login">
       <i class="fas fa-user"></i> <span>Đăng nhập</span>
+
       <div class="login-dropdown">
         <div class="login-message">
           👋 <span>Xin chào, vui lòng đăng nhập</span>
@@ -30,3 +43,4 @@
     </div>
   </div>
 </div>
+

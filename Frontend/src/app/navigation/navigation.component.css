@@ -36,6 +36,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  position: relative;
 }
 
 .navbar-menu-button i {
@@ -168,3 +169,47 @@
   color: black;
 }
 
+.sidebar {
+  width: 220px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  z-index: 2000;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  color: black;
+}
+
+.menu-item:hover {
+  background: #f0f0f0;
+}
+
+.menu-item i {
+  margin-right: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  cursor: pointer;
+}
