@@ -1,0 +1,326 @@
+ .container {
+     display: flex;
+     max-width: 1200px;
+     margin: 20px auto;
+     font-family: Inter, sans-serif;
+ }
+
+ .sidebar {
+     width: 25%;
+     background-color: #fff;
+     border-radius: 6px;
+     overflow: hidden;
+     margin-right: 20px;
+     border: 1px solid #ddd;
+ }
+
+ .sidebar .profile {
+     text-align: center;
+     padding: 20px;
+     border-bottom: 1px solid #ddd;
+ }
+
+ .sidebar .profile i {
+     font-size: 50px;
+     color: #555;
+ }
+
+ .sidebar .profile h3 {
+     margin-top: 10px;
+     font-size: 18px;
+     font-weight: bold;
+ }
+
+ .sidebar ul {
+     list-style: none;
+ }
+
+ .sidebar ul li {
+     padding: 15px 20px;
+     display: flex;
+     align-items: center;
+     cursor: pointer;
+     color: #333;
+ }
+
+ .sidebar ul li i {
+     margin-right: 10px;
+ }
+
+ .sidebar ul li.active {
+     color: red;
+     font-weight: bold;
+ }
+
+ .content {
+     width: 75%;
+     flex: 1;
+     background-color: #fff;
+     border-radius: 6px;
+     padding: 30px;
+     border: 1px solid #ddd;
+ }
+
+ .content h2 {
+     margin-bottom: 30px;
+     font-size: 24px;
+     color: #333;
+ }
+
+ .form-group {
+     display: flex;
+     margin-bottom: 20px;
+     align-items: center;
+ }
+
+ .form-group label {
+     width: 120px;
+     font-size: 16px;
+     color: #333;
+ }
+
+ .form-group input[type="text"],
+ .form-group select {
+     padding: 8px 12px;
+     font-size: 16px;
+     border: 1px solid #28a745;
+     border-radius: 4px;
+     width: 300px;
+ }
+
+ .form-group input[disabled] {
+     border: none;
+     color: #000;
+ }
+
+ .form-group .gender {
+     display: flex;
+     gap: 20px;
+ }
+
+ .form-group .gender input {
+     margin-right: 5px;
+ }
+
+ .form-group .birth-select select {
+     margin-right: 10px;
+     width: 100px;
+ }
+
+ .btn-save {
+     margin-top: 20px;
+ }
+
+ .btn-save button {
+     background-color: red;
+     color: #fff;
+     padding: 10px 20px;
+     font-size: 16px;
+     cursor: pointer;
+ }
+
+
+
+
+
+
+
+
+
+
+ .order-container {
+     width: 75%;
+ }
+
+ .order-header-tabs-container {
+     padding: 15px 20px 0px 20px;
+     background-color: white;
+     border-radius: 6px;
+     border: 1px solid #ddd;
+ }
+
+ .order-header {
+     font-size: 22px;
+     font-weight: bold;
+     margin-bottom: 20px;
+     margin-left: 15px;
+ }
+
+ .tabs {
+     display: flex;
+ }
+
+ .tab {
+     text-align: center;
+     padding: 10px 16px;
+     cursor: pointer;
+     font-weight: bold;
+     color: #333;
+     width: 17%;
+ }
+
+ .tab.active {
+     color: red;
+     border-bottom: 3px solid red;
+ }
+
+ .search-box {
+     display: flex;
+     margin-bottom: 20px;
+     margin-top: 20px;
+     position: relative
+ }
+
+ .search-box input {
+     flex: 1;
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-right: none;
+     font-size: 18px;
+ }
+
+ .search-box button {
+     padding: 10px 16px;
+     background-color: white;
+     border: 1px solid #ccc;
+     border-left: none;
+     border-radius: 0 4px 4px 0;
+     cursor: pointer;
+     font-size: 18px;
+     color: #007bff;
+ }
+
+ .search-box .line {
+     position: absolute;
+     top: 50%;
+     right: 140px;
+     transform: translateY(-50%);
+     width: 3px;
+     height: 20px;
+     background-color: #ccc;
+ }
+
+ .order-list-container {
+     background-color: #fff;
+     padding: 40px 20px;
+     background-color: #fff;
+     border: 1px solid #ddd;
+     border-radius: 6px;
+ }
+
+ .order-list-container h2 {
+     padding: 10px;
+     margin-bottom: 10px;
+ }
+
+ .empty-state {
+     text-align: center;
+ }
+
+ .empty-state img {
+     width: 80px;
+     height: 80px;
+     margin-bottom: 20px;
+     opacity: 0.7;
+ }
+
+ .empty-state p {
+     margin-bottom: 20px;
+     font-size: 18px;
+     color: #333;
+ }
+
+ .empty-state button {
+     background-color: red;
+     color: white;
+     border: none;
+     padding: 12px 20px;
+     font-size: 18px;
+     border-radius: 4px;
+     cursor: pointer;
+ }
+
+
+ .order-cards {
+     height: 300px;
+     overflow-y: auto;
+     overflow-x: hidden;
+ }
+
+ .order-card {
+     background-color: #fff;
+     border-radius: 10px;
+     padding: 20px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: space-between;
+     align-items: center;
+     gap: 20px;
+     max-width: 800px;
+     margin: auto;
+     margin-bottom: 10px;
+ }
+
+ .order-info {
+     flex: 2;
+ }
+
+ .order-info p {
+     margin-bottom: 10px;
+     color: #333;
+ }
+
+ .order-info span {
+     font-weight: bold;
+     color: #000;
+ }
+
+ .order-status {
+     flex: 1;
+     text-align: right;
+ }
+
+ .order-status p {
+     margin-bottom: 10px;
+     color: #444;
+ }
+
+ .total {
+     font-weight: bold;
+     font-size: 1.2em;
+     color: #000;
+ }
+
+ .btn-detail {
+     background-color: #ff2c2c;
+     color: white;
+     border: none;
+     padding: 10px 16px;
+     border-radius: 6px;
+     cursor: pointer;
+     font-size: 14px;
+     transition: background 0.3s;
+ }
+
+ .overlay {
+     position: fixed;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background: rgba(0, 0, 0, 0.5);
+     z-index: 1000;
+     cursor: pointer;
+ }
+
+ .order-detail-component {
+     margin: auto;
+     max-width: 900px;
+     position: fixed;
+     top: 30px;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     z-index: 2000;
+ }
