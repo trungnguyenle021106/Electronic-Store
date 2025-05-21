@@ -8,5 +8,4 @@ namespace UserService.Domain.Response
     int? idAccount,
     bool? role,
     Customer? customer);
-
 }

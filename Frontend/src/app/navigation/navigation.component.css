@@ -5,10 +5,11 @@
   padding: 10px 20px;
   gap: 15px;
   flex-wrap: wrap;
-  font-family: 'Roboto', sans-serif;    
+  font-family: 'Roboto', sans-serif;
   justify-content: center;
   position: sticky;
-  top: 0; 
+  top: 0;
+  z-index: 1000;
 }
 
 
@@ -212,4 +213,80 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   cursor: pointer;
+}
+
+
+
+
+
+.modal {
+  top: 50%;
+  position: fixed;
+   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  padding-top: 50px;
+  font-family: Inter, sans-serif;
+  z-index: 1100;
+}
+
+.modal-content {
+  background: white;
+  padding: 50px;
+  border-radius: 8px;
+  width: 100%;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background: #e51f28;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-register-text {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-register-link {
+  color: #007bff;
+  text-decoration: none;
 }
