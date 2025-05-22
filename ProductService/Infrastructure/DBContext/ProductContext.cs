@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using ProductService.Domain.Entities;
+using System.Reflection.Metadata;
 
 namespace ProductService.Infrastructure.DBContext
 {
@@ -14,6 +15,7 @@ namespace ProductService.Infrastructure.DBContext
         public DbSet<ProductProperty> ProductProperties { get; set; }
         public DbSet<ProductPropertyDetail> ProductPropertyDetails { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductType> ProductTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +31,11 @@ namespace ProductService.Infrastructure.DBContext
             //        .WithMany(o => o.ProductPropertyDetails)
             //        .HasForeignKey(od => od.ProductPropertyID);
             //});
+
+
+            modelBuilder.Entity<ProductType>()
+                .HasMany<Product>()
+                .WithOne();
 
             modelBuilder.Entity<Product>()
                 .HasMany(e => e.ProductProperties)
