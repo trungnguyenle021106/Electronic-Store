@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamPathTemplate": "/customers/me",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,7 +9,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/customers/{customerID}",
+      "UpstreamPathTemplate": "/gateway/usersapi/customers/me",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -102,6 +102,58 @@
       ],
       "UpstreamPathTemplate": "/gateway/usersapi/accounts/{accountID}",
       "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/auth/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/logout/specific",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/auth/logout/specific",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/status",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/auth/status",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/tokens/refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/auth/tokens/refresh",
+      "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     }
   ]

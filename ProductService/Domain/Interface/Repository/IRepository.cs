@@ -4,9 +4,14 @@
     {
         IQueryable<TEntity> GetAll();
         IQueryable<TEntity> GetByIdQueryable(int id);
+        IQueryable<TEntity> GetEntitiesByForeignKeyId(int ID, string nameColumn);
         Task<TEntity> GetById(int id);
-        Task<TEntity> Add(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
         TEntity Update(TEntity entity);
-        void Delete(TEntity entity);
+        void Remove(TEntity entity);
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
+        IQueryable<TEntity> GetByCompositeKey(int id1, string keyProperty1Name, int id2, string keyProperty2Name);
+        Task<List<TEntity>?> RemoveRange(IEnumerable<TEntity> entitiesToDelete);
+
     }
 }

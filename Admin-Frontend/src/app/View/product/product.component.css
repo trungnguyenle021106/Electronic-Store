@@ -1,0 +1,149 @@
+ /* Main Content */
+ .main-content {
+     padding: 20px;
+     display: flex;
+     flex-direction: column;
+ }
+
+ .main-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+ }
+
+ .main-header .tabs {
+     display: flex;
+     gap: 20px;
+ }
+
+ .main-header .tabs button {
+     background-color: #ecf0f1;
+     border: 1px solid #bdc3c7;
+     padding: 10px 20px;
+     border-radius: 5px;
+     cursor: pointer;
+ }
+
+ .main-header .tabs button.active {
+     background-color: #1abc9c;
+     color: white;
+     border: none;
+ }
+
+ .main-header .actions {
+     display: flex;
+     gap: 10px;
+ }
+
+ .main-header .actions input,
+ .main-header .actions select {
+     padding: 10px;
+     border: 1px solid #bdc3c7;
+     border-radius: 5px;
+ }
+
+  .main-header .actions input {
+     width: 500px;
+ }
+
+ .main-header .actions select {
+     width: 250px;
+ }
+ 
+ /* Table Container with Scroll */
+ .table-container {
+     max-height: 80vh;
+     /* Giới hạn chiều cao 60% màn hình */
+     overflow-y: auto;
+     /* Thêm thanh cuộn dọc */
+     background-color: white;
+     border-radius: 5px;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+ }
+
+ /* Table */
+ th.id {
+     width: 90px;
+ }
+
+ th.name {
+     width: 600px;
+ }
+
+ th.image {
+     width: 250px;
+ }
+
+ th.amount {
+     width: 100px;
+ }
+
+ th.action {
+     width: 100px;
+ }
+
+ th.status {
+     width: 150px;
+ }
+
+ .data-table {
+     width: 100%;
+     border-collapse: collapse;
+ }
+
+ .data-table thead {
+     background-color: #34495e;
+     color: white;
+ }
+
+ .data-table th,
+ .data-table td {
+     text-align: center;
+     padding: 12px 15px;
+     border: 1px solid #ddd;
+     font-size: 20px;
+     overflow-wrap: break-word;
+ }
+
+ .data-table tbody tr:nth-child(even) {
+     background-color: #f9f9f9;
+ }
+
+ .data-table tbody tr:hover {
+     background-color: #f1f1f1;
+ }
+
+ .data-table img{
+    height: 200px;
+    width: 100%;
+ }
+
+ .data-table .actions button {
+     padding: 5px 10px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     margin: 8px;
+     font-size: 20px;
+ }
+
+ .data-table .actions .edit {
+     background-color: #1abc9c;
+     color: white;
+ }
+
+ .data-table .actions .delete {
+     background-color: #e74c3c;
+     color: white;
+ }
+
+
+ .data-table .actions .detail {
+     background-color: blue;
+     color: white;
+ }
+
+ s .data-table .actions button:hover {
+     opacity: 0.9;
+ }

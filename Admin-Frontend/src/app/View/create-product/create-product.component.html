@@ -1,0 +1,93 @@
+<div class="container">
+    <!-- Form Thêm Sản Phẩm -->
+    <div class="section">
+        <div class="form-section">
+            <h2>Thêm Sản Phẩm</h2>
+            <div class="form-group">
+                <label for="product-image">Hình ảnh sản phẩm</label>
+                <input type="file" id="product-image" accept="image/*" onchange="previewImage(event)">
+                <div class="image-preview" id="image-preview">
+                    <p>Chưa có hình ảnh nào được chọn</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="product-name">Tên sản phẩm</label>
+                <input type="text" id="product-name" placeholder="Nhập tên sản phẩm">
+            </div>
+            <div class="form-group">
+                <label for="product-quantity">Số lượng</label>
+                <input type="number" id="product-quantity" placeholder="Nhập số lượng">
+            </div>
+            <div class="form-group">
+                <label for="product-price">Giá</label>
+                <input type="number" id="product-price" placeholder="Nhập giá sản phẩm">
+            </div>
+            <div class="form-group">
+                <label for="product-status">Trạng thái</label>
+                <select id="product-status">
+                    <option value="còn hàng">Còn hàng</option>
+                    <option value="hết hàng">Hết hàng</option>
+                    <option value="ngừng kinh doanh">Ngừng kinh doanh</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="product-description">Mô tả sản phẩm</label>
+                <textarea id="product-description" placeholder="Nhập mô tả sản phẩm"></textarea>
+            </div>
+            <div class="form-actions">
+                <button>Thêm Sản Phẩm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Thêm Thuộc Tính -->
+    <div class="section">
+        <div class="attributes-panel">
+            <div class="attributes-list">
+                <h2>Thuộc tính có sẵn</h2>
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm kiếm thuộc tính...">
+                    <select>
+                        <option value="">Tất cả</option>
+                        <option value="color">Màu sắc</option>
+                        <option value="size">Kích thước</option>
+                        <option value="material">Chất liệu</option>
+                    </select>
+                </div>
+                <ul>
+                    <li>
+                        <span>Màu - Đỏ</span>
+                        <button>Thêm</button>
+                    </li>
+                    <li>
+                        <span>Kích thước - Lớn</span>
+                        <button>Thêm</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="added-attributes">
+                <h2>Thuộc tính đã thêm</h2>
+                <ul>
+                    <li>Chưa có thuộc tính nào</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const imagePreview = document.getElementById('image-preview');
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.innerHTML = `<img src="${e.target.result}" alt="Hình ảnh sản phẩm">`;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.innerHTML = `<p>Chưa có hình ảnh nào được chọn</p>`;
+        }
+    }
+</script>

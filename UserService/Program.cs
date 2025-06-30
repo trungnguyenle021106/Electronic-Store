@@ -1,22 +1,34 @@
-﻿using AuthorizationPolicy;
-using AuthorizationPolicy.AdminOrSelfUserId;
+﻿using AuthorizationPolicy.AdminOrSelfUserId;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using UserService.Application.Service;
 using UserService.Application.UnitOfWorks;
+using UserService.Application.Usecases;
 using UserService.Domain.Interface.UnitOfWork;
-using UserService.Infrastructure.DBContext;
+using UserService.Infrastructure.Data.DBContext;
+using UserService.Infrastructure.Setting;
+using UserService.Infrastructure.Verify_Email;
 using UserService.Interface_Adapters.APIs;
 
 DotNetEnv.Env.Load();
 var MyConnectionString = Environment.GetEnvironmentVariable("MyConnectionString");
 var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key");
 var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer");
-var JwtAudience = Environment.GetEnvironmentVariable("Jwt__Audience");
+var JwtAudiences = Environment.GetEnvironmentVariable("Jwt__Audience")?.Split(',');
+var accessTokenExpirationMinutes = Environment.GetEnvironmentVariable("Jwt__AccessTokenExpirationMinutes");
 
+var jwtSettingsInstance = new JWTSetting
+{
+    Issuer = JwtIssuer,
+    Audiences = JwtAudiences,
+    Key = JwtKey,
+    ExpirationMinutes = int.Parse(accessTokenExpirationMinutes)
+};
 var key = Encoding.UTF8.GetBytes(JwtKey);
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,8 +39,33 @@ builder.Services.AddDbContext<UserContext>(options =>
     options.UseSqlServer(MyConnectionString));
 
 builder.Services.AddScoped<IUnitOfWork, UserUnitOfWork>();
+builder.Services.AddScoped<CreateUserUC>();
+builder.Services.AddScoped<GetUserUC>();
+builder.Services.AddScoped<UpdateUserUC>();
+builder.Services.AddScoped<LoginLogoutSignUpUC>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<HashService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<EmailValidator>();
+
 builder.Services.AddSingleton<IAuthorizationHandler, AdminOrSelfAccountIDHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SelfAccountIDHandler>();
+builder.Services.AddSingleton(jwtSettingsInstance);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
+                      policyBuilder =>
+                      {
+                          // Sử dụng các tham số riêng biệt cho WithOrigins
+                          // hoặc một mảng các chuỗi nếu bạn có nhiều origins
+                          policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod()
+                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+                                
+                      });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -72,16 +109,39 @@ builder.Services
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = JwtIssuer,
-            ValidAudience = JwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            ValidAudiences = JwtAudiences,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
         };
-    });
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Đọc Access Token từ cookie
+                if (context.Request.Cookies.ContainsKey("AccessToken"))
+                {
+                    context.Token = context.Request.Cookies["AccessToken"];
+                }
+                return Task.CompletedTask;
+            }
+        };
+
+    }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.Cookie.Name = "RefreshToken";
+    }); 
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OnlyAdmin", policy =>
     {
-        policy.RequireRole("True");
+        policy.RequireRole("Admin");
+    });
+
+    options.AddPolicy("OnlyCustomer", policy =>
+    {
+        policy.RequireRole("Customer");
     });
 
     options.AddPolicy("AdminOrSelfAccountId", policy =>
@@ -103,7 +163,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 

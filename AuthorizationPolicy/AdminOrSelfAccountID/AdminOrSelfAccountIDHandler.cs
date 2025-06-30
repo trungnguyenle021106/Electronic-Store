@@ -17,7 +17,7 @@ namespace AuthorizationPolicy.AdminOrSelfUserId
             string roleClaim = context.User.FindFirst(ClaimTypes.Role)?.Value ?? "";
             string idClaim = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            if (roleClaim.ToString() == "True" || idClaim == userID.ToString()) context.Succeed(requirement);
+            if (roleClaim.ToString() == "Admin" || idClaim == userID.ToString()) context.Succeed(requirement);
             return Task.CompletedTask;
         }
     }

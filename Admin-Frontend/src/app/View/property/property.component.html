@@ -1,0 +1,67 @@
+<div class="main-content">
+    <div *ngIf="isOverlayDisplayed" class="overlay"></div>
+    <app-create-property *ngIf="isCreatePropertyDisplayed" (statusEmitter)="DisplayCreateProperty($event); DisplayOverlay($event)"
+        class="create-property"></app-create-property>
+    <div class="main-header">
+        <div class="tabs">
+            <h1>THUỘC TÍNH SẢN PHẨM</h1>
+        </div>
+        <div class="actions">
+            <input type="text" placeholder="Tìm kiếm...">
+            <select>
+                <option>Dropdown 1</option>
+                <option>Dropdown 2</option>
+            </select>
+            <button (click)="DisplayCreateProperty(true); DisplayOverlay(true)" style="background-color: #1abc9c; color: white; padding: 10px 20px; border: none; 
+                border-radius: 5px; cursor: pointer; font-size: 20px">
+                Thêm thuộc tính
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="id">ID</th>
+                    <th class="name">TÊN</th>
+                    <th class="describe">MÔ TẢ</th>
+                    <th class="action">HÀNH ĐỘNG</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Laptop gaming MSI Katana 15 B13VFK 676VN</td>
+                    <td>Laptop gaming MSI Katana 15 B13VFK 676VN</td>
+                    <td class="actions">
+                        <button class="edit">Sửa</button>
+                        <button class="delete">Xóa</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>Sản phẩm B</td>
+                    <td>Laptop gaming MSI Katana 15 B13VFK 676VN</td>
+                    <td class="actions">
+                        <button class="edit">Sửa</button>
+                        <button class="delete">Xóa</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>Sản phẩm B</td>
+                    <td>Laptop gaming MSI Katana 15 B13VFK 676VN</td>
+                    <td class="actions">
+                        <button class="edit">Sửa</button>
+                        <button class="delete">Xóa</button>
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+</div>

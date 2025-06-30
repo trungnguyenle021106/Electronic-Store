@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.IdentityModel.Tokens;
 using MyJWTHandler.Domain;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,30 +11,52 @@ namespace MyJWTHandler
     public static class JWTHandler
     {
         #region Token JWT
-        public static string GenerateAccessToken(string issuer, string audience, string key, int id, bool role
-            , string name, string Phone, int idCustomer)
+        private static string GenerateToken(LoginResponse result, WebApplication app)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            int customerId = result.customer != null ? result.customer.ID : 0;
+            string customerName = result.customer != null ? result.customer.Name : "";
+            string customerPhone = result.customer != null ? result.customer.Phone : "";
 
-            var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Iss, issuer),
-                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Aud,  audience),
-                new Claim(ClaimTypes.Role, role.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("Name", name),
-                new Claim("Phone", Phone),
-                new Claim("idCustomer", idCustomer.ToString())
+            // Load các giá trị từ file .env
+            DotNetEnv.Env.Load();
+
+            // Đọc các giá trị từ file .env hoặc cấu hình của app
+            var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer") ?? app.Configuration["Jwt:Issuer"] ?? "";
+            var JwtAudiences = Environment.GetEnvironmentVariable("Jwt__Audience")?.Split(',')
+                               ?? app.Configuration["Jwt:Audience"]?.Split(',')
+                               ?? new string[] { }; // Lấy danh sách audience
+            var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key") ?? app.Configuration["Jwt:Key"] ?? "";
+
+            // Tạo token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(JwtKey);
+
+            // Tạo danh sách claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, result.idAccount.ToString() ?? "0"),
+                new Claim(ClaimTypes.Role, result.role.ToString() ?? "false"),
+                new Claim("CustomerName", customerName),
+                new Claim("CustomerPhone", customerPhone),
+                new Claim("CustomerId", customerId.ToString())
             };
 
-            var token = new JwtSecurityToken(
-                issuer,
-                audience,
-                claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: credentials);
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            // Thêm các audience vào claims
+            foreach (var audience in JwtAudiences)
+            {
+                claims.Add(new Claim("aud", audience));
+            }
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Issuer = JwtIssuer,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            // Tạo token
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
         #endregion
     }

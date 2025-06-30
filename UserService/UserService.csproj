@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="EPPlus" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
@@ -19,17 +21,19 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Verifalia" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Migrations\" />
+    <Folder Include="Infrastructure\Data\Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiDto\ApiDto.csproj" />
+    <ProjectReference Include="..\ApiDto\CommonDto.csproj" />
     <ProjectReference Include="..\AuthorizationPolicy\AuthorizationPolicy.csproj" />
-    <ProjectReference Include="..\MyJWTHandler\MyJWTHandler.csproj" />
   </ItemGroup>
 
 </Project>

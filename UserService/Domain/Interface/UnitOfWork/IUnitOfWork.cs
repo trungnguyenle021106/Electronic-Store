@@ -7,6 +7,7 @@ namespace UserService.Domain.Interface.UnitOfWork
     {
         IRepository<Account> AccountRepository();
         IRepository<Customer> CustomerRepository();
+        IRepository<RefreshToken> RefreshTokenRepository();
         Task Commit();
         void Rollback();
     }

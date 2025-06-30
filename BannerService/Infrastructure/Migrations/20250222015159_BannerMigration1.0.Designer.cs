@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BannerService.Infrastructure.Migrations
 {
-    [DbContext(typeof(BannerContext))]
+    [DbContext(typeof(ContentManagementContext))]
     [Migration("20250222015159_BannerMigration1.0")]
     partial class BannerMigration10
     {
