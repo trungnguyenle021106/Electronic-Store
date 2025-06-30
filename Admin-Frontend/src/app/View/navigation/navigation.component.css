@@ -1,0 +1,32 @@
+/* src/app/sidebar/sidebar.component.css */
+
+.sidebar {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar button {
+  background-color: #34495e;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.sidebar button:hover {
+  background-color: #1abc9c;
+}

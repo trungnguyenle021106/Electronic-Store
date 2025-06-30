@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
+﻿using ApiDto.Response;
+using CommonDto.Results;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Text;
+using UserService.Application.Service;
 using UserService.Application.Usecases;
+using UserService.Domain.DTO;
 using UserService.Domain.Entities;
 using UserService.Domain.Request;
 using UserService.Domain.Response;
-using UserService.Infrastructure.DBContext;
-using MyJWTHandler;
 using UserService.Infrastructure.Verify_Email;
-using UserService.Domain.Interface.UnitOfWork;
-using Microsoft.AspNetCore.Authorization;
 
 namespace UserService.Interface_Adapters.APIs
 {
@@ -29,141 +27,376 @@ namespace UserService.Interface_Adapters.APIs
         #region Create User USECASE
         public static void MapCreateUserUseCaseAPIs(this WebApplication app)
         {
-            MapCreateAccount(app);
-            MapCreateCustomer(app);
+            //MapCreateAccount(app);
+            //MapCreateCustomer(app);
+            MapRefreshAccessToken(app);
         }
 
         public static void MapCreateAccount(this WebApplication app)
         {
-            app.MapPost("/accounts", async (IUnitOfWork unitOfWork
-                , [FromBody] Account newAccount, HttpContext httpContext) =>
+            app.MapPost("/accounts", async (CreateUserUC createUserUC
+                , [FromBody] Account newAccount, HttpContext httpContext, AuthService authService, EmailValidator emailValidatorService) =>
             {
-                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
+                if (!authService.IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
 
-                EmailValidatorResponse emailValidator = await EmailValidator.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
+                EmailValidatorDTO emailValidator = await emailValidatorService.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
                 if (!emailValidator.Status)
                 {
                     return Results.BadRequest(emailValidator.Message);
                 }
 
-                Account? createdAccount = await new CreateUserUC(unitOfWork).CreateAccount(newAccount).ConfigureAwait(false);
-                if (createdAccount != null)
+                CreationResult<Account> result = await createUserUC.CreateAccount(newAccount).ConfigureAwait(false);
+                if (result.IsSuccess)
                 {
-                    return Results.Ok(createdAccount);
+                    Results.Created($"/accounts/{result.CreatedItem.ID}", result.CreatedItem);
                 }
-                return Results.BadRequest("Email đã được đăng ký");
+
+                return result.ErrorType switch
+                {
+                    CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                    CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    CreationErrorType.RepositoryTypeMismatch => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Server Configuration Error",
+                        detail: result.ErrorMessage
+                    ),
+                    CreationErrorType.InternalError => Results.Problem(
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error",
+                         detail: result.ErrorMessage
+                     ),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             });
         }
 
         public static void MapCreateCustomer(this WebApplication app)
         {
-            app.MapPost("/customers", async (IUnitOfWork userContext,
-                 HttpContext httpContext, [FromBody] Customer newCustomer) =>
+            app.MapPost("/customers", async (CreateUserUC createUserUC,
+                 HttpContext httpContext, [FromBody] Customer newCustomer, AuthService authService) =>
             {
-                if (!HaveAName(httpContext))
+                CreationResult<Customer> result = await createUserUC.CreateCustomer(newCustomer).ConfigureAwait(false);
+                if (result.IsSuccess)
                 {
-                    return Results.StatusCode(403);
+                    Results.Created($"/customers/{result.CreatedItem.ID}", result.CreatedItem);
                 }
 
-                return Results.Ok(await new CreateUserUC(userContext).CreateCustomer(newCustomer).ConfigureAwait(false));
+                return result.ErrorType switch
+                {
+                    CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                    CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    CreationErrorType.RepositoryTypeMismatch => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Server Configuration Error",
+                        detail: result.ErrorMessage
+                    ),
+                    CreationErrorType.InternalError => Results.Problem(
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error",
+                         detail: result.ErrorMessage
+                     ),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             }).RequireAuthorization();
+        }
+
+        public static void MapRefreshAccessToken(this WebApplication app)
+        {
+            app.MapPost("/auth/tokens/refresh", async (HttpContext context, CreateUserUC createUserUC, TokenService tokenService) =>
+            {
+                RefreshToken refreshToken = await tokenService.GetRefreshToken(context).ConfigureAwait(false);
+
+                CreationResult<string> result = await createUserUC.RefreshAccessToken(refreshToken).ConfigureAwait(false);
+                if (result.IsSuccess)
+                {
+                    tokenService.SetTokenCookie(context, "AccessToken", result.CreatedItem,
+            DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
+                    return Results.Ok();
+                }
+
+                switch (result.ErrorType)
+                {
+                    case CreationErrorType.Invalid:
+                        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
+                        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
+                        return Results.BadRequest(new { message = result.ErrorMessage });
+
+                    case CreationErrorType.ValidationError:
+                        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
+                        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
+                        return Results.BadRequest(new { message = result.ErrorMessage });
+
+                    case CreationErrorType.InternalError:
+                        return Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Internal Server Error",
+                            detail: result.ErrorMessage
+                        );
+
+                    default: // Trường hợp mặc định cho các lỗi không xác định
+                        return Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        );
+                }
+            });
         }
         #endregion
 
         #region Get User USECASE
         public static void MapGetUserUseCaseAPIs(this WebApplication app)
         {
-            MapGetCustomerByID(app);
+            MapGetCustomerByIDForCustomer(app);
+            MapGetCustomerByIDForAdmin(app);
             MapGetAccountByID(app);
-            MapGetAccount(app);
-            MapGetUser(app);
+            MapGetAllAccount(app);
+            MapGetAllUser(app);
+            MapGetCurrentCustomer(app);
+            MapGetStatus(app);
+            test(app);
         }
 
-        public static void MapGetCustomerByID(this WebApplication app)
+        public static void test(this WebApplication app)
         {
-            app.MapGet("/customers/{customerID}", async (UserContext userContext, int customerID, HttpContext httpContext) =>
+            app.MapGet("/test", async (HttpContext httpContext, TokenService tokenService) =>
             {
-
-                Customer? customer = await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false);
-                int accountID = customer?.AccountID ?? 0;
-
-                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
-
-                if (!authorizationResult.Succeeded)
+                RefreshToken refreshToken = await tokenService.GetRefreshToken(httpContext).ConfigureAwait(false);
+                JWTClaim jWTClaim = tokenService.GetJWTClaim(httpContext);
+                var response = new
                 {
-                    return Results.Forbid();
+                    refreshToken,
+                    jWTClaim
+                };
+                return Results.Ok(response);
+            }).RequireAuthorization();
+        }
+
+        public static void MapGetCurrentCustomer(this WebApplication app)
+        {
+            app.MapGet("/customers/me", async (GetUserUC getUserUC, HttpContext httpContext, TokenService tokenService) =>
+            {
+                int accountID = tokenService.GetJWTClaim(httpContext)?.IDAccount ?? 0;
+                QueryResult<Customer> result = await getUserUC.GetCustomerByAccountID(accountID).ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Item);
                 }
 
-                return Results.Ok(await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false));
+                return result.ErrorType switch
+                {
+                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+            }).RequireAuthorization("OnlyCustomer");
+        }
+
+        public static void MapGetCustomerByIDForCustomer(this WebApplication app)
+        {
+            app.MapGet("/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext) =>
+            {
+                QueryResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    int accountID = result.Item?.AccountID ?? 0;
+
+                    var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                    var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
+
+                    if (!authorizationResult.Succeeded)
+                    {
+                        return Results.Forbid();
+                    }
+
+                    return Results.Ok(result.Item);
+                }
+
+                return result.ErrorType switch
+                {
+                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+
             }).RequireAuthorization();
+        }
+
+        public static void MapGetCustomerByIDForAdmin(this WebApplication app)
+        {
+            app.MapGet("/admin/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext) =>
+            {
+                QueryResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Item);
+                }
+
+                return result.ErrorType switch
+                {
+                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetAccountByID(this WebApplication app)
         {
-            app.MapGet("/accounts/{accountID}", async (HttpContext httpContext, UserContext userContext, int accountID) =>
+            app.MapGet("/accounts/{accountID}", async (GetUserUC getUserUC, HttpContext httpContext, int accountID) =>
             {
-                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
+                QueryResult<Account> result = await getUserUC.GetAccountByID(accountID).ConfigureAwait(false);
 
-                if (!authorizationResult.Succeeded)
+                if (result.IsSuccess)
                 {
-                    return Results.Forbid();
+                    return Results.Ok(result.Item);
                 }
 
-                return Results.Ok(await new GetUserUC(userContext).GetAccountByID(accountID).ConfigureAwait(false));
+                return result.ErrorType switch
+                {
+                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void MapGetAllAccount(this WebApplication app)
+        {
+            app.MapGet("/accounts", async (GetUserUC getUserUC) =>
+            {
+                QueryResult<Account> result = await getUserUC.GetAllAccount().ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Items);
+                }
+                return Results.BadRequest(new { message = result.ErrorMessage });
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void MapGetAllUser(this WebApplication app)
+        {
+            app.MapGet("/customers", async (GetUserUC getUserUC) =>
+            {
+                QueryResult<Customer> result = await getUserUC.GetAllCustomer().ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Items);
+                }
+                return Results.BadRequest(new { message = result.ErrorMessage });
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void MapGetStatus(this WebApplication app)
+        {
+            app.MapGet("/auth/status", (HttpContext httpContext, TokenService tokenService) =>
+            {
+                JWTClaim jWTClaim = tokenService.GetJWTClaim(httpContext);
+                return Results.Ok(jWTClaim.Role);
             }).RequireAuthorization();
         }
 
-        public static void MapGetAccount(this WebApplication app)
-        {
-            app.MapGet("/accounts", async (UserContext userContext) =>
-            {
-                return Results.Ok(await new GetUserUC(userContext).GetAllAccount().ConfigureAwait(false));
-            }).RequireAuthorization("OnlyAdmin");
-        }
 
-        public static void MapGetUser(this WebApplication app)
-        {
-            app.MapGet("/customers", async (UserContext userContext) =>
-            {
-                return Results.Ok(await new GetUserUC(userContext).GetAllAccount().ConfigureAwait(false));
-            }).RequireAuthorization("OnlyAdmin");
-        }
         #endregion
 
         #region Update User USECASE
         public static void MapUpdateUserUseCaseAPIs(this WebApplication app)
         {
             MapUpdateCustomerInformation(app);
-            MapUpdateAccount(app);
+            MapUpdateAccountPassword(app);
+            MapUpdateAccountStatus(app);
         }
 
         public static void MapUpdateCustomerInformation(this WebApplication app)
         {
-            app.MapPatch("/customers/{customerID}", async (HttpContext httpContext, UserContext userContext,
-                int customerID, Customer newCustomer) =>
+            app.MapPut("/customers/{customerID}", async (UpdateUserUC updateUserUC, GetUserUC getUserUC,
+                HttpContext httpContext, int customerID, [FromBody] Customer newCustomer) =>
             {
-                Customer? customer = await new GetUserUC(userContext).GetCustomerByID(customerID).ConfigureAwait(false);
-                int accountID = customer?.AccountID ?? 0;
+
+                QueryResult<Customer> resultQuery = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+                if (!resultQuery.IsSuccess)
+                {
+                    return resultQuery.ErrorType switch
+                    {
+                        RetrievalErrorType.NotFound => Results.NotFound(new { message = resultQuery.ErrorMessage }),
+                        RetrievalErrorType.ValidationError => Results.BadRequest(new { message = resultQuery.ErrorMessage }),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: resultQuery.ErrorMessage
+                        )
+                    };
+                }
+
+                int accountID = resultQuery.Item?.AccountID ?? 0;
 
                 var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "SelfAccountId").ConfigureAwait(false);
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
 
                 if (!authorizationResult.Succeeded)
                 {
                     return Results.Forbid();
                 }
 
-                return Results.Ok(await new UpdateUserUC(userContext).
-                    UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false));
+
+                UpdateResult<Customer> resultUpdate = await updateUserUC.UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false);
+                if (resultUpdate.IsSuccess)
+                {
+                    Results.Ok(resultUpdate.UpdatedItem);
+                }
+
+                return resultUpdate.ErrorType switch
+                {
+                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = resultUpdate.ErrorMessage }),
+                    UpdateErrorType.NotFound => Results.NotFound(new { message = resultUpdate.ErrorMessage }),
+                    UpdateErrorType.InternalError => Results.Problem(
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error",
+                         detail: resultUpdate.ErrorMessage
+                     ),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: resultUpdate.ErrorMessage
+                    )
+                };
             }).RequireAuthorization();
         }
 
-        public static void MapUpdateAccount(this WebApplication app)
+        public static void MapUpdateAccountPassword(this WebApplication app)
         {
-            app.MapPatch("/accounts/{accountID}", async (HttpContext httpContext, UserContext context,
-                int accountID, Account newAccount) =>
+            app.MapPatch("/accounts/{accountID}/password", async (HttpContext httpContext, UpdateUserUC updateUserUC,
+                int accountID, [FromBody] UpdatePasswordRequest updatePasswordRequest) =>
             {
 
                 var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
@@ -174,9 +407,61 @@ namespace UserService.Interface_Adapters.APIs
                     return Results.Forbid();
                 }
 
-                return Results.Ok(await new UpdateUserUC(context).
-                    UpdateAccount(accountID, newAccount).ConfigureAwait(false));
+                UpdateResult<Account> result = await updateUserUC.UpdateAccountPassword(accountID,
+                    updatePasswordRequest.oldPassword, updatePasswordRequest.newPassword).ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    Results.Ok(result.UpdatedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    UpdateErrorType.InternalError => Results.Problem(
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error",
+                         detail: result.ErrorMessage
+                     ),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             }).RequireAuthorization();
+        }
+
+        public static void MapUpdateAccountStatus(this WebApplication app)
+        {
+            app.MapPatch("/accounts/{accountID}/status", async (HttpContext httpContext, UpdateUserUC updateUserUC,
+                int accountID, [FromBody] string status) =>
+            {
+                UpdateResult<Account> result = await updateUserUC.UpdateAccountStatus(accountID, status).
+                ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    Results.Ok(result.UpdatedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    UpdateErrorType.InternalError => Results.Problem(
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error",
+                         detail: result.ErrorMessage
+                     ),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -184,80 +469,133 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapLoginLogoutSignUpUseCaseAPIs(this WebApplication app)
         {
             MapLogin(app);
+            MapSignUp(app);
+            MapLogoutSpecific(app);
         }
 
         public static void MapLogin(this WebApplication app)
         {
-            app.MapPost("/users/login", async (UserContext userContext, [FromBody] LoginRequest loginRequest
-                , HttpContext httpContext) =>
+            app.MapPost("/auth/login", async (LoginLogoutSignUpUC loginLogoutSignUpUC, [FromBody] LoginRequest loginRequest
+                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
             {
-                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
-                LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
+                if (!authService.IsLogOut(httpContext)) return Results.BadRequest("You are not logout");
+                LoginResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.LoginAccount(loginRequest.Email, loginRequest.Password).ConfigureAwait(false);
 
-                if (result.statusCode == 1)
+                if (result.IsSuccess)
                 {
-                    return Results.Ok(GenerateToken(result, app));
+                    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Value.RefreshToken.TokenHash,
+                       result.Value.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Value.AccessToken,
+                        result.Value.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+
+                    if (result.Value.Account.Role.Equals("Customer"))
+                    {
+                        return Results.Ok("http://localhost:4200");
+                    }
+                    else
+                    {
+                        return Results.Ok("http://localhost:4300");
+                    }
                 }
-                return Results.Ok(result.Message);
+                else
+                {
+                    return result.ErrorType switch
+                    {
+                        LoginErrorType.AccountLocked => Results.BadRequest(new { message = result.ErrorMessage }),
+                        LoginErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                        LoginErrorType.InvalidCredentials => Results.BadRequest(new { message = result.ErrorMessage }),
+                        LoginErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        LoginErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: result.ErrorMessage
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
             });
         }
 
-        public static void MapSignUpToken(this WebApplication app)
+        public static void MapSignUp(this WebApplication app)
         {
-            app.MapPost("/users/signup/token", async (UserContext userContext, [FromBody] LoginRequest loginRequest
-                , HttpContext httpContext) =>
+            app.MapPost("/auth/sign-up", async (LoginLogoutSignUpUC loginLogoutSignUpUC, [FromBody] SignUpRequest signUpRequest
+                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
             {
-                if (!IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
-                LoginResponse result = await new LoginLogoutSignUpUC(userContext).LoginAccount(loginRequest.UserName, loginRequest.Password).ConfigureAwait(false);
+                if (!authService.IsLogOut(httpContext)) return Results.BadRequest("You are not logout");
+                CreationResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.SignUp(signUpRequest).ConfigureAwait(false);
 
-                if (result.statusCode == 1)
-                {       
-                    return Results.Ok(GenerateToken(result, app));
+                if (result.IsSuccess)
+                {
+                    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.CreatedItem.RefreshToken.TokenHash,
+                        result.CreatedItem.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                    tokenService.SetTokenCookie(httpContext, "AccessToken", result.CreatedItem.AccessToken,
+                        result.CreatedItem.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                    return Results.Ok();
                 }
-                return Results.Ok(result.Message);
+                else
+                {
+                    return result.ErrorType switch
+                    {
+                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        CreationErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: result.ErrorMessage
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
             });
         }
 
-
-        #endregion
-
-        #region Other Methods
-        private static string GenerateToken(LoginResponse result, WebApplication app)
+        public static void MapLogoutSpecific(this WebApplication app)
         {
-            int customerId = result.customer != null ? result.customer.ID : 0;
-            string customerName = result.customer != null ? result.customer.Name : "";
-            string customerPhone = result.customer != null ? result.customer.Phone : "";
-
-            string issuer = app.Configuration["Jwt:Issuer"] ?? "";
-            string audience = app.Configuration["Jwt:Audience"] ?? "";
-            string key = app.Configuration["Jwt:Key"] ?? "";
-            return JWTHandler.GenerateAccessToken
-                    (issuer, audience, key
-                    , result.idAccount ?? 0, result.role ?? false, customerName, customerPhone, customerId);
-        }
-
-        private static bool HaveAName(HttpContext httpContext)
-        {
-            var user = httpContext.User; // Lấy thông tin người dùng từ HttpContext
-            var nameClaim = user.FindFirst(ClaimTypes.Name);
-            string name = nameClaim?.Value ?? "";
-
-            if (string.IsNullOrEmpty(name))
+            app.MapPost("/auth/logout/specific", async (LoginLogoutSignUpUC loginLogoutSignUpUC
+                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
             {
-                return true; 
-            }
 
-            return false;
+                UpdateResult<RefreshToken> result = await loginLogoutSignUpUC.LogoutSpecificSession(httpContext).ConfigureAwait(false);
+
+                if (result.IsSuccess)
+                {
+                    tokenService.ClearTokenCookie(httpContext, "AccessToken", false, SameSiteMode.Lax);
+                    tokenService.ClearTokenCookie(httpContext, "RefreshToken", false, SameSiteMode.Lax);
+                    return Results.Ok();
+                }
+                else
+                {
+                    return result.ErrorType switch
+                    {
+                        UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        UpdateErrorType.Unauthorized => Results.Unauthorized(),
+                        UpdateErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: result.ErrorMessage
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
+            }).RequireAuthorization();
         }
 
-        private static bool IsLogOut(HttpContext httpContext)
-        {
-            if (httpContext.User.Identity.IsAuthenticated)
-            {
-                return false; 
-            }
-            return true;
-        }
         #endregion
     }
 }

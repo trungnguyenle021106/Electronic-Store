@@ -6,6 +6,8 @@ namespace ProductService.Domain.Interface.UnitOfWork
     public interface IUnitOfWork
     {
         IRepository<Product> ProductRepository();
+        IRepository<ProductType> ProductTypeRepository();
+        IRepository<ProductBrand> ProductBrandRepository();
         IRepository<ProductProperty> ProductPropertyRepository();
         IRepository<ProductPropertyDetail> ProductPropertyDetailRepository();
         Task Commit();

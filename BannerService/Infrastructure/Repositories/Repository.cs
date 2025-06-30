@@ -6,8 +6,8 @@ namespace BannerService.Infrastructure.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly BannerContext _Context;
-        public Repository(BannerContext _Context)
+        private readonly ContentManagementContext _Context;
+        public Repository(ContentManagementContext _Context)
         {
             this._Context = _Context;
         }

@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiDto.Response;
+using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.Usecases;
 using ProductService.Domain.Entities;
-using ProductService.Infrastructure.DBContext;
+
 
 namespace ProductService.Interface_Adapters.APIs
 {
     public static class ProductAPI
     {
+
         public static void MapProductEndpoints(this WebApplication app)
         {
             MapCreateProductUseCaseAPIs(app);
@@ -25,27 +27,117 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void CreateProduct(this WebApplication app)
         {
-            app.MapPost("/products", async (ProductContext context, Product product) =>
+            app.MapPost("/products", async (CreateProductUC createProductUC, Product product) =>
             {
-                return Results.Ok(await new CreateProductUC(context).CreateProduct(product));
+                CreationResult<Product> result = await createProductUC.CreateProduct(product);
+
+                if (result.IsSuccess)
+                {
+                    // 201 Created: Sản phẩm được tạo thành công
+                    return Results.Created($"/products/{result.CreatedItem.ID}", result.CreatedItem);
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
+                    return result.ErrorType switch
+                    {
+                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Server Configuration Error",
+                            detail: result.ErrorMessage
+                        ),
+                        CreationErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: result.ErrorMessage
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void AddPropertiesToProduct(this WebApplication app)
         {
-            app.MapPost("/products/{productId}/productProperties", async (ProductContext context, int productId
+            app.MapPost("/products/{productId}/productProperties", async (CreateProductUC createProductUC, int productId
                 , [FromBody] List<int> productProperties) =>
             {
-                return Results.Ok(await new CreateProductUC(context).
-                    AddPropertiesToProduct(productId, productProperties));
+
+                CreationResult<ProductPropertyDetail> result = await createProductUC.AddPropertiesToProduct(productId, productProperties);
+
+                if (result.IsSuccess)
+                {
+                    // Sản phẩm được tạo thành công
+                    return Results.Ok(result.CreatedItems);
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
+                    return result.ErrorType switch
+                    {
+                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Server Configuration Error",
+                            detail: "A server configuration error occurred. Please contact support."
+                        ),
+                        CreationErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: "An internal server error occurred. Please try again later."
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: "An unexpected error occurred."
+                        )
+                    };
+                }
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void CreateProductProperty(this WebApplication app)
         {
-            app.MapPost("/productProperties", async (ProductContext context, ProductProperty productProperty) =>
+            app.MapPost("/productProperties", async (CreateProductUC createProductUC, ProductProperty productProperty) =>
             {
-                return Results.Ok(await new CreateProductUC(context).CreateProductProperty(productProperty));
+                CreationResult<ProductProperty> result = await createProductUC.CreateProductProperty(productProperty);
+
+                if (result.IsSuccess)
+                {
+                    // 201 Created: Sản phẩm được tạo thành công
+                    return Results.Created($"/productProperties/{result.CreatedItem.ID}", result.CreatedItem);
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
+                    return result.ErrorType switch
+                    {
+                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Server Configuration Error",
+                            detail: result.ErrorMessage
+                        ),
+                        CreationErrorType.InternalError => Results.Problem(
+                             statusCode: StatusCodes.Status500InternalServerError,
+                             title: "Internal Server Error",
+                             detail: result.ErrorMessage
+                         ),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -60,25 +152,55 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void GetProductByID(this WebApplication app)
         {
-            app.MapGet("/products/{productID}", async (ProductContext context, int productID) =>
+            app.MapGet("/products/{productID}", async (GetProductUC getProductUC, int productID) =>
             {
-                return Results.Ok(await new GetProductUC(context).GetProductByID(productID));
+                QueryResult<Product> result = await getProductUC.GetProductByID(productID);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Item);
+                }
+                else
+                {
+                    return result.ErrorType switch
+                    {
+                        RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                        RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                        _ => Results.Problem(
+                            statusCode: StatusCodes.Status500InternalServerError,
+                            title: "Unknown Error",
+                            detail: result.ErrorMessage
+                        )
+                    };
+                }
             });
         }
 
         public static void GetAllProducts(this WebApplication app)
         {
-            app.MapGet("/products", async (ProductContext context) =>
+            app.MapGet("/products", async (GetProductUC getProductUC) =>
             {
-                return Results.Ok(await new GetProductUC(context).GetAllProducts());
+                QueryResult<Product> result = await getProductUC.GetAllProducts();
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Items);
+                }
+                return Results.BadRequest(new { message = result.ErrorMessage });
             });
         }
 
         public static void GetAllProductProperties(this WebApplication app)
         {
-            app.MapGet("/productProperties", async (ProductContext context) =>
+            app.MapGet("/productProperties", async (GetProductUC getProductUC) =>
             {
-                return Results.Ok(await new GetProductUC(context).GetAllProductProperties());
+                QueryResult<ProductProperty> result = await getProductUC.GetAllProductProperties();
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.Items);
+                }
+                return Results.BadRequest(new { message = result.ErrorMessage });
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -92,20 +214,51 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void UpdateProduct(this WebApplication app)
         {
-            app.MapPatch("/products/{productID}", async (ProductContext context, int productID,
+            app.MapPut("/products/{productID}", async (UpdateProductUC updateProductUC, int productID,
                 [FromBody] Product newProduct) =>
             {
-                return Results.Ok(await new UpdateProductUC(context).UpdateProduct(productID, newProduct));
+                UpdateResult<Product> result = await updateProductUC.
+                UpdateProduct(productID, newProduct);
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.UpdatedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void UpdateProductProperty(this WebApplication app)
         {
-            app.MapPatch("/productProperties/{productPropertyID}", async (ProductContext context,
+            app.MapPatch("/productProperties/{productPropertyID}", async (UpdateProductUC updateProductUC,
                 int productPropertyID, [FromBody] ProductProperty newProductProperty) =>
             {
-                return Results.Ok(await new UpdateProductUC(context).
-                    UpdateProductProperty(productPropertyID, newProductProperty));
+                UpdateResult<ProductProperty> result = await updateProductUC.
+                UpdateProductProperty(productPropertyID, newProductProperty);
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.UpdatedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -114,15 +267,83 @@ namespace ProductService.Interface_Adapters.APIs
         public static void MapDeleteProductUseCaseAPIs(this WebApplication app)
         {
             DeleteProduct(app);
+            DeleteProductProperty(app);
+            DeleteProductPropertyDetails(app);
         }
 
         public static void DeleteProduct(this WebApplication app)
         {
-            app.MapDelete("/productPropertyDetails", async (ProductContext context,
-            [FromBody] ProductPropertyDetail productPropertyDetail) =>
+            app.MapDelete("/products", async (DeleteProductUC deleteProductUC,
+            [FromBody] Product product) =>
             {
-                return Results.Ok(await new DeleteProductUC(context).
-                   DeletePropertyDetail(productPropertyDetail));
+                DeletionResult<Product> result = await deleteProductUC.DeleteProduct(product);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.DeletedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+
+        public static void DeleteProductProperty(this WebApplication app)
+        {
+            app.MapDelete("/productProperties", async (DeleteProductUC deleteProductUC,
+            [FromBody] ProductProperty productProperty) =>
+            {
+                DeletionResult<ProductProperty> result = await deleteProductUC.DeleteProductProperty(productProperty);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.DeletedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void DeleteProductPropertyDetails(this WebApplication app)
+        {
+            app.MapDelete("/productPropertyDetails", async (DeleteProductUC deleteProductUC,
+            [FromBody] List<ProductPropertyDetail> productPropertyDetails) =>
+            {
+                DeletionResult<ProductPropertyDetail> result = await deleteProductUC.DeleteProductPropertyDetails(productPropertyDetails);
+
+                if (result.IsSuccess)
+                {
+                    return Results.Ok(result.DeletedItem);
+                }
+
+                return result.ErrorType switch
+                {
+                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    _ => Results.Problem(
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "Unknown Error",
+                        detail: result.ErrorMessage
+                    )
+                };
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion

@@ -1,0 +1,159 @@
+.modal-content {
+    background: white;
+    padding: 50px;
+    border-radius: 8px;
+    width: 100%;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background: #e51f28;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-register-text {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.login-register-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+
+/* CSS cho input khi có lỗi */
+.input-error {
+    border-color: #e74c3c;
+    /* Màu đỏ cho border */
+    box-shadow: 0 0 0 0.1rem rgba(231, 76, 60, 0.25);
+    /* Hiệu ứng shadow nhẹ màu đỏ */
+    background-color: #fef8f8;
+    /* Nền nhạt hơn để làm nổi bật */
+}
+
+.input-error:focus {
+    border-color: #c0392b;
+    /* Màu đỏ đậm hơn khi focus */
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.4);
+    /* Shadow đậm hơn khi focus */
+    outline: none;
+    /* Bỏ outline mặc định của trình duyệt */
+}
+
+/* CSS cho các thông báo lỗi của từng trường (dưới input) */
+.error-message {
+    color: #e74c3c;
+    /* Màu đỏ cho chữ */
+    font-size: 0.85em;
+    /* Kích thước chữ nhỏ hơn */
+    margin-top: 5px;
+    /* Khoảng cách trên */
+    margin-bottom: 10px;
+    /* Khoảng cách dưới */
+    /* Để hiển thị động với fade-in/fade-out */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out;
+}
+
+/* Khi error-message hiển thị */
+.error-message small {
+    display: block;
+    /* Đảm bảo mỗi lỗi trên một dòng */
+    margin-bottom: 2px;
+}
+
+/* Kích hoạt transition khi lỗi hiển thị (kết hợp với *ngIf) */
+/* Cần lưu ý rằng *ngIf sẽ loại bỏ phần tử khỏi DOM,
+   nên để transition hoạt động mượt mà hơn, bạn có thể dùng
+   [hidden] hoặc animation. Tuy nhiên, với *ngIf, hiệu ứng
+   sẽ là xuất hiện/biến mất nhanh. Để có hiệu ứng mượt hơn,
+   bạn có thể cần Angular animations hoặc một chút JavaScript
+   để thêm/bỏ class. Với CSS đơn thuần, khi *ngIf true, nó sẽ
+   hiển thị ngay lập tức. */
+/* Dưới đây là cách mô phỏng transition nếu phần tử không bị loại bỏ */
+.error-message:not([hidden]) {
+    /* Nếu dùng [hidden]="!showError" */
+    opacity: 1;
+    max-height: 50px;
+    /* Đủ lớn để chứa nội dung lỗi */
+}
+
+
+/* CSS cho thông báo lỗi từ server */
+.server-error-message {
+    background-color: #ffe0e0;
+    /* Nền đỏ nhạt */
+    color: #c0392b;
+    /* Chữ đỏ đậm */
+    border: 1px solid #e74c3c;
+    /* Border đỏ */
+    padding: 10px 15px;
+    /* Padding */
+    margin-top: 20px;
+    /* Khoảng cách trên */
+    border-radius: 5px;
+    /* Bo góc */
+    text-align: center;
+    /* Căn giữa chữ */
+    font-size: 0.95em;
+    /* Kích thước chữ */
+    font-weight: 500;
+    /* Độ đậm chữ */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Shadow nhẹ */
+    /* Thêm hiệu ứng fade-in nếu cần */
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

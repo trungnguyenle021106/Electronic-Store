@@ -3,6 +3,6 @@
 namespace UserService.Domain.Request
 {
     public record LoginRequest(
-     string UserName,
+     string Email,
      string Password);
 }

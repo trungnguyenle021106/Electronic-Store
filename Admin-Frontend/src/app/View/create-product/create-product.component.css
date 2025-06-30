@@ -1,0 +1,183 @@
+ .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section {
+      display: flex;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      gap: 20px;
+    }
+
+    .form-section,
+    .attributes-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .form-group input[type="file"] {
+      padding: 0;
+    }
+
+    .form-group textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .image-preview {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-actions {
+      text-align: center;
+    }
+
+    .form-actions button {
+      padding: 10px 20px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .form-actions button:hover {
+      background-color: #16a085;
+    }
+
+    .attributes-panel {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .attributes-panel .attributes-list,
+    .attributes-panel .added-attributes {
+      flex: 1;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .attributes-list h3,
+    .added-attributes h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .attributes-list .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .attributes-list .search-bar input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .attributes-list .search-bar select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .attributes-list ul,
+    .added-attributes ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: white;
+    }
+
+    .attributes-list ul li,
+    .added-attributes ul li {
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .attributes-list ul li:last-child,
+    .added-attributes ul li:last-child {
+      border-bottom: none;
+    }
+
+    .attributes-list ul li button,
+    .added-attributes ul li button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .attributes-list ul li button {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    .attributes-list ul li button:hover {
+      background-color: #16a085;
+    }
+
+    .added-attributes ul li button {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .added-attributes ul li button:hover {
+      background-color: #c0392b;
+    }

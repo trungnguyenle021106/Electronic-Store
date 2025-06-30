@@ -2,8 +2,9 @@
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.IRepositories;
 using ProductService.Domain.Interface.UnitOfWork;
-using ProductService.Infrastructure.DBContext;
-using ProductService.Infrastructure.Repository;
+using ProductService.Infrastructure.Data.DBContext;
+using ProductService.Infrastructure.Data.Repositories;
+
 
 namespace ProductService.Application.UnitOfWork
 {
@@ -13,6 +14,9 @@ namespace ProductService.Application.UnitOfWork
         private readonly IRepository<Product> _ProductRepository;
         private readonly IRepository<ProductProperty> _ProductPropertyRepository;
         private readonly IRepository<ProductPropertyDetail> _ProductPropertyDetailRepository;
+        private readonly IRepository<ProductBrand> _ProductBrandRepository;
+        private readonly IRepository<ProductType> _ProductTypeRepository;
+
         public ProductUnitOfWork(ProductContext context)
         {
             this._ProductRepository = new Repository<Product>(context);
@@ -47,6 +51,16 @@ namespace ProductService.Application.UnitOfWork
         public IRepository<Product> ProductRepository()
         {
             return this._ProductRepository;
+        }
+
+        public IRepository<ProductType> ProductTypeRepository()
+        {
+            return this._ProductTypeRepository;
+        }
+
+        public IRepository<ProductBrand> ProductBrandRepository()
+        {
+           return this._ProductBrandRepository;
         }
     }
 }

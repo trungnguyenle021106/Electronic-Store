@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BannerService.Infrastructure.Migrations
 {
-    [DbContext(typeof(BannerContext))]
+    [DbContext(typeof(ContentManagementContext))]
     partial class BannerContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
