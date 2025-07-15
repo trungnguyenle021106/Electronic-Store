@@ -31,6 +31,15 @@
       </div>
     </div>
 
+    <!-- Số điện thoại -->
+    <div class="form-group">
+      <input type="text" formControlName="Phone" placeholder="Số điện thoại"
+        [class.invalid]="isFieldInvalid('Phone')" />
+      <div class="error-message" *ngIf="isFieldInvalid('Phone')">
+        Số điện thoại có 10 chữ số, không được để trống và chỉ chứa số.
+      </div>
+    </div>
+
     <!-- Địa chỉ -->
     <div class="form-group">
       <input type="text" formControlName="Address" placeholder="Địa chỉ" [class.invalid]="isFieldInvalid('Address')" />
@@ -44,10 +53,7 @@
       <input type="Password" formControlName="Password" placeholder="Mật khẩu"
         [class.invalid]="isFieldInvalid('Password')" />
       <div class="error-message" *ngIf="isFieldInvalid('Password')">
-        Mật khẩu phải có ít nhất 6 ký tự.
-      </div>
-        <div class="error-message" *ngIf="isFieldInvalid('Password')">
-        Mật khẩu tối đa 50 ký tự.
+        Mật khẩu phải có ít nhất 6 ký tự và tối đa 50 ký tự.
       </div>
     </div>
 
@@ -58,7 +64,7 @@
   </form>
 
   <!-- Backend error message -->
-  <div class="backend-error" *ngIf="backendError">
+  <div class="server-error-message" *ngIf="backendError">
     {{ backendError }}
   </div>
 

@@ -1,13 +1,9 @@
-﻿using ApiDto.Response;
+﻿using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using UserService.Application.Service;
-using UserService.Application.UnitOfWorks;
 using UserService.Domain.DTO;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;
-using UserService.Domain.Request;
-
 
 namespace UserService.Application.Usecases
 {
@@ -24,54 +20,48 @@ namespace UserService.Application.Usecases
             this.hashService = hashService;
         }
 
-        public async Task<CreationResult<Account>> CreateAccount(Account account)
+        public async Task<ServiceResult<Account>> CreateAccount(Account account)
         {
             try
             {
                 if (account == null)
                 {
-                    return CreationResult<Account>
-                       .Failure("No account provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<Account>
+                       .Failure("No account provided to add.", ServiceErrorType.ValidationError);
                 }
 
                 IQueryable<Account> query = this.unitOfWork.AccountRepository().GetAll();
                 query = query.Where(a => a.Email == account.Email);
                 Account? newAccount = await query.FirstOrDefaultAsync().ConfigureAwait(false);
 
-                // Cách viết theo query syntax
-                //Account ? newAccount = await (from a in accounts
-                //                             where a.Email == account.Email
-                //                             select a).FirstOrDefaultAsync().ConfigureAwait(false);
-
                 if (newAccount != null)
                 {
-                    return CreationResult<Account>.Failure("Account is exist", CreationErrorType.AlreadyExists);
+                    return ServiceResult<Account>.Failure("Account is exist", ServiceErrorType.AlreadyExists);
                 }
 
                 await this.unitOfWork.AccountRepository().Add(account).ConfigureAwait(false);
                 await this.unitOfWork.Commit().ConfigureAwait(false);
-                return CreationResult<Account>.Success(account);
+                return ServiceResult<Account>.Success(account);
             }
             catch (Exception ex)
             {
-                // Bắt các lỗi hệ thống không mong muốn khác (lỗi database, lỗi mạng, lỗi logic, ...)
                 Console.Error.WriteLine($"Error creating account: {ex}");
 
-                return CreationResult<Account>.Failure(
+                return ServiceResult<Account>.Failure(
                     "An unexpected internal error occurred during product creation.",
-                    CreationErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }
 
-        public async Task<CreationResult<Customer>> CreateCustomer(Customer customer)
+        public async Task<ServiceResult<Customer>> CreateCustomer(Customer customer)
         {
             try
             {
                 if (customer == null)
                 {
-                    return CreationResult<Customer>
-                       .Failure("No customer provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<Customer>
+                       .Failure("No customer provided to add.", ServiceErrorType.ValidationError);
                 }
 
                 IQueryable<Customer> query = this.unitOfWork.CustomerRepository().GetAll();
@@ -80,33 +70,32 @@ namespace UserService.Application.Usecases
                 Customer? newCustomer = await query.FirstOrDefaultAsync().ConfigureAwait(false);
                 if (newCustomer != null)
                 {
-                    return CreationResult<Customer>.Failure("Customer is exist", CreationErrorType.AlreadyExists);
+                    return ServiceResult<Customer>.Failure("Customer is exist", ServiceErrorType.AlreadyExists);
                 }
 
                 await this.unitOfWork.CustomerRepository().Add(customer).ConfigureAwait(false);
                 await this.unitOfWork.Commit().ConfigureAwait(false);
-                return CreationResult<Customer>.Success(customer);
+                return ServiceResult<Customer>.Success(customer);
             }
             catch (Exception ex)
             {
-                // Bắt các lỗi hệ thống không mong muốn khác (lỗi database, lỗi mạng, lỗi logic, ...)
                 Console.Error.WriteLine($"Error creating account: {ex}");
 
-                return CreationResult<Customer>.Failure(
+                return ServiceResult<Customer>.Failure(
                     "An unexpected internal error occurred during product creation.",
-                    CreationErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }
 
-        public async Task<CreationResult<RefreshToken>> CreateRefreshToken(int accountID)
+        public async Task<ServiceResult<RefreshToken>> CreateRefreshToken(int accountID)
         {
             try
             {
                 if (accountID <= 0)
                 {
-                    return CreationResult<RefreshToken>
-                    .Failure("No account provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<RefreshToken>
+                    .Failure("No account provided to add.", ServiceErrorType.ValidationError);
                 }
 
                 IQueryable<Account> query = this.unitOfWork.AccountRepository().GetAll();
@@ -115,8 +104,8 @@ namespace UserService.Application.Usecases
 
                 if (account == null)
                 {
-                    return CreationResult<RefreshToken>
-                  .Failure("No account provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<RefreshToken>
+                  .Failure("No account provided to add.", ServiceErrorType.ValidationError);
                 }
 
                 RefreshToken refreshToken = new RefreshToken
@@ -130,50 +119,48 @@ namespace UserService.Application.Usecases
                 };
                 await this.unitOfWork.RefreshTokenRepository().Add(refreshToken).ConfigureAwait(false);
                 await this.unitOfWork.Commit().ConfigureAwait(false);
-                return CreationResult<RefreshToken>.Success(refreshToken);
+                return ServiceResult<RefreshToken>.Success(refreshToken);
             }
             catch (Exception ex)
             {
-                // Bắt các lỗi hệ thống không mong muốn khác (lỗi database, lỗi mạng, lỗi logic, ...)
                 Console.Error.WriteLine($"Error creating account: {ex}");
 
-                return CreationResult<RefreshToken>.Failure(
+                return ServiceResult<RefreshToken>.Failure(
                     "An unexpected internal error occurred during product creation.",
-                    CreationErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }
 
-        public async Task<CreationResult<string>> RefreshAccessToken(RefreshToken refreshToken)
+        public async Task<ServiceResult<string>> RefreshAccessToken(RefreshToken refreshToken)
         {
             try
             {
                 int idAccount = refreshToken?.AccountID ?? 0;
                 if (idAccount <= 0)
                 {
-                    return CreationResult<string>
-                    .Failure("No refresh token provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<string>
+                    .Failure("No refresh token provided to add.", ServiceErrorType.ValidationError);
                 }
 
                 if(refreshToken.IsRevoked == true ||  refreshToken.ExpiresAt < DateTime.UtcNow)
                 {
-                    return CreationResult<string>
-                 .Failure("Refresh token is expired or revoked.", CreationErrorType.Invalid);
+                    return ServiceResult<string>
+                 .Failure("Refresh token is expired or revoked.", ServiceErrorType.Invalid);
                 }
 
                 Account account = await unitOfWork.AccountRepository().GetById(idAccount).ConfigureAwait(false);
                 string accessToken = this.tokenService.GenerateAccessToken(new JWTClaim(account.ID, account.Role));
            
-                return CreationResult<string>.Success(accessToken);
+                return ServiceResult<string>.Success(accessToken);
             }
             catch (Exception ex)
             {
-                // Bắt các lỗi hệ thống không mong muốn khác (lỗi database, lỗi mạng, lỗi logic, ...)
                 Console.Error.WriteLine($"Error creating JWT: {ex}");
 
-                return CreationResult<string>.Failure(
+                return ServiceResult<string>.Failure(
                     "An unexpected internal error occurred during JWT creation.",
-                    CreationErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }

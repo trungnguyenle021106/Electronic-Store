@@ -34,6 +34,14 @@
         "Version": "v1",
         "Url": "http://localhost:5064/swagger/v1/swagger.json"
       }
+    },
+    {
+      "Key": "gatewayapi",
+      "Config": {
+        "Name": "Gateway API",
+        "Version": "v1",
+        "Url": "http://localhost:5293/swagger/v1/swagger.json"
+      }
     }
   ]
 }

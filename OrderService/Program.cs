@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using CommonDto.HandleErrorResult;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OrderService.Infrastructure.DBContext;
+using OrderService.Interface_Adapters;
 using OrderService.Interface_Adapters.API;
 using System.Text;
 
@@ -23,6 +25,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<OrderContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
+
+
+builder.Services.AddSingleton<HandleResultApi>();
+builder.Services.AddSingleton<HandleServiceError>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -67,7 +73,8 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = JwtIssuer,
             ValidAudience = JwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
         };
     });
 

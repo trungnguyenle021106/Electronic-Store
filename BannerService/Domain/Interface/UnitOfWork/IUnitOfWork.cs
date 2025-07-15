@@ -1,9 +1,9 @@
-﻿using BannerService.Domain.Entities;
-using BannerService.Domain.Entities;
-using BannerService.Domain.Interface.IRepositories;
+﻿using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Interface.IRepositories;
 using ContentManagementService.Domain.Entities;
 
-namespace BannerService.Domain.Interface.UnitOfWork
+namespace ContentManagementService.Domain.Interface.UnitOfWork
 {
     public interface IUnitOfWork
     {

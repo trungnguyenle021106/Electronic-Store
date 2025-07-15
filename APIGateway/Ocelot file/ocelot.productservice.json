@@ -1,6 +1,7 @@
 {
   "Routes": [
     {
+      //Product
       "DownstreamPathTemplate": "/products",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -9,7 +10,7 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/products",
+      "UpstreamPathTemplate": "/gateway/product-apis/products",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "productsapi"
     },
@@ -22,7 +23,7 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/products",
+      "UpstreamPathTemplate": "/gateway/product-apis/products",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "productsapi"
     },
@@ -35,47 +36,8 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/products/{productID}",
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
       "UpstreamHttpMethod": [ "GET" ],
-      "SwaggerKey": "productsapi"
-    },
-    {
-      "DownstreamPathTemplate": "/products/{productID}/productProperties",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5272
-        }
-      ],
-      "UpstreamPathTemplate": "/gateway/productsapi/products/{productID}/productProperties",
-      "UpstreamHttpMethod": [ "POST" ],
-      "SwaggerKey": "productsapi"
-    },
-    {
-      "DownstreamPathTemplate": "/productProperties",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5272
-        }
-      ],
-      "UpstreamPathTemplate": "/gateway/productsapi/productProperties",
-      "UpstreamHttpMethod": [ "GET" ],
-      "SwaggerKey": "productsapi"
-    },
-    {
-      "DownstreamPathTemplate": "/productProperties",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5272
-        }
-      ],
-      "UpstreamPathTemplate": "/gateway/productsapi/productProperties",
-      "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "productsapi"
     },
     {
@@ -87,12 +49,15 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/products/{productID}",
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
       "UpstreamHttpMethod": [ "PATCH" ],
       "SwaggerKey": "productsapi"
     },
+
+
+    //Product Property
     {
-      "DownstreamPathTemplate": "/productProperties/{productPropertyID}",
+      "DownstreamPathTemplate": "/products/{productID}/product-properties",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -100,12 +65,12 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/productProperties/{productPropertyID}",
-      "UpstreamHttpMethod": [ "PATCH" ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}/product-properties",
+      "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "productsapi"
     },
     {
-      "DownstreamPathTemplate": "/productPropertyDetails",
+      "DownstreamPathTemplate": "/product-properties",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -113,7 +78,184 @@
           "Port": 5272
         }
       ],
-      "UpstreamPathTemplate": "/gateway/productsapi/productPropertyDetails",
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-property-names",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-property-names",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties/{productPropertyID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties/{productPropertyID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+
+    //Product Brand
+    {
+      "DownstreamPathTemplate": "/product-brands",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-brands",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/productBrands/{productBrandID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-brands/{productBrandID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+    //Product Type
+    {
+      "DownstreamPathTemplate": "/product-types",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types/{productTypeID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types/{productTypeID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+
+    // Product property details
+    {
+      "DownstreamPathTemplate": "/product-property-details",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-property-details",
       "UpstreamHttpMethod": [ "DELETE" ],
       "SwaggerKey": "productsapi"
     }

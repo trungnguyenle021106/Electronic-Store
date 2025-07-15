@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   // Lấy instance của AuthService và Router bằng hàm inject()
   const authService = inject(AuthService);
   const router = inject(Router);
-
+  
   // Gọi API để kiểm tra trạng thái đăng nhập
   // Phương thức checkLoginStatus() của bạn trả về Observable<boolean> rất phù hợp
   return authService.checkStatus().pipe(

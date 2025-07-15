@@ -10,6 +10,7 @@
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="EPPlus" Version="8.0.5" />
+    <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
@@ -27,11 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Data\Migrations\" />
+    <Folder Include="Infrastructure\DTO\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiDto\ApiDto.csproj" />
     <ProjectReference Include="..\ApiDto\CommonDto.csproj" />
     <ProjectReference Include="..\AuthorizationPolicy\AuthorizationPolicy.csproj" />
   </ItemGroup>

@@ -22,6 +22,8 @@ namespace ProductService.Application.UnitOfWork
             this._ProductRepository = new Repository<Product>(context);
             this._ProductPropertyRepository = new Repository<ProductProperty>(context);
             this._ProductPropertyDetailRepository = new Repository<ProductPropertyDetail>(context);
+            this._ProductBrandRepository = new Repository<ProductBrand>(context);
+            this._ProductTypeRepository = new Repository<ProductType>(context);
             this._Context = context;
         }
 

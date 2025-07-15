@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using APIGateway.Application.Usecases;
+using APIGateway.Handler;
+using APIGateway.Infrastructure.Service;
+using APIGateway.Interface_Adapters.APIs;
+using Azure.Core;
+using CommonDto.HandleErrorResult;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System.Text;
@@ -18,9 +22,6 @@ var key = Encoding.UTF8.GetBytes(JwtKey);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
 
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
@@ -29,9 +30,81 @@ builder.Configuration
     .AddOcelot("Ocelot file", builder.Environment)
     .AddEnvironmentVariables();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<AuthHeaderHandler>();
 
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<GWCreateUC>();
+
+builder.Services.AddSingleton<HandleResultApi>();
+builder.Services.AddSingleton<HandleServiceError>();
+
+builder.Services.AddHttpClient<ProductService>()
+    .ConfigureHttpClient(httpClient =>
+    {
+        httpClient.BaseAddress = new Uri("http://localhost:5272/");
+    })
+    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
+    .AddHttpMessageHandler<AuthHeaderHandler>()
+    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL)
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        return new HttpClientHandler
+        {
+            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
+            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
+            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+    });
+
+builder.Services.AddHttpClient<ContentManagementService>()
+    .ConfigureHttpClient(httpClient =>
+    {
+        httpClient.BaseAddress = new Uri("http://localhost:5271/");
+    })
+    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
+    .AddHttpMessageHandler<AuthHeaderHandler>()
+    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL có thể bỏ qua phần này nếu http)
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        return new HttpClientHandler
+        {
+            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
+            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
+            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+    });
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
+
+    // Cấu hình bảo mật Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
 builder.Services.AddOcelot(builder.Configuration);
 
 builder.Services.AddCors(options =>
@@ -44,8 +117,8 @@ builder.Services.AddCors(options =>
                           policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
-                                 .AllowCredentials() ; // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
-                              
+                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+
                       });
 });
 
@@ -61,18 +134,59 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = JwtIssuer,
             ValidAudiences = JwtAudiences,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Đọc Access Token từ cookie
+                if (context.Request.Cookies.ContainsKey("AccessToken"))
+                {
+                    context.Token = context.Request.Cookies["AccessToken"];
+                }
+
+                //var accessToken = context.Request.Query["access_token"];
+                //var path = context.HttpContext.Request.Path;
+                //if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/productPropertyHub"))
+                //{
+                //    context.Token = accessToken;
+                //}
+                return Task.CompletedTask;
+            }
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OnlyAdmin", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+});
+
 
 var app = builder.Build();
-app.UseRouting();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocumentTitle = "GATEWAY APIS";
+    });
+}
+
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGatewayEndpoints();
+
+
 await app.UseOcelot();
+
 
 app.Run();
 

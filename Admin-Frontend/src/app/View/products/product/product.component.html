@@ -1,0 +1,55 @@
+<div class="main-content">
+    <div class="main-header">
+        <div class="tabs">
+            <h1>SẢN PHẨM</h1>
+        </div>
+        <div class="actions">
+            <input type="text" placeholder="Tìm kiếm...">
+            <select>
+                <option>Dropdown 1</option>
+                <option>Dropdown 2</option>
+            </select>
+            <button (click)="OnClickCreateProduct()" style="background-color: #1abc9c; color: white; padding: 10px 20px; border: none; 
+                border-radius: 5px; cursor: pointer; font-size: 20px">
+                Thêm sản phẩm
+            </button>
+        </div>
+    </div>
+
+  <div #scrollContainer class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th class="id">ID</th>
+                <th class="name">TÊN</th>
+                <th class="image">ẢNH</th>
+                <th class="brand">HÃNG</th>
+                <th class="type">LOẠI</th>
+                <th class="amount">SỐ LƯỢNG</th>
+                <th>GIÁ</th>
+                <th class="status">TRẠNG THÁI</th>
+                <th class="action">HÀNH ĐỘNG</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let productDTO of productDTOs; let i = index" [attr.data-product-id]="productDTO.ID">
+                <td>{{ productDTO.ID }}</td>
+                <td>{{ productDTO.Name }}</td>
+                <td class="image">
+                    <img [src]="productDTO.Image" alt="Sản phẩm" style="border-radius: 5px;">
+                </td>
+                <td>{{ productDTO.ProductBrandName }}</td>
+                <td>{{ productDTO.ProductTypeName }}</td>
+                <td>{{ productDTO.Quantity }}</td>
+                <td>{{ productDTO.Price | currency:'VND':'symbol':'1.0-0' }}</td>
+                <td>{{ productDTO.Status }}</td>
+                <td class="actions">
+                    <button class="edit">Sửa</button>
+                    <button class="delete">Xóa</button>
+                    <button class="detail">Chi tiết</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>

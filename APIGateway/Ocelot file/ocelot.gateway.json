@@ -1,0 +1,17 @@
+{
+  //"Routes": [
+  //  {
+  //    "DownstreamPathTemplate": "/filters",
+  //    "DownstreamScheme": "http",
+  //    "DownstreamHostAndPorts": [
+  //      {
+  //        "Host": "localhost",
+  //        "Port": 5293
+  //      }
+  //    ],
+  //    "UpstreamPathTemplate": "/gateway/filters",
+  //    "UpstreamHttpMethod": [ "POST" ],
+  //    "SwaggerKey": "gatewayapi"
+  //  }
+  //]
+}

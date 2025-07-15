@@ -1,18 +1,18 @@
 ﻿
-using BannerService.Application.UnitOfWork;
-using BannerService.Domain.Entities;
-using BannerService.Domain.Interface.UnitOfWork;
-using BannerService.Infrastructure.DBContext;
+using ContentManagementService.Application.UnitOfWork;
+using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Interface.UnitOfWork;
+using ContentManagementService.Infrastructure.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace BannerService.Application.Usecases
+namespace ContentManagementService.Application.Usecases
 {
     public class UpdateFilterUC
     {
         private readonly IUnitOfWork unitOfWork;
-        public UpdateFilterUC(ContentManagementContext bannerContext)
+        public UpdateFilterUC(IUnitOfWork unitOfWork)
         {
-            this.unitOfWork = new ContentManagementUnitOfWork(bannerContext);
+            this.unitOfWork = unitOfWork;
         }
 
         //public async Task<Filter?> UpdateBanner(int bannerID, Filter newBanner)

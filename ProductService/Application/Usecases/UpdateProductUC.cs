@@ -1,4 +1,4 @@
-﻿using ApiDto.Response;
+﻿using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
@@ -13,7 +13,7 @@ namespace ProductService.Application.Usecases
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<UpdateResult<Product>> UpdateProduct(int productID, Product newProduct)
+        public async Task<ServiceResult<Product>> UpdateProduct(int productID, Product newProduct)
         {
             try
             {
@@ -21,7 +21,7 @@ namespace ProductService.Application.Usecases
                 Product? existingProduct = await productQuery.FirstOrDefaultAsync();
                 if (existingProduct == null)
                 {
-                    return UpdateResult<Product>.Failure("Product not found.", UpdateErrorType.NotFound);
+                    return ServiceResult<Product>.Failure("Product not found.", ServiceErrorType.NotFound);
                 }
 
                 existingProduct.Description = newProduct.Description;
@@ -33,40 +33,41 @@ namespace ProductService.Application.Usecases
                 existingProduct.ProductBrandID = newProduct.ProductBrandID;
 
                 await this.unitOfWork.Commit();
-                return UpdateResult<Product>.Success(existingProduct);
+                return ServiceResult<Product>.Success(existingProduct);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi cập nhật Product: " + ex.ToString());
-                return UpdateResult<Product>.Failure("An internal error occurred during product update.", UpdateErrorType.InternalError);
+                return ServiceResult<Product>.Failure("An internal error occurred during product update.", ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<UpdateResult<ProductProperty>> UpdateProductProperty(int productPropertyID, ProductProperty newproductProperty)
+        public async Task<ServiceResult<ProductProperty>> UpdateProductProperty(int productPropertyID, ProductProperty newproductProperty)
         {
             try
             {
-                IQueryable<ProductProperty> ProductPropertyQuery = this.unitOfWork.ProductPropertyRepository().GetByIdQueryable(productPropertyID);
-                ProductProperty? productProperty = await ProductPropertyQuery.FirstOrDefaultAsync();
+                ProductProperty? productProperty = await this.unitOfWork.ProductPropertyRepository().GetById(productPropertyID);
+ 
                 if (productProperty == null)
                 {
-                    return UpdateResult<ProductProperty>.Failure("Product property not found.", UpdateErrorType.NotFound);
+                    return ServiceResult<ProductProperty>.Failure("Product property not found.", ServiceErrorType.NotFound);
                 }
-
-                productProperty.Description = newproductProperty.Description;
-                productProperty.Name = newproductProperty.Name;
+                if (!productProperty.Description.Equals(""))
+                    productProperty.Description = newproductProperty.Description;
+                if (!productProperty.Name.Equals(""))
+                    productProperty.Name = newproductProperty.Name;
 
                 await this.unitOfWork.Commit();
-                return UpdateResult<ProductProperty>.Success(productProperty);
+                return ServiceResult<ProductProperty>.Success(productProperty);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi cập nhật Product Property: " + ex.ToString());
-                return UpdateResult<ProductProperty>.Failure("An internal error occurred during product property update.", UpdateErrorType.InternalError);
+                return ServiceResult<ProductProperty>.Failure("An internal error occurred during product property update.", ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<UpdateResult<ProductType>> UpdateProductType(int productTypeID, ProductType newProductType)
+        public async Task<ServiceResult<ProductType>> UpdateProductType(int productTypeID, ProductType newProductType)
         {
             try
             {
@@ -74,21 +75,21 @@ namespace ProductService.Application.Usecases
                 ProductType? existingProductType = await query.FirstOrDefaultAsync();
                 if (existingProductType == null)
                 {
-                    return UpdateResult<ProductType>.Failure("Product type not found.", UpdateErrorType.NotFound);
+                    return ServiceResult<ProductType>.Failure("Product type not found.", ServiceErrorType.NotFound);
                 }
                 existingProductType.Name = newProductType.Name;
 
                 await this.unitOfWork.Commit();
-                return UpdateResult<ProductType>.Success(existingProductType);
+                return ServiceResult<ProductType>.Success(existingProductType);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi cập nhật Product type: " + ex.ToString());
-                return UpdateResult<ProductType>.Failure("An internal error occurred during product update.", UpdateErrorType.InternalError);
+                return ServiceResult<ProductType>.Failure("An internal error occurred during product update.", ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<UpdateResult<ProductBrand>> UpdateProductBrand(int productBrandID, ProductBrand newProductBrand)
+        public async Task<ServiceResult<ProductBrand>> UpdateProductBrand(int productBrandID, ProductBrand newProductBrand)
         {
             try
             {
@@ -96,17 +97,17 @@ namespace ProductService.Application.Usecases
                 ProductBrand? existingProductBrand = await query.FirstOrDefaultAsync();
                 if (existingProductBrand == null)
                 {
-                    return UpdateResult<ProductBrand>.Failure("Product brand not found.", UpdateErrorType.NotFound);
+                    return ServiceResult<ProductBrand>.Failure("Product brand not found.", ServiceErrorType.NotFound);
                 }
                 existingProductBrand.Name = newProductBrand.Name;
 
                 await this.unitOfWork.Commit();
-                return UpdateResult<ProductBrand>.Success(existingProductBrand);
+                return ServiceResult<ProductBrand>.Success(existingProductBrand);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi cập nhật Product brand: " + ex.ToString());
-                return UpdateResult<ProductBrand>.Failure("An internal error occurred during product update.", UpdateErrorType.InternalError);
+                return ServiceResult<ProductBrand>.Failure("An internal error occurred during product update.", ServiceErrorType.InternalError);
             }
         }
     }

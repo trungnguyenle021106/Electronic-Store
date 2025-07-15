@@ -1,0 +1,47 @@
+<h2>Thông tin tài khoản</h2>
+<form [formGroup]="accountInfoForm" (ngSubmit)="onSubmit()">
+    <!-- Họ Tên -->
+    <div class="form-group">
+        <label for="name">Họ Tên</label>
+        <input id="name" type="text" formControlName="name" placeholder="Nhập họ tên" />
+    </div>
+      <div class="error" *ngIf="hasError('name', 'required')">Họ tên không được để trống</div>
+
+    <!-- Giới tính -->
+    <div class="form-group">
+        <label>Giới tính</label>
+        <div class="gender">
+            <label>
+                <input type="radio" formControlName="gender" value="male" /> Nam
+            </label>
+            <label>
+                <input type="radio" formControlName="gender" value="female" /> Nữ
+            </label>
+        </div>
+    </div>
+
+    <!-- Số điện thoại -->
+    <div class="form-group">
+        <label for="phone">Số điện thoại</label>
+        <input id="phone" type="text" formControlName="phone" placeholder="Nhập số điện thoại" />
+    </div>
+    <div class="error" *ngIf="hasError('phone', 'required')">Số điện thoại không được để trống</div>
+    <div class="error" *ngIf="hasError('phone', 'pattern')">Số điện thoại không hợp lệ</div>
+
+    <!-- Email -->
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="text" formControlName="email" readonly/>
+    </div>
+
+    <!-- Địa chỉ -->
+    <div class="form-group">
+        <label for="address">Địa chỉ</label>
+        <input id="address" type="text" formControlName="address" placeholder="Nhập địa chỉ" />
+    </div>
+    <div class="error" *ngIf="hasError('address', 'required')">Địa chỉ không được để trống</div>
+    <!-- Nút Lưu -->
+    <div class="btn-save">
+        <button type="submit" [disabled]="accountInfoForm.invalid">LƯU THAY ĐỔI</button>
+    </div>
+</form>

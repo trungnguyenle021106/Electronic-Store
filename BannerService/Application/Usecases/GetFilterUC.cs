@@ -1,17 +1,18 @@
-﻿using BannerService.Application.UnitOfWork;
-using BannerService.Domain.Entities;
-using BannerService.Domain.Interface.UnitOfWork;
-using BannerService.Infrastructure.DBContext;
+﻿using ContentManagementService.Application.UnitOfWork;
+using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Interface.UnitOfWork;
+using ContentManagementService.Infrastructure.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace BannerService.Application.Usecases
+namespace ContentManagementService.Application.Usecases
 {
     public class GetFilterUC
     {
         private readonly IUnitOfWork unitOfWork;
-        public GetFilterUC(ContentManagementContext filterContext)
+
+        public GetFilterUC(IUnitOfWork UnitOfWork)
         {
-            this.unitOfWork = new ContentManagementUnitOfWork(filterContext);
+            this.unitOfWork = UnitOfWork;
         }
 
         public async Task<Filter?> GetFilterByID(int filterID)

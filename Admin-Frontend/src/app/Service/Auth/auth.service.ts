@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, filter, Observable, of, take, tap, throwError } from 'rxjs';
-import { LoginRequest } from '../../Model/Request/LoginRequest';
 import { Router } from '@angular/router';
+import { LoginRequest } from '../../Model/Product/DTO/Request/LoginRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,8 @@ export class AuthService {
       })
     );
   }
+
+
 
   login(loginRequest: LoginRequest): Observable<string> {
     let apiUrl: string = `${this.baseApiUrl}/gateway/usersapi/auth/login`;

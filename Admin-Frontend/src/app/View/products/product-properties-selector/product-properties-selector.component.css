@@ -1,0 +1,84 @@
+  .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+      padding: 32px 20px 28px 20px;
+  }
+
+  .section {
+      margin-bottom: 32px;
+  }
+
+  .section:last-child {
+      margin-bottom: 0;
+  }
+
+  .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #374151;
+  }
+
+ .chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 44px; /* Giữ nguyên chiều cao tối thiểu bạn muốn */
+  padding: 6px 0;
+  /* Thêm các thuộc tính sau để có thanh cuộn dọc */
+  max-height: 400px; /* Đặt chiều cao tối đa mong muốn của bạn (ví dụ: 200px) */
+  overflow-y: auto; /* Hiển thị thanh cuộn dọc khi nội dung vượt quá max-height */
+  /* Thêm padding ngang nếu bạn muốn cuộn mà không bị dính sát mép */
+  padding-right: 10px; /* Để tránh thanh cuộn che mất nội dung */
+  padding-left: 6px; /* Để giữ khoảng cách padding ban đầu */
+}
+
+  .chip {
+      display: inline-flex;
+      align-items: center;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      color: #374151;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: background 0.15s, box-shadow 0.15s;
+      margin-bottom: 0;
+      /* fix extra space in flex wrap */
+      user-select: none;
+  }
+
+  .chip:hover,
+  .chip:focus {
+      background: #d1d5db;
+  }
+
+  .chip.current {
+      background: #2563eb;
+      color: #fff;
+  }
+
+  .chip.current:hover,
+  .chip.current:focus {
+      background: #1e40af;
+  }
+
+  @media (max-width: 600px) {
+      .container {
+          padding: 16px 5vw;
+      }
+
+      .section-title {
+          font-size: 1rem;
+      }
+
+      .chip {
+          font-size: 0.97rem;
+          padding: 7px 13px;
+      }
+  }

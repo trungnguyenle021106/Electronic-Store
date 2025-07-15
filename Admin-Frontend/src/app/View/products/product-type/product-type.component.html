@@ -1,0 +1,71 @@
+<div class="main-content">
+    <div *ngIf="isOverlayDisplayed" class="overlay"></div>
+
+        <div *ngIf="isConFirmDisplayed" class="confirm-form-modal">
+        <h2 mat-dialog-title>Xác nhận thực hiện hành động</h2>
+        <mat-dialog-content> 
+            <p>Bạn có xác nhận thực hiện hành động này</p>
+        </mat-dialog-content>
+        <mat-dialog-actions> <button mat-button (click)="DisplayConfirmForm(false)" (click)="DisplayOverlay(false)">Hủy bỏ</button>
+            <button mat-raised-button color="warn" (click)="OnAcceptDelete()">Xác nhận</button>
+        </mat-dialog-actions>
+    </div>
+
+
+    <app-product-type-form *ngIf="isFormPropertyDisplayed"
+        (statusEmitter)="DisplayFormProperty($event); DisplayOverlay($event)" class="form-property "
+        [typePropertyForm]="typePropertyForm" [curProductType]="curProductType">
+    </app-product-type-form>
+
+    <div class="main-header">
+        <div class="tabs">
+            <h1>LOẠI SẢN PHẨM</h1>
+        </div>
+        <div class="actions">
+            <input type="text" [(ngModel)]="searchKeyword" (input)="onSearchInput($event)" placeholder="Tìm kiếm...">
+
+            <!-- <select [(ngModel)]="filterPropertyName" (change)="onFilterChange()">
+                <option value="">-- Lọc theo tên thuộc tính --</option>
+                <option *ngFor="let name of uniquePropertyNames" [value]="name">{{ name }}</option>
+            </select> -->
+            <button (click)="SetTypePropertyForm('Create'); DisplayFormProperty(true) ;DisplayOverlay(true)" style="background-color: #1abc9c; color: white; padding: 10px 20px; border: none; 
+                border-radius: 5px; cursor: pointer; font-size: 20px">
+                Thêm loại sản phẩm
+            </button>
+        </div>
+    </div>
+
+    <div #scrollContainer class="table-container">
+        <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+            <!-- Cột ID -->
+            <ng-container matColumnDef="ID">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.ID }} </mat-cell>
+            </ng-container>
+
+            <!-- Cột Tên -->
+            <ng-container matColumnDef="TÊN">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> TÊN </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
+            </ng-container>
+
+            <!-- Cột Hành Động -->
+            <ng-container matColumnDef="HÀNH ĐỘNG">
+                <mat-header-cell *matHeaderCellDef> HÀNH ĐỘNG </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-button color="primary" (click)="OnclickUpdate(element)" >Sửa</button>
+                    <button mat-button color="warn" (click)="OnclickDelete(element)">Xóa</button>
+                </mat-cell>
+            </ng-container>
+
+            <!-- Header và Row -->
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <!-- Phân trang -->
+        <mat-paginator [length]="totalProducts" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+            [pageIndex]="currentPage" aria-label="Chọn trang thuộc tính sản phẩm">
+        </mat-paginator>
+    </div>
+</div>

@@ -18,6 +18,8 @@ import { AuthInterceptor } from './Interceptors/interceptor';
 import { LoginComponent } from './View/form/login/login.component';
 import { SignUpComponent } from './View/form/sign-up/sign-up.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccountInformationComponent } from './View/form/account-information/account-information.component';
+import { AccountOrderComponent } from './View/form/account-order/account-order.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AccountComponent,
     OrderdetailComponent,
     LoginComponent,
-    SignUpComponent
+    SignUpComponent,
+    AccountInformationComponent,
+    AccountOrderComponent
   ],
   imports: [
     BrowserModule,

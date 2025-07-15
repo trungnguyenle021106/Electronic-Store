@@ -1,10 +1,8 @@
-﻿using ApiDto.Response;
+﻿using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using UserService.Application.UnitOfWorks;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;
-
+using UserService.Domain.Response;
 
 namespace UserService.Application.Usecases
 {
@@ -16,63 +14,63 @@ namespace UserService.Application.Usecases
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<QueryResult<Account>> GetAccountByID(int accountID)
+        public async Task<ServiceResult<Account>> GetAccountByID(int accountID)
         {
             try
             {
                 if (accountID <= 0)
                 {
-                    return QueryResult<Account>.Failure("Account ID is invalid.", RetrievalErrorType.ValidationError);
+                    return ServiceResult<Account>.Failure("Account ID is invalid.", ServiceErrorType.ValidationError);
                 }
                 Account? account = await this.unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false);
 
                 if (account == null)
                 {
-                    return QueryResult<Account>.Failure("Account is not found.", RetrievalErrorType.NotFound);
+                    return ServiceResult<Account>.Failure("Account is not found.", ServiceErrorType.NotFound);
                 }
 
-                return QueryResult<Account>.Success(account);
+                return ServiceResult<Account>.Success(account);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy account có id : {accountID}, lỗi : {ex.Message}");
-                return QueryResult<Account>.Failure("An unexpected internal error occurred while get account.",
-                      RetrievalErrorType.InternalError);
+                return ServiceResult<Account>.Failure("An unexpected internal error occurred while get account.",
+                      ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<QueryResult<Customer>> GetCustomerByID(int customerID)
+        public async Task<ServiceResult<Customer>> GetCustomerByID(int customerID)
         {
             try
             {
                 if (customerID <= 0)
                 {
-                    return QueryResult<Customer>.Failure("Customer ID is invalid.", RetrievalErrorType.ValidationError);
+                    return ServiceResult<Customer>.Failure("Customer ID is invalid.", ServiceErrorType.ValidationError);
                 }
                 Customer? customer = await this.unitOfWork.CustomerRepository().GetById(customerID).ConfigureAwait(false);
 
                 if (customer == null)
                 {
-                    return QueryResult<Customer>.Failure("Customer is not found.", RetrievalErrorType.NotFound);
+                    return ServiceResult<Customer>.Failure("Customer is not found.", ServiceErrorType.NotFound);
                 }
 
-                return QueryResult<Customer>.Success(customer);
+                return ServiceResult<Customer>.Success(customer);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy customer có id : {customerID}, lỗi : {ex.Message}");
-                return QueryResult<Customer>.Failure("An unexpected internal error occurred while get customer.",
-                      RetrievalErrorType.InternalError);
+                return ServiceResult<Customer>.Failure("An unexpected internal error occurred while get customer.",
+                      ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<QueryResult<Customer>> GetCustomerByAccountID(int accountID)
+        public async Task<ServiceResult<CustomerInformation>> GetCustomerInformationByAccountID(int accountID)
         {
             try
             {
                 if (accountID <= 0)
                 {
-                    return QueryResult<Customer>.Failure("Account is invalid.", RetrievalErrorType.ValidationError);
+                    return ServiceResult<CustomerInformation>.Failure("Account is invalid.", ServiceErrorType.ValidationError);
                 }
                 IQueryable<Account> accountQuery = this.unitOfWork.AccountRepository().GetAll();
                 Customer? customer = await accountQuery.
@@ -86,51 +84,52 @@ namespace UserService.Application.Usecases
                 .Select(joined => joined.Customer)
                 .FirstOrDefaultAsync().ConfigureAwait(false);
 
+                string email = (await this.unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false)).Email;
                 if (customer == null)
                 {
-                    return QueryResult<Customer>.Failure("Customer is not found.", RetrievalErrorType.NotFound);
+                    return ServiceResult<CustomerInformation>.Failure("Customer is not found.", ServiceErrorType.NotFound);
                 }
 
-                return QueryResult<Customer>.Success(customer);
+                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(email, customer.Name, customer.Phone, customer.Address, customer.Gender));
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy customer có accountID : {accountID}, lỗi : {ex.Message}");
-                return QueryResult<Customer>.Failure("An unexpected internal error occurred while get customer.",
-                      RetrievalErrorType.InternalError);
+                return ServiceResult<CustomerInformation>.Failure("An unexpected internal error occurred while get customer.",
+                      ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<QueryResult<Customer>> GetAllCustomer()
+        public async Task<ServiceResult<Customer>> GetAllCustomer()
         {
             try
             {
                 IQueryable<Customer> customersQuery = this.unitOfWork.CustomerRepository().GetAll();
                 List<Customer> customersList = await customersQuery.ToListAsync().ConfigureAwait(false);
-                return QueryResult<Customer>.Success(customersList);
+                return ServiceResult<Customer>.Success(customersList);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy danh sách customer : {ex.Message}");
-                return QueryResult<Customer>.Failure("An unexpected internal error occurred while get customers.",
-                      RetrievalErrorType.InternalError);
+                return ServiceResult<Customer>.Failure("An unexpected internal error occurred while get customers.",
+                      ServiceErrorType.InternalError);
             }
         }
 
-        public async Task<QueryResult<Account>> GetAllAccount()
+        public async Task<ServiceResult<Account>> GetAllAccount()
         {
             try
             {
                 IQueryable<Account> accountsQuery = this.unitOfWork.AccountRepository().GetAll();
                 List<Account> accountsList = await accountsQuery.ToListAsync().ConfigureAwait(false);
 
-                return QueryResult<Account>.Success(accountsList);
+                return ServiceResult<Account>.Success(accountsList);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy danh sách account : {ex.Message}");
-                return QueryResult<Account>.Failure("An unexpected internal error occurred while get accounts.",
-                      RetrievalErrorType.InternalError);
+                return ServiceResult<Account>.Failure("An unexpected internal error occurred while get accounts.",
+                      ServiceErrorType.InternalError);
             }
         }
     }

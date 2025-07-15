@@ -1,0 +1,68 @@
+<div class="order-header-tabs-container">
+    <div class="order-header">Quản lý đơn hàng</div>
+
+    <div class="tabs">
+        <div class="tab">TẤT CẢ</div>
+        <div class="tab active">MỚI (0)</div>
+        <div class="tab">ĐANG XỬ LÝ</div>
+        <div class="tab">ĐANG VẬN CHUYỂN</div>
+        <div class="tab">HOÀN THÀNH</div>
+        <div class="tab">HUỶ</div>
+    </div>
+</div>
+
+
+<div class="search-box">
+    <input type="text" placeholder="🔍 Tìm đơn hàng theo Mã đơn hàng">
+    <span class="line"></span>
+    <button>Tìm đơn hàng</button>
+</div>
+<div class="order-list-container ">
+    <div class="empty-state" *ngIf="isEmptyOrder">
+        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" alt="Không có đơn hàng">
+        <p>Quý khách chưa có đơn hàng nào.</p>
+        <button>TIẾP TỤC MUA HÀNG</button>
+    </div>
+
+    <h2 *ngIf="!isEmptyOrder">TẤT CẢ ĐƠN HÀNG</h2>
+    <div class="order-cards" *ngIf="!isEmptyOrder">
+        <div class="order-card">
+            <div class="order-info">
+                <p>Mã đơn hàng: <span>#DH123456</span></p>
+                <p>Ngày đặt: <span>20/05/2025</span></p>
+                <p>Sản phẩm: <span>2 sản phẩm</span></p>
+            </div>
+            <div class="order-status">
+                <p><strong>Chờ xác nhận</strong></p>
+                <p class="total">₫300.000.000</p>
+                <button class="btn-detail">Xem chi tiết</button>
+            </div>
+        </div>
+
+        <div class="order-card">
+            <div class="order-info">
+                <p>Mã đơn hàng: <span>#DH123456</span></p>
+                <p>Ngày đặt: <span>20/05/2025</span></p>
+                <p>Sản phẩm: <span>2 sản phẩm</span></p>
+            </div>
+            <div class="order-status">
+                <p><strong>Chờ xác nhận</strong></p>
+                <p class="total">₫300.000.000</p>
+                <button class="btn-detail" (click)="DisplayOrderDetail(1)">Xem chi tiết</button>
+            </div>
+        </div>
+
+        <div class="order-card">
+            <div class="order-info">
+                <p>Mã đơn hàng: <span>#DH123456</span></p>
+                <p>Ngày đặt: <span>20/05/2025</span></p>
+                <p>Sản phẩm: <span>2 sản phẩm</span></p>
+            </div>
+            <div class="order-status">
+                <p><strong>Chờ xác nhận</strong></p>
+                <p class="total">₫300.000.000</p>
+                <button class="btn-detail">Xem chi tiết</button>
+            </div>
+        </div>
+    </div>
+</div>

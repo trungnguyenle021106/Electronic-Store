@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProductComponent } from './View/product/product.component';
 import { CreateProductComponent } from './View/create-product/create-product.component';
-import { CreatePropertyComponent } from './View/create-property/create-property.component';
-import { PropertyComponent } from './View/property/property.component';
 import { LoginComponent } from './View/login/login.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
+import { ContentManagementComponent } from './View/content-management/content-management.component';
+import { ProductComponent } from './View/products/product/product.component';
+import { PropertyComponent } from './View/products/property/property.component';
+import { ProductTypeComponent } from './View/products/product-type/product-type.component';
+import { ProductBrandComponent } from './View/products/product-brand/product-brand.component';
+import { ProductFormComponent } from './View/products/product-form/product-form.component';
 
 const routes: Routes = [
   // Route cho trang đăng nhập - KHÔNG CÓ GUARD
@@ -26,6 +29,21 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'product-form',
+    component: ProductFormComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'product-type',
+    component: ProductTypeComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'product-brand',
+    component: ProductBrandComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'property',
     component: PropertyComponent,
     canActivate: [authGuard]
@@ -36,11 +54,10 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'create-property',
-    component: CreatePropertyComponent,
+    path: 'content-management',
+    component: ContentManagementComponent,
     canActivate: [authGuard]
   },
-
   // Route wildcard cho các đường dẫn không khớp, chuyển hướng về một trang nào đó
   // Ví dụ, chuyển hướng về 'product' sau khi xác thực
   { path: '**', redirectTo: '/product', pathMatch: 'full' }

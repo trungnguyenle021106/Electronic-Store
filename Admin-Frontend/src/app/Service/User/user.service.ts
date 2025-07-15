@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginRequest } from '../../Model/Request/LoginRequest';
-import { LoginResponse } from '../../Model/Response/LoginResponse';
 import { Observable } from 'rxjs';
 
 @Injectable({

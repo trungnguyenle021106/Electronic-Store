@@ -1,8 +1,10 @@
-﻿using ApiDto.Response;
+﻿using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using ProductService.Application.Usecases;
+using ProductService.Domain.DTO;
 using ProductService.Domain.Entities;
-
+using ProductService.Infrastructure.Socket;
 
 namespace ProductService.Interface_Adapters.APIs
 {
@@ -11,6 +13,15 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void MapProductEndpoints(this WebApplication app)
         {
+            app.MapHub<ProductPropertyHub>("/productPropertyHub")
+             .RequireAuthorization("OnlyAdmin");
+
+            app.MapHub<ProductTypeHub>("/productTypeHub")
+            .RequireAuthorization("OnlyAdmin");
+
+            app.MapHub<ProductBrandHub>("/productBrandHub")
+            .RequireAuthorization("OnlyAdmin");
+
             MapCreateProductUseCaseAPIs(app);
             MapGetProductUseCaseAPIs(app);
             MapUpdateProductUseCaseAPIs(app);
@@ -23,186 +34,229 @@ namespace ProductService.Interface_Adapters.APIs
             CreateProduct(app);
             AddPropertiesToProduct(app);
             CreateProductProperty(app);
+            CreateProductBrand(app);
+            CreateProductType(app);
+        }
+
+        public static void CreateProductBrand(this WebApplication app)
+        {
+            app.MapPost("/product-brands", async (CreateProductUC createProductUC, IHubContext<ProductBrandHub> ProductBrandHubContext,
+                [FromBody] List<ProductBrand> listProductBrands, HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<ProductBrand> result = await createProductUC.CreateMultiProductBrands(listProductBrands);
+                if (result.IsSuccess)
+                {
+                    await ProductBrandHubContext.Clients.All.SendAsync(
+                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.ListItem[0],
+                       "ProductBrandAdded" // Thêm một tin nhắn kèm theo
+                       );
+                }
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void CreateProductType(this WebApplication app)
+        {
+            app.MapPost("/product-types", async (CreateProductUC createProductUC, IHubContext<ProductTypeHub> ProductTypeHubContext,
+                [FromBody] List<ProductType> listProductTypes, HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<ProductType> result = await createProductUC.CreateMultiProductTypes(listProductTypes);
+                if (result.IsSuccess)
+                {
+                    await ProductTypeHubContext.Clients.All.SendAsync(
+                       "ProductTypeChanged",
+                       result.ListItem[0],
+                       "ProductTypeAdded"
+                       );
+                }
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void CreateProduct(this WebApplication app)
         {
-            app.MapPost("/products", async (CreateProductUC createProductUC, Product product) =>
+            app.MapPost("/products", async (CreateProductUC createProductUC, Product product, HandleResultApi handleResultApi) =>
             {
-                CreationResult<Product> result = await createProductUC.CreateProduct(product);
+                ServiceResult<Product> result = await createProductUC.CreateProduct(product);
+                return handleResultApi.MapServiceResultToHttp(result);
 
-                if (result.IsSuccess)
-                {
-                    // 201 Created: Sản phẩm được tạo thành công
-                    return Results.Created($"/products/{result.CreatedItem.ID}", result.CreatedItem);
-                }
-                else
-                {
-                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
-                    return result.ErrorType switch
-                    {
-                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Server Configuration Error",
-                            detail: result.ErrorMessage
-                        ),
-                        CreationErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: result.ErrorMessage
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+                //if (result.IsSuccess)
+                //{
+                //    // 201 Created: Sản phẩm được tạo thành công
+                //    return Results.Created($"/products/{result.Item.ID}", result.Item);
+                //}
+                //else
+                //{
+                //    // Xử lý các loại lỗi khác nhau dựa trên ServiceErrorType
+                //    return result.ServiceErrorType switch
+                //    {
+                //        ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Server Configuration Error",
+                //            detail: result.ErrorMessage
+                //        ),
+                //        ServiceErrorType.InternalError => Results.Problem(
+                //             statusCode: StatusCodes.Status500InternalServerError,
+                //             title: "Internal Server Error",
+                //             detail: result.ErrorMessage
+                //         ),
+                //        _ => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        )
+                //    };
+                //}
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void AddPropertiesToProduct(this WebApplication app)
         {
-            app.MapPost("/products/{productId}/productProperties", async (CreateProductUC createProductUC, int productId
+            app.MapPost("/products/{productId}/product-properties", async (CreateProductUC createProductUC, HandleResultApi handleResultApi, int productId
                 , [FromBody] List<int> productProperties) =>
             {
-
-                CreationResult<ProductPropertyDetail> result = await createProductUC.AddPropertiesToProduct(productId, productProperties);
-
-                if (result.IsSuccess)
-                {
-                    // Sản phẩm được tạo thành công
-                    return Results.Ok(result.CreatedItems);
-                }
-                else
-                {
-                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
-                    return result.ErrorType switch
-                    {
-                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Server Configuration Error",
-                            detail: "A server configuration error occurred. Please contact support."
-                        ),
-                        CreationErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: "An internal server error occurred. Please try again later."
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: "An unexpected error occurred."
-                        )
-                    };
-                }
+                ServiceResult<ProductPropertyDetail> result = await createProductUC.AddPropertiesToProduct(productId, productProperties);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void CreateProductProperty(this WebApplication app)
         {
-            app.MapPost("/productProperties", async (CreateProductUC createProductUC, ProductProperty productProperty) =>
+            app.MapPost("/product-properties", async (CreateProductUC createProductUC, IHubContext<ProductPropertyHub> productPropertyHubContext,
+                [FromBody] List<ProductProperty> listProductProperties, HandleResultApi handleResultApi) =>
             {
-                CreationResult<ProductProperty> result = await createProductUC.CreateProductProperty(productProperty);
-
+                ServiceResult<ProductProperty> result = await createProductUC.CreateMultiProductProperties(listProductProperties);
                 if (result.IsSuccess)
                 {
-                    // 201 Created: Sản phẩm được tạo thành công
-                    return Results.Created($"/productProperties/{result.CreatedItem.ID}", result.CreatedItem);
+                    await productPropertyHubContext.Clients.All.SendAsync(
+                       "ProductPropertyChanged",
+                       result.ListItem[0],
+                       "ProductPropertyAdded"
+                       );
                 }
-                else
-                {
-                    // Xử lý các loại lỗi khác nhau dựa trên ErrorType
-                    return result.ErrorType switch
-                    {
-                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        CreationErrorType.RepositoryTypeMismatch => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Server Configuration Error",
-                            detail: result.ErrorMessage
-                        ),
-                        CreationErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: result.ErrorMessage
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
+
         #endregion
 
         #region Get Product USECASE
         public static void MapGetProductUseCaseAPIs(this WebApplication app)
         {
-            GetAllProductProperties(app);
-            GetAllProducts(app);
+            GetPagedProductTypes(app);
+            GetPagedProductBrands(app);
             GetProductByID(app);
+            GetPagedProducts(app);
+            GetPagedProductProperties(app);
+            GetProductPropertyNames(app);
         }
 
         public static void GetProductByID(this WebApplication app)
         {
-            app.MapGet("/products/{productID}", async (GetProductUC getProductUC, int productID) =>
+            app.MapGet("/products/{productID}", async (GetProductUC getProductUC, int productID, HandleResultApi handleResultApi) =>
             {
-                QueryResult<Product> result = await getProductUC.GetProductByID(productID);
-
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Item);
-                }
-                else
-                {
-                    return result.ErrorType switch
-                    {
-                        RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                        RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+                ServiceResult<Product> result = await getProductUC.GetProductByID(productID);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.Item);
+                //}
+                //else
+                //{
+                //    return result.ServiceErrorType switch
+                //    {
+                //        ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        _ => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        )
+                //    };
+                //}
             });
         }
 
-        public static void GetAllProducts(this WebApplication app)
+        public static void GetProductPropertyNames(this WebApplication app)
         {
-            app.MapGet("/products", async (GetProductUC getProductUC) =>
+            app.MapGet("/product-property-names", async (GetProductUC getProductUC, HandleResultApi handleResultApi) =>
             {
-                QueryResult<Product> result = await getProductUC.GetAllProducts();
+                ServiceResult<string> result = await getProductUC.GetAllUniquePropertyNames();
+                return handleResultApi.MapServiceResultToHttp(result);
 
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Items);
-                }
-                return Results.BadRequest(new { message = result.ErrorMessage });
-            });
+            }).RequireAuthorization();
         }
 
-        public static void GetAllProductProperties(this WebApplication app)
+        public static void GetPagedProducts(this WebApplication app)
         {
-            app.MapGet("/productProperties", async (GetProductUC getProductUC) =>
+            app.MapGet("/products", async (GetProductUC getProductUC, HandleResultApi handleResultApi
+                , [FromQuery] int page, [FromQuery] int pageSize) =>
             {
-                QueryResult<ProductProperty> result = await getProductUC.GetAllProductProperties();
-
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Items);
-                }
-                return Results.BadRequest(new { message = result.ErrorMessage });
+                ServiceResult<PagedResult<ProductDTO>> result = await getProductUC.GetPagedProducts(page, pageSize);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
+
+
+        public static void GetPagedProductProperties(this WebApplication app)
+        {
+            app.MapGet("/product-properties", async (
+                GetProductUC getProductUC,
+                HandleResultApi handleResultApi,
+                [FromQuery] int page,
+                [FromQuery] int pageSize,
+                [FromQuery] string? searchText,
+                [FromQuery] string? filter
+            ) =>
+            {
+                ServiceResult<PagedResult<ProductProperty>> result =
+                    await getProductUC.GetPagedProductProperties(page, pageSize, searchText, filter);
+
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+        }
+
+        public static void GetPagedProductTypes(this WebApplication app)
+        {
+            app.MapGet("/product-types", async (
+                GetProductUC getProductUC,
+                HandleResultApi handleResultApi,
+                [FromQuery] int page,
+                [FromQuery] int pageSize,
+                [FromQuery] string? searchText,
+                [FromQuery] string? filter
+            ) =>
+            {
+                ServiceResult<PagedResult<ProductType>> result =
+                    await getProductUC.GetPagedProductTypes(page, pageSize, searchText, filter);
+
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+        }
+
+        public static void GetPagedProductBrands(this WebApplication app)
+        {
+            app.MapGet("/product-brands", async (
+                GetProductUC getProductUC,
+                HandleResultApi handleResultApi,
+                [FromQuery] int page,
+                [FromQuery] int pageSize,
+                [FromQuery] string? searchText,
+                [FromQuery] string? filter
+            ) =>
+            {
+                ServiceResult<PagedResult<ProductBrand>> result =
+                    await getProductUC.GetPagedProductBrands(page, pageSize, searchText, filter);
+
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+        }
+
+
         #endregion
 
         #region Update Product USECASE
@@ -214,51 +268,86 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void UpdateProduct(this WebApplication app)
         {
-            app.MapPut("/products/{productID}", async (UpdateProductUC updateProductUC, int productID,
+            app.MapPut("/products/{productID}", async (UpdateProductUC updateProductUC, HandleResultApi handleResultApi, int productID,
                 [FromBody] Product newProduct) =>
             {
-                UpdateResult<Product> result = await updateProductUC.
-                UpdateProduct(productID, newProduct);
+                ServiceResult<Product> result = await updateProductUC.UpdateProduct(productID, newProduct);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.Item);
+                //}
+
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void UpdateProductType(this WebApplication app)
+        {
+            app.MapPatch("/product-types/{productTypeID}", async (UpdateProductUC updateProductUC, HandleResultApi handleResultApi,
+                int productTypeID, [FromBody] ProductType newProductType, IHubContext<ProductTypeHub> ProductTypeHubContext) =>
+            {
+                ServiceResult<ProductType> result = await updateProductUC.UpdateProductType(productTypeID, newProductType);
                 if (result.IsSuccess)
                 {
-                    return Results.Ok(result.UpdatedItem);
+                    await ProductTypeHubContext.Clients.All.SendAsync(
+                       "ProductTypeChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.Item,
+                       "ProductTypeUpdated" // Thêm một tin nhắn kèm theo
+                       );
                 }
 
-                return result.ErrorType switch
+                return handleResultApi.MapServiceResultToHttp(result);
+
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void UpdateProductBrand(this WebApplication app)
+        {
+            app.MapPatch("/product-brands/{productBrandID}", async (UpdateProductUC updateProductUC, HandleResultApi handleResultApi,
+                int productBrandID, [FromBody] ProductBrand newProductBrand, IHubContext<ProductBrandHub> productBrandHubContext) =>
+            {
+                ServiceResult<ProductBrand> result = await updateProductUC.UpdateProductBrand(productBrandID, newProductBrand);
+                if (result.IsSuccess)
                 {
-                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                    await productBrandHubContext.Clients.All.SendAsync(
+                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.Item,
+                       "ProductBrandUpdated" // Thêm một tin nhắn kèm theo
+                       );
+                }
+
+                return handleResultApi.MapServiceResultToHttp(result);
+
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void UpdateProductProperty(this WebApplication app)
         {
-            app.MapPatch("/productProperties/{productPropertyID}", async (UpdateProductUC updateProductUC,
-                int productPropertyID, [FromBody] ProductProperty newProductProperty) =>
+            app.MapPatch("/product-properties/{productPropertyID}", async (UpdateProductUC updateProductUC, HandleResultApi handleResultApi,
+                int productPropertyID, [FromBody] ProductProperty newProductProperty, IHubContext<ProductPropertyHub> productPropertyHubContext) =>
             {
-                UpdateResult<ProductProperty> result = await updateProductUC.
-                UpdateProductProperty(productPropertyID, newProductProperty);
+                ServiceResult<ProductProperty> result = await updateProductUC.UpdateProductProperty(productPropertyID, newProductProperty);
                 if (result.IsSuccess)
                 {
-                    return Results.Ok(result.UpdatedItem);
+                    await productPropertyHubContext.Clients.All.SendAsync(
+                       "ProductPropertyChanged",
+                       result.Item,
+                       "ProductPropertyUpdated" // Thêm một tin nhắn kèm theo
+                       );
                 }
 
-                return result.ErrorType switch
-                {
-                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                return handleResultApi.MapServiceResultToHttp(result);
+
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -269,81 +358,100 @@ namespace ProductService.Interface_Adapters.APIs
             DeleteProduct(app);
             DeleteProductProperty(app);
             DeleteProductPropertyDetails(app);
+            DeleteProductType(app);
+            DeleteProductBrand(app);
         }
 
         public static void DeleteProduct(this WebApplication app)
         {
-            app.MapDelete("/products", async (DeleteProductUC deleteProductUC,
+            app.MapDelete("/products", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
             [FromBody] Product product) =>
             {
-                DeletionResult<Product> result = await deleteProductUC.DeleteProduct(product);
+                ServiceResult<Product> result = await deleteProductUC.DeleteProduct(product);
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
 
+        public static void DeleteProductType(this WebApplication app)
+        {
+            app.MapDelete("/product-types/{id}", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
+            int id, IHubContext<ProductTypeHub> ProductTypeHubContext) =>
+            {
+                ServiceResult<ProductType> result = await deleteProductUC.DeleteProductType(id);
                 if (result.IsSuccess)
                 {
-                    return Results.Ok(result.DeletedItem);
+                    await ProductTypeHubContext.Clients.All.SendAsync(
+                       "ProductTypeChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.Item,
+                       "ProductTypeDeleted" // Thêm một tin nhắn kèm theo
+                       );
                 }
+                return handleResultApi.MapServiceResultToHttp(result);
 
-                return result.ErrorType switch
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void DeleteProductBrand(this WebApplication app)
+        {
+            app.MapDelete("/product-brands/{id}", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
+            int id, IHubContext<ProductBrandHub> ProductBrandHubContext) =>
+            {
+                ServiceResult<ProductBrand> result = await deleteProductUC.DeleteProductBrand(id);
+                if (result.IsSuccess)
                 {
-                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                    await ProductBrandHubContext.Clients.All.SendAsync(
+                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.Item,
+                       "ProductBrandDeleted" // Thêm một tin nhắn kèm theo
+                       );
+                }
+                return handleResultApi.MapServiceResultToHttp(result);
+
             }).RequireAuthorization("OnlyAdmin");
         }
 
 
         public static void DeleteProductProperty(this WebApplication app)
         {
-            app.MapDelete("/productProperties", async (DeleteProductUC deleteProductUC,
-            [FromBody] ProductProperty productProperty) =>
+            app.MapDelete("/product-properties/{id}", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
+            int id, IHubContext<ProductPropertyHub> productPropertyHubContext) =>
             {
-                DeletionResult<ProductProperty> result = await deleteProductUC.DeleteProductProperty(productProperty);
-
+                ServiceResult<ProductProperty> result = await deleteProductUC.DeleteProductProperty(id);
                 if (result.IsSuccess)
                 {
-                    return Results.Ok(result.DeletedItem);
+                    await productPropertyHubContext.Clients.All.SendAsync(
+                       "ProductPropertyChanged", // Tên event mà client Angular sẽ lắng nghe
+                       result.Item,
+                       "ProductPropertyDeleted" // Thêm một tin nhắn kèm theo
+                       );
                 }
+                return handleResultApi.MapServiceResultToHttp(result);
 
-                return result.ErrorType switch
-                {
-                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void DeleteProductPropertyDetails(this WebApplication app)
         {
-            app.MapDelete("/productPropertyDetails", async (DeleteProductUC deleteProductUC,
+            app.MapDelete("/productPropertyDetails", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
             [FromBody] List<ProductPropertyDetail> productPropertyDetails) =>
             {
-                DeletionResult<ProductPropertyDetail> result = await deleteProductUC.DeleteProductPropertyDetails(productPropertyDetails);
+                ServiceResult<ProductPropertyDetail> result = await deleteProductUC.DeleteProductPropertyDetails(productPropertyDetails);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.ListItem);
+                //}
 
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.DeletedItem);
-                }
-
-                return result.ErrorType switch
-                {
-                    DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion

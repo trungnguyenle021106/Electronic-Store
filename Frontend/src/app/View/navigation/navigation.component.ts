@@ -55,7 +55,6 @@ export class NavigationComponent {
       },
       error: (err) => {
         console.error('Failed to fetch customer profile:', err);
-        this.customerName = "";
       }
     });
   }
