@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UserService } from '../../Service/User/user.service';
-import { LoginRequest } from '../../Model/Request/LoginRequest';
+
 import { AuthService } from '../../Service/Auth/auth.service';
+import { LoginRequest } from '../../Model/Product/DTO/Request/LoginRequest';
 
 @Component({
   selector: 'app-login',

@@ -1,4 +1,4 @@
-﻿namespace BannerService.Domain.Interface.IRepositories
+﻿namespace ContentManagementService.Domain.Interface.IRepositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
@@ -8,6 +8,7 @@
         Task<TEntity> GetById(int id);
         Task<TEntity> Add(TEntity entity);
         TEntity Update(TEntity entity);
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
         void Delete(TEntity entity);
     }
 }

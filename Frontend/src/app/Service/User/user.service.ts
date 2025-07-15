@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Customer } from '../../Model/User/Customer';
+import { CustomerInformation } from '../../Model/User/CustomerInformation';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,6 @@ export class UserService {
 
   getMyProfile() {
     let apiUrl: string = `${this.baseApiUrl}/gateway/usersapi/customers/me`;
-    return this.http.get<Customer>(apiUrl, { withCredentials: true });
+    return this.http.get<CustomerInformation>(apiUrl, { withCredentials: true });
   }
 }

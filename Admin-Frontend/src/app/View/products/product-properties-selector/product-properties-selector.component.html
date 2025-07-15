@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="section">
+        <div class="section-title">Thuộc tính sản phẩm đang có</div>
+        <div class="chip-list">
+            <button *ngFor="let attr of currentAttributes; let i = index" class="chip current"
+                [title]="'Bấm để xóa khỏi sản phẩm'" (click)="removeCurrentAttribute(attr)">
+                {{ attr }}
+            </button>
+            <div *ngIf="currentAttributes.length === 0" class="no-attributes-message">
+                Chưa có thuộc tính nào được chọn.
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Thuộc tính sản phẩm chưa có</div>
+        <div class="chip-list">
+            <button *ngFor="let attr of availableAttributes; let i = index" class="chip"
+                [title]="'Bấm để thêm vào sản phẩm'" (click)="addAvailableAttribute(attr)">
+                {{ attr }}
+            </button>
+            <div *ngIf="availableAttributes.length === 0" class="no-attributes-message">
+                Tất cả thuộc tính đã được chọn.
+            </div>
+        </div>
+    </div>
+</div>

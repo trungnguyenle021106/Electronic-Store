@@ -38,11 +38,11 @@ namespace ProductService.Infrastructure.Data.DBContext
                 .WithMany(e => e.Products)
                 .UsingEntity<ProductPropertyDetail>();
 
-            modelBuilder.Entity<ProductBrand>()
+            modelBuilder.Entity<ProductType>()
                 .HasMany<Product>()
                 .WithOne();
 
-            modelBuilder.Entity<ProductType>()
+            modelBuilder.Entity<ProductBrand>()
                    .HasMany<Product>()
                    .WithOne();
         }

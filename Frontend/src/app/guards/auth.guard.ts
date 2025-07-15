@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       // Nếu API trả về null, nghĩa là người dùng chưa đăng nhập hoặc phiên đã hết hạn
       if (!currentUserRole) {
         // console.log('Người dùng chưa đăng nhập hoặc phiên hết hạn. Chuyển hướng đến /login');
-        return router.createUrlTree(['/login']); // Trả về UrlTree để chuyển hướng
+        return router.createUrlTree(['/']); // Trả về UrlTree để chuyển hướng
       }
 
       if (currentUserRole === 'Admin') {
@@ -30,7 +30,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       // Xử lý lỗi từ API (ví dụ: mất kết nối mạng, server không phản hồi)
       console.error('Lỗi trong authGuard khi gọi API kiểm tra trạng thái xác thực:', error);
       // Trong trường hợp có lỗi nghiêm trọng khi gọi API, chúng ta coi như người dùng chưa đăng nhập
-      return of(router.createUrlTree(['/login'])); // Trả về Observable<UrlTree>
+      return of(router.createUrlTree(['/'])); // Trả về Observable<UrlTree>
     })
   );
 

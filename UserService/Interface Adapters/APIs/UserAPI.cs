@@ -1,9 +1,6 @@
-﻿using ApiDto.Response;
-using CommonDto.Results;
+﻿using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using UserService.Application.Service;
 using UserService.Application.Usecases;
 using UserService.Domain.DTO;
@@ -35,7 +32,8 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapCreateAccount(this WebApplication app)
         {
             app.MapPost("/accounts", async (CreateUserUC createUserUC
-                , [FromBody] Account newAccount, HttpContext httpContext, AuthService authService, EmailValidator emailValidatorService) =>
+                , [FromBody] Account newAccount, HttpContext httpContext, AuthService authService, EmailValidator emailValidatorService,
+                HandleResultApi handleResultApi) =>
             {
                 if (!authService.IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
 
@@ -45,109 +43,128 @@ namespace UserService.Interface_Adapters.APIs
                     return Results.BadRequest(emailValidator.Message);
                 }
 
-                CreationResult<Account> result = await createUserUC.CreateAccount(newAccount).ConfigureAwait(false);
-                if (result.IsSuccess)
-                {
-                    Results.Created($"/accounts/{result.CreatedItem.ID}", result.CreatedItem);
-                }
+                ServiceResult<Account> result = await createUserUC.CreateAccount(newAccount).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
 
-                return result.ErrorType switch
-                {
-                    CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                    CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    CreationErrorType.RepositoryTypeMismatch => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Server Configuration Error",
-                        detail: result.ErrorMessage
-                    ),
-                    CreationErrorType.InternalError => Results.Problem(
-                         statusCode: StatusCodes.Status500InternalServerError,
-                         title: "Internal Server Error",
-                         detail: result.ErrorMessage
-                     ),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
-            });
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Created($"/accounts/{result.Item.ID}", result.Item);
+                //}
+
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Server Configuration Error",
+                //        detail: result.ErrorMessage
+                //    ),
+                //    ServiceErrorType.InternalError => Results.Problem(
+                //         statusCode: StatusCodes.Status500InternalServerError,
+                //         title: "Internal Server Error",
+                //         detail: result.ErrorMessage
+                //     ),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapCreateCustomer(this WebApplication app)
         {
-            app.MapPost("/customers", async (CreateUserUC createUserUC,
+            app.MapPost("/customers", async (CreateUserUC createUserUC, HandleResultApi handleResultApi,
                  HttpContext httpContext, [FromBody] Customer newCustomer, AuthService authService) =>
             {
-                CreationResult<Customer> result = await createUserUC.CreateCustomer(newCustomer).ConfigureAwait(false);
-                if (result.IsSuccess)
-                {
-                    Results.Created($"/customers/{result.CreatedItem.ID}", result.CreatedItem);
-                }
+                ServiceResult<Customer> result = await createUserUC.CreateCustomer(newCustomer).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Created($"/customers/{result.Item.ID}", result.Item);
+                //}
 
-                return result.ErrorType switch
-                {
-                    CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                    CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    CreationErrorType.RepositoryTypeMismatch => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Server Configuration Error",
-                        detail: result.ErrorMessage
-                    ),
-                    CreationErrorType.InternalError => Results.Problem(
-                         statusCode: StatusCodes.Status500InternalServerError,
-                         title: "Internal Server Error",
-                         detail: result.ErrorMessage
-                     ),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
-            }).RequireAuthorization();
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Server Configuration Error",
+                //        detail: result.ErrorMessage
+                //    ),
+                //    ServiceErrorType.InternalError => Results.Problem(
+                //         statusCode: StatusCodes.Status500InternalServerError,
+                //         title: "Internal Server Error",
+                //         detail: result.ErrorMessage
+                //     ),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapRefreshAccessToken(this WebApplication app)
         {
-            app.MapPost("/auth/tokens/refresh", async (HttpContext context, CreateUserUC createUserUC, TokenService tokenService) =>
+            app.MapPost("/auth/tokens/refresh", async (HttpContext context, CreateUserUC createUserUC, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
                 RefreshToken refreshToken = await tokenService.GetRefreshToken(context).ConfigureAwait(false);
 
-                CreationResult<string> result = await createUserUC.RefreshAccessToken(refreshToken).ConfigureAwait(false);
-                if (result.IsSuccess)
-                {
-                    tokenService.SetTokenCookie(context, "AccessToken", result.CreatedItem,
-            DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
-                    return Results.Ok();
-                }
+                ServiceResult<string> result = await createUserUC.RefreshAccessToken(refreshToken).ConfigureAwait(false);
 
-                switch (result.ErrorType)
-                {
-                    case CreationErrorType.Invalid:
-                        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
-                        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
-                        return Results.BadRequest(new { message = result.ErrorMessage });
+                string accessToken = result.Item;
+                result = ServiceResult<string>.NoContent();
 
-                    case CreationErrorType.ValidationError:
-                        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
-                        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
-                        return Results.BadRequest(new { message = result.ErrorMessage });
+                return handleResultApi.MapServiceResultToHttp(result,
+                  () =>
+                  {
+                      tokenService.SetTokenCookie(context, "AccessToken", accessToken,
+                         DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
+                  },
+                  () =>
+                  {
+                      tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
+                      tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
+                  });
 
-                    case CreationErrorType.InternalError:
-                        return Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Internal Server Error",
-                            detail: result.ErrorMessage
-                        );
+                //if (result.IsSuccess)
+                //{
+                //    tokenService.SetTokenCookie(context, "AccessToken", result.Item,
+                //        DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
+                //    return Results.Ok();
+                //}
 
-                    default: // Trường hợp mặc định cho các lỗi không xác định
-                        return Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        );
-                }
+                //switch (result.ServiceErrorType)
+                //{
+                //    case ServiceErrorType.Invalid:
+                //        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
+                //        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
+                //        return Results.BadRequest(new { message = result.ErrorMessage });
+
+                //    case ServiceErrorType.ValidationError:
+                //        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
+                //        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
+                //        return Results.BadRequest(new { message = result.ErrorMessage });
+
+                //    case ServiceErrorType.InternalError:
+                //        return Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Internal Server Error",
+                //            detail: result.ErrorMessage
+                //        );
+
+                //    default:
+                //        return Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        );
+                //}
             });
         }
         #endregion
@@ -155,12 +172,12 @@ namespace UserService.Interface_Adapters.APIs
         #region Get User USECASE
         public static void MapGetUserUseCaseAPIs(this WebApplication app)
         {
-            MapGetCustomerByIDForCustomer(app);
+            //MapGetCustomerByIDForCustomer(app);
             MapGetCustomerByIDForAdmin(app);
             MapGetAccountByID(app);
             MapGetAllAccount(app);
             MapGetAllUser(app);
-            MapGetCurrentCustomer(app);
+            MapGetCurrentCustomerInformation(app);
             MapGetStatus(app);
             test(app);
         }
@@ -180,36 +197,45 @@ namespace UserService.Interface_Adapters.APIs
             }).RequireAuthorization();
         }
 
-        public static void MapGetCurrentCustomer(this WebApplication app)
+        public static void MapGetCurrentCustomerInformation(this WebApplication app)
         {
-            app.MapGet("/customers/me", async (GetUserUC getUserUC, HttpContext httpContext, TokenService tokenService) =>
+            app.MapGet("/customers/me", async (GetUserUC getUserUC, HttpContext httpContext, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
                 int accountID = tokenService.GetJWTClaim(httpContext)?.IDAccount ?? 0;
-                QueryResult<Customer> result = await getUserUC.GetCustomerByAccountID(accountID).ConfigureAwait(false);
 
-                if (result.IsSuccess)
+                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
+
+                if (!authorizationResult.Succeeded)
                 {
-                    return Results.Ok(result.Item);
+                    return Results.Forbid();
                 }
 
-                return result.ErrorType switch
-                {
-                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByAccountID(accountID).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.Item);
+                //}
+
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
             }).RequireAuthorization("OnlyCustomer");
         }
-
+        [Obsolete]
         public static void MapGetCustomerByIDForCustomer(this WebApplication app)
         {
             app.MapGet("/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext) =>
             {
-                QueryResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+                ServiceResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
@@ -226,10 +252,10 @@ namespace UserService.Interface_Adapters.APIs
                     return Results.Ok(result.Item);
                 }
 
-                return result.ErrorType switch
+                return result.ServiceErrorType switch
                 {
-                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
                     _ => Results.Problem(
                         statusCode: StatusCodes.Status500InternalServerError,
                         title: "Unknown Error",
@@ -240,80 +266,81 @@ namespace UserService.Interface_Adapters.APIs
             }).RequireAuthorization();
         }
 
+
         public static void MapGetCustomerByIDForAdmin(this WebApplication app)
         {
-            app.MapGet("/admin/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext) =>
+            app.MapGet("/admin/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext, HandleResultApi handleResultApi) =>
             {
-                QueryResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+                ServiceResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.Item);
+                //}
 
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Item);
-                }
-
-                return result.ErrorType switch
-                {
-                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
 
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetAccountByID(this WebApplication app)
         {
-            app.MapGet("/accounts/{accountID}", async (GetUserUC getUserUC, HttpContext httpContext, int accountID) =>
+            app.MapGet("/accounts/{accountID}", async (GetUserUC getUserUC, HandleResultApi handleResultApi, HttpContext httpContext, int accountID) =>
             {
-                QueryResult<Account> result = await getUserUC.GetAccountByID(accountID).ConfigureAwait(false);
+                ServiceResult<Account> result = await getUserUC.GetAccountByID(accountID).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.Item);
+                //}
 
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Item);
-                }
-
-                return result.ErrorType switch
-                {
-                    RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: result.ErrorMessage
-                    )
-                };
+                //return result.ServiceErrorType switch
+                //{
+                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //    _ => Results.Problem(
+                //        statusCode: StatusCodes.Status500InternalServerError,
+                //        title: "Unknown Error",
+                //        detail: result.ErrorMessage
+                //    )
+                //};
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetAllAccount(this WebApplication app)
         {
-            app.MapGet("/accounts", async (GetUserUC getUserUC) =>
+            app.MapGet("/accounts", async (GetUserUC getUserUC, HandleResultApi handleResultApi) =>
             {
-                QueryResult<Account> result = await getUserUC.GetAllAccount().ConfigureAwait(false);
-
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Items);
-                }
-                return Results.BadRequest(new { message = result.ErrorMessage });
+                ServiceResult<Account> result = await getUserUC.GetAllAccount().ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.ListItem);
+                //}
+                //return Results.BadRequest(new { message = result.ErrorMessage });
             }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetAllUser(this WebApplication app)
         {
-            app.MapGet("/customers", async (GetUserUC getUserUC) =>
+            app.MapGet("/customers", async (GetUserUC getUserUC, HandleResultApi handleResultApi) =>
             {
-                QueryResult<Customer> result = await getUserUC.GetAllCustomer().ConfigureAwait(false);
-
-                if (result.IsSuccess)
-                {
-                    return Results.Ok(result.Items);
-                }
-                return Results.BadRequest(new { message = result.ErrorMessage });
+                ServiceResult<Customer> result = await getUserUC.GetAllCustomer().ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+                //if (result.IsSuccess)
+                //{
+                //    return Results.Ok(result.ListItem);
+                //}
+                //return Results.BadRequest(new { message = result.ErrorMessage });
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -325,7 +352,6 @@ namespace UserService.Interface_Adapters.APIs
                 return Results.Ok(jWTClaim.Role);
             }).RequireAuthorization();
         }
-
 
         #endregion
 
@@ -343,13 +369,13 @@ namespace UserService.Interface_Adapters.APIs
                 HttpContext httpContext, int customerID, [FromBody] Customer newCustomer) =>
             {
 
-                QueryResult<Customer> resultQuery = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
+                ServiceResult<Customer> resultQuery = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
                 if (!resultQuery.IsSuccess)
                 {
-                    return resultQuery.ErrorType switch
+                    return resultQuery.ServiceErrorType switch
                     {
-                        RetrievalErrorType.NotFound => Results.NotFound(new { message = resultQuery.ErrorMessage }),
-                        RetrievalErrorType.ValidationError => Results.BadRequest(new { message = resultQuery.ErrorMessage }),
+                        ServiceErrorType.NotFound => Results.NotFound(new { message = resultQuery.ErrorMessage }),
+                        ServiceErrorType.ValidationError => Results.BadRequest(new { message = resultQuery.ErrorMessage }),
                         _ => Results.Problem(
                             statusCode: StatusCodes.Status500InternalServerError,
                             title: "Unknown Error",
@@ -368,18 +394,17 @@ namespace UserService.Interface_Adapters.APIs
                     return Results.Forbid();
                 }
 
-
-                UpdateResult<Customer> resultUpdate = await updateUserUC.UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false);
+                ServiceResult<Customer> resultUpdate = await updateUserUC.UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false);
                 if (resultUpdate.IsSuccess)
                 {
-                    Results.Ok(resultUpdate.UpdatedItem);
+                    return Results.Ok(resultUpdate.Item);
                 }
 
-                return resultUpdate.ErrorType switch
+                return resultUpdate.ServiceErrorType switch
                 {
-                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = resultUpdate.ErrorMessage }),
-                    UpdateErrorType.NotFound => Results.NotFound(new { message = resultUpdate.ErrorMessage }),
-                    UpdateErrorType.InternalError => Results.Problem(
+                    ServiceErrorType.ValidationError => Results.BadRequest(new { message = resultUpdate.ErrorMessage }),
+                    ServiceErrorType.NotFound => Results.NotFound(new { message = resultUpdate.ErrorMessage }),
+                    ServiceErrorType.InternalError => Results.Problem(
                          statusCode: StatusCodes.Status500InternalServerError,
                          title: "Internal Server Error",
                          detail: resultUpdate.ErrorMessage
@@ -407,19 +432,19 @@ namespace UserService.Interface_Adapters.APIs
                     return Results.Forbid();
                 }
 
-                UpdateResult<Account> result = await updateUserUC.UpdateAccountPassword(accountID,
+                ServiceResult<Account> result = await updateUserUC.UpdateAccountPassword(accountID,
                     updatePasswordRequest.oldPassword, updatePasswordRequest.newPassword).ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
-                    Results.Ok(result.UpdatedItem);
+                    return Results.Ok(result.Item);
                 }
 
-                return result.ErrorType switch
+                return result.ServiceErrorType switch
                 {
-                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    UpdateErrorType.InternalError => Results.Problem(
+                    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    ServiceErrorType.InternalError => Results.Problem(
                          statusCode: StatusCodes.Status500InternalServerError,
                          title: "Internal Server Error",
                          detail: result.ErrorMessage
@@ -438,19 +463,19 @@ namespace UserService.Interface_Adapters.APIs
             app.MapPatch("/accounts/{accountID}/status", async (HttpContext httpContext, UpdateUserUC updateUserUC,
                 int accountID, [FromBody] string status) =>
             {
-                UpdateResult<Account> result = await updateUserUC.UpdateAccountStatus(accountID, status).
+                ServiceResult<Account> result = await updateUserUC.UpdateAccountStatus(accountID, status).
                 ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
-                    Results.Ok(result.UpdatedItem);
+                    return Results.Ok(result.Item);
                 }
 
-                return result.ErrorType switch
+                return result.ServiceErrorType switch
                 {
-                    UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                    UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                    UpdateErrorType.InternalError => Results.Problem(
+                    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                    ServiceErrorType.InternalError => Results.Problem(
                          statusCode: StatusCodes.Status500InternalServerError,
                          title: "Internal Server Error",
                          detail: result.ErrorMessage
@@ -476,123 +501,160 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapLogin(this WebApplication app)
         {
             app.MapPost("/auth/login", async (LoginLogoutSignUpUC loginLogoutSignUpUC, [FromBody] LoginRequest loginRequest
-                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
+                , HttpContext httpContext, AuthService authService, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
                 if (!authService.IsLogOut(httpContext)) return Results.BadRequest("You are not logout");
-                LoginResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.LoginAccount(loginRequest.Email, loginRequest.Password).ConfigureAwait(false);
+                ServiceResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.LoginAccount(loginRequest.Email, loginRequest.Password).ConfigureAwait(false);
 
-                if (result.IsSuccess)
-                {
-                    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Value.RefreshToken.TokenHash,
-                       result.Value.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+                return handleResultApi.MapServiceResultToHttpNoContent(result,
+                     () =>
+                         {
+                             tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
+                               result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
 
-                    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Value.AccessToken,
-                        result.Value.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+                             tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
+                                 result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+                         },
+                     () =>
+                         {
+                             if (result.Item.Account.Role.Equals("Customer"))
+                             {
+                                 return Results.Ok("http://localhost:4200");
+                             }
+                             else
+                             {
+                                 return Results.Ok("http://localhost:4300");
+                             }
+                         }
+                         );
+                //if (result.IsSuccess)
+                //{
+                //    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
+                //       result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
 
+                //    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
+                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
 
-                    if (result.Value.Account.Role.Equals("Customer"))
-                    {
-                        return Results.Ok("http://localhost:4200");
-                    }
-                    else
-                    {
-                        return Results.Ok("http://localhost:4300");
-                    }
-                }
-                else
-                {
-                    return result.ErrorType switch
-                    {
-                        LoginErrorType.AccountLocked => Results.BadRequest(new { message = result.ErrorMessage }),
-                        LoginErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                        LoginErrorType.InvalidCredentials => Results.BadRequest(new { message = result.ErrorMessage }),
-                        LoginErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        LoginErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: result.ErrorMessage
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+                //    if (result.Item.Account.Role.Equals("Customer"))
+                //    {
+                //        return Results.Ok("http://localhost:4200");
+                //    }
+                //    else
+                //    {
+                //        return Results.Ok("http://localhost:4300");
+                //    }
+                //}
+                //else
+                //{
+                //    return result.ServiceErrorType switch
+                //    {
+                //        ServiceErrorType.AccountLocked => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.InvalidCredentials => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.InternalError => Results.Problem(
+                //             statusCode: StatusCodes.Status500InternalServerError,
+                //             title: "Internal Server Error",
+                //             detail: result.ErrorMessage
+                //         ),
+                //        _ => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        )
+                //    };
+                //}
             });
         }
 
         public static void MapSignUp(this WebApplication app)
         {
             app.MapPost("/auth/sign-up", async (LoginLogoutSignUpUC loginLogoutSignUpUC, [FromBody] SignUpRequest signUpRequest
-                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
+                , HttpContext httpContext, AuthService authService, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
                 if (!authService.IsLogOut(httpContext)) return Results.BadRequest("You are not logout");
-                CreationResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.SignUp(signUpRequest).ConfigureAwait(false);
-
-                if (result.IsSuccess)
-                {
-                    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.CreatedItem.RefreshToken.TokenHash,
-                        result.CreatedItem.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                    tokenService.SetTokenCookie(httpContext, "AccessToken", result.CreatedItem.AccessToken,
-                        result.CreatedItem.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                    return Results.Ok();
-                }
-                else
-                {
-                    return result.ErrorType switch
+                ServiceResult<LoginSignUpDTO> result = await loginLogoutSignUpUC.SignUp(signUpRequest).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttpNoContent(result,
+                    () =>
                     {
-                        CreationErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                        CreationErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        CreationErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: result.ErrorMessage
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+                        tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
+                          result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                        tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
+                            result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+                    }, null
+                    );
+                //if (result.IsSuccess)
+                //{
+                //    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
+                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                //    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
+                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
+
+                //    return Results.Ok();
+                //}
+                //else
+                //{
+                //    return result.ServiceErrorType switch
+                //    {
+                //        ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.InternalError => Results.Problem(
+                //             statusCode: StatusCodes.Status500InternalServerError,
+                //             title: "Internal Server Error",
+                //             detail: result.ErrorMessage
+                //         ),
+                //        _ => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        )
+                //    };
+                //}
             });
         }
 
         public static void MapLogoutSpecific(this WebApplication app)
         {
             app.MapPost("/auth/logout/specific", async (LoginLogoutSignUpUC loginLogoutSignUpUC
-                , HttpContext httpContext, AuthService authService, TokenService tokenService) =>
+                , HttpContext httpContext, AuthService authService, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
 
-                UpdateResult<RefreshToken> result = await loginLogoutSignUpUC.LogoutSpecificSession(httpContext).ConfigureAwait(false);
+                ServiceResult<RefreshToken> result = await loginLogoutSignUpUC.LogoutSpecificSession(httpContext).ConfigureAwait(false);
 
-                if (result.IsSuccess)
-                {
-                    tokenService.ClearTokenCookie(httpContext, "AccessToken", false, SameSiteMode.Lax);
-                    tokenService.ClearTokenCookie(httpContext, "RefreshToken", false, SameSiteMode.Lax);
-                    return Results.Ok();
-                }
-                else
-                {
-                    return result.ErrorType switch
-                    {
-                        UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                        UpdateErrorType.Unauthorized => Results.Unauthorized(),
-                        UpdateErrorType.InternalError => Results.Problem(
-                             statusCode: StatusCodes.Status500InternalServerError,
-                             title: "Internal Server Error",
-                             detail: result.ErrorMessage
-                         ),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: result.ErrorMessage
-                        )
-                    };
-                }
+                return handleResultApi.MapServiceResultToHttpNoContent(result,
+                    () =>
+                        {
+                            tokenService.ClearTokenCookie(httpContext, "AccessToken", false, SameSiteMode.Lax);
+                            tokenService.ClearTokenCookie(httpContext, "RefreshToken", false, SameSiteMode.Lax);
+                        },
+                    null
+                    );
+                //if (result.IsSuccess)
+                //{
+                //    tokenService.ClearTokenCookie(httpContext, "AccessToken", false, SameSiteMode.Lax);
+                //    tokenService.ClearTokenCookie(httpContext, "RefreshToken", false, SameSiteMode.Lax);
+                //    return Results.Ok();
+                //}
+                //else
+                //{
+                //    return result.ServiceErrorType switch
+                //    {
+                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
+                //        ServiceErrorType.Unauthorized => Results.Unauthorized(),
+                //        ServiceErrorType.InternalError => Results.Problem(
+                //             statusCode: StatusCodes.Status500InternalServerError,
+                //             title: "Internal Server Error",
+                //             detail: result.ErrorMessage
+                //         ),
+                //        _ => Results.Problem(
+                //            statusCode: StatusCodes.Status500InternalServerError,
+                //            title: "Unknown Error",
+                //            detail: result.ErrorMessage
+                //        )
+                //    };
+                //}
             }).RequireAuthorization();
         }
 

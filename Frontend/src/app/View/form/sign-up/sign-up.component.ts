@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../Service/Auth/auth.service';
+import { SignUpRequest } from '../../../Model/Requests/SignUpRequest';
 
 @Component({
   selector: 'app-sign-up',
@@ -18,7 +19,14 @@ export class SignUpComponent {
     this.registerForm = this.fb.group({
       Email: ['', [Validators.required, Validators.email]],
       Name: ['', Validators.required],
-      Gender: ['', Validators.required],
+      Phone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]*$'),
+          Validators.minLength(10),
+          Validators.maxLength(10)
+        ]],
       Address: ['', Validators.required],
       Password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
     });
@@ -41,15 +49,16 @@ export class SignUpComponent {
       this.backendError = null;
 
       // Simulate API call
-      const formData = this.registerForm.value;
-      console.log('Submitting form:', formData);
+      const signUpRequest: SignUpRequest = this.registerForm.value;
+      console.log('Submitting form:', signUpRequest);
 
       // Replace with actual API call
-      this.authService.signUp(formData).subscribe({
+      this.authService.signUp(signUpRequest).subscribe({
         next: (response) => {
           this.authService.setLoggedIn(true);
         },
         error: (error) => {
+          console.log(error)
           this.backendError = error.error.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
         },
       })

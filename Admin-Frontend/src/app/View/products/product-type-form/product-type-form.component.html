@@ -1,0 +1,31 @@
+<div class="form-container" [class.blurred-background]="isConFirmDisplayed">
+    <div *ngIf="isConFirmDisplayed" class="overlay"></div>
+
+    <div *ngIf="isConFirmDisplayed" class="confirm-form-modal">
+        <h2 mat-dialog-title>Xác nhận thực hiện hành động</h2>
+        <mat-dialog-content>
+            <p>Bạn có xác nhận thực hiện hành động này</p>
+        </mat-dialog-content>
+        <mat-dialog-actions> <button mat-button (click)="DisplayConfirmForm(false)">Hủy bỏ</button>
+            <button mat-raised-button color="warn" (click)="OnAccept()">Xác nhận</button>
+        </mat-dialog-actions>
+    </div>
+
+    <button (click)="ClosePropertyForm()" class="close-button" id="closeButton">&times;</button>
+    <h1>{{describeAction}}</h1>
+    <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="name">Tên loại</label>
+            <input type="text" id="name" formControlName="name" placeholder="Nhập tên loại" />
+            <div *ngIf="propertyForm.get('name')?.invalid && (propertyForm.get('name')?.dirty || propertyForm.get('name')?.touched)"
+                class="error-message">
+                <div *ngIf="propertyForm.get('name')?.errors?.['required']">Tên loại không được để trống.</div>
+                <div *ngIf="propertyForm.get('name')?.errors?.['pattern']">Tên loại không được chứa số hoặc ký tự
+                    đặc biệt.</div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit">{{actionName}}</button>
+        </div>
+    </form>
+</div>

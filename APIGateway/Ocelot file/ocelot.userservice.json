@@ -155,6 +155,19 @@
       "UpstreamPathTemplate": "/gateway/usersapi/auth/tokens/refresh",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/sign-up",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/usersapi/auth/sign-up",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
     }
   ]
 }

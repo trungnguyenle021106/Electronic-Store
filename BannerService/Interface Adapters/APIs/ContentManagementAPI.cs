@@ -1,39 +1,36 @@
-﻿
-using BannerService.Application.Usecases;
-using BannerService.Domain.Entities;
-using BannerService.Infrastructure.DBContext;
+﻿using CommonDto.ResultDTO;
+using ContentManagementService.Application.Usecases;
+using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Request;
+using ContentManagementService.Infrastructure.Data.DBContext;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BannerService.Interface_Adapters.APIs
+namespace ContentManagementService.Interface_Adapters.APIs
 {
     public static class ContentManagementAPI
     {
-        public static void MapBannerEndpoints(this WebApplication app)
+        public static void MapContentManagementEndpoints(this WebApplication app)
         {
-            MapCreateBannerUseCaseAPIs(app);
+            MapCreateContentManagementUseCaseAPIs(app);
             MapGetBannerUsecaseAPIs(app);
             MapUpdateBannerUseCaseAPIs(app);
         }
 
         #region Create Banner USECASE
-        public static void MapCreateBannerUseCaseAPIs(this WebApplication app)
+        public static void MapCreateContentManagementUseCaseAPIs(this WebApplication app)
         {
-            MapCreateBannerNormal(app);
+            CreateFilterAndFilterDetails(app);
         }
 
-        public static void MapCreateBannerNormal(this WebApplication app)
+        public static void CreateFilterAndFilterDetails(this WebApplication app)
         {
-            //app.MapPost("/banners", async (ContentManagementContext bannerContext, Filter newBanner) =>
-            //{
-            //    try
-            //    {
-            //        return Results.Ok(await new CreateFilterUC(bannerContext).CreateBanner(newBanner));
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Results.BadRequest(ex.Message);
-            //    }
-            //}).RequireAuthorization("OnlyAdmin");
+            app.MapPost("/filters", async (HttpContext httpContext, CreateContentUC createContentUC, HandleResultApi handleResultApi,
+                [FromBody] CreateFilterRequest createFilterRequest) =>
+            {
+                ServiceResult<Filter> result = await createContentUC.CreateFilterAndFilterDetails(createFilterRequest);
+
+              return  handleResultApi.MappingErrorHttp(result);            
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
@@ -46,32 +43,32 @@ namespace BannerService.Interface_Adapters.APIs
 
         public static void MapGetBannerByID(this WebApplication app)
         {
-            app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, int bannerId) =>
-            {
-                try
-                {
-                    return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByID(bannerId));
-                }
-                catch (Exception ex)
-                {
-                    return Results.BadRequest(ex.Message);
-                }
-            }).RequireAuthorization("OnlyAdmin");
+            //app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, int bannerId) =>
+            //{
+            //    try
+            //    {
+            //        return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByID(bannerId));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        return Results.BadRequest(ex.Message);
+            //    }
+            //}).RequireAuthorization("OnlyAdmin");
         }
 
         public static void MapGetBannerByPosition(this WebApplication app)
         {
-            app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, string position) =>
-            {
-                try
-                {
-                    return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByPosition(position));
-                }
-                catch (Exception ex)
-                {
-                    return Results.BadRequest(ex.Message);
-                }
-            }).RequireAuthorization();
+            //app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, string position) =>
+            //{
+            //    try
+            //    {
+            //        return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByPosition(position));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        return Results.BadRequest(ex.Message);
+            //    }
+            //}).RequireAuthorization();
         }
 
         public static void MapGetAllBanners(this WebApplication app)

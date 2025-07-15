@@ -20,7 +20,24 @@ const routes: Routes =
       path: 'account',
       component: AccountComponent,
       title: 'account',
-      canActivate: [authGuard] // <-- THÊM DÒNG NÀY ĐỂ BẢO VỆ ROUTE TÀI KHOẢN
+      canActivate: [authGuard], // <-- THÊM DÒNG NÀY ĐỂ BẢO VỆ ROUTE TÀI KHOẢN
+      children: [ // <-- THÊM MẢNG CHILDREN VÀO ĐÂY
+        {
+          path: '', // Route rỗng sẽ khớp với '/account'
+          redirectTo: 'information', // Tùy chọn: chuyển hướng '/account' đến '/account/information'
+          pathMatch: 'full'
+        },
+        {
+          path: 'order', // Route rỗng sẽ khớp với '/account'
+          component: AccountComponent, // Tùy chọn: chuyển hướng '/account' đến '/account/information'
+          title: 'account-order'
+        },
+        {
+          path: 'information', // Khớp với '/account/information'
+          component: AccountComponent, // <-- Vẫn hiển thị AccountComponent
+          title: 'account-information'
+        },
+      ]
     },
     { path: 'orderdetail/:id', component: OrderdetailComponent, title: 'orderdetail' },
   ];

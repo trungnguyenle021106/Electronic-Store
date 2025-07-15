@@ -1,10 +1,24 @@
-﻿using BannerService.Infrastructure.DBContext;
-using BannerService.Interface_Adapters.APIs;
+﻿using CommonDto.HandleErrorResult;
+using ContentManagementService.Application.UnitOfWork;
+using ContentManagementService.Application.Usecases;
+using ContentManagementService.Domain.Interface.UnitOfWork;
+using ContentManagementService.Infrastructure.Data.DBContext;
+using ContentManagementService.Interface_Adapters;
+using ContentManagementService.Interface_Adapters.APIs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+
+DotNetEnv.Env.Load();
+var MyConnectionString = Environment.GetEnvironmentVariable("MyConnectionString");
+var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key");
+var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer");
+var JwtAudiences = Environment.GetEnvironmentVariable("Jwt__Audience")?.Split(',');
+
+var key = Encoding.UTF8.GetBytes(JwtKey);
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +27,30 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContentManagementContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
+      options.UseSqlServer(MyConnectionString));
+
+builder.Services.AddScoped<IUnitOfWork, ContentManagementUnitOfWork>();
+
+builder.Services.AddScoped<CreateContentUC>();
+
+builder.Services.AddSingleton<HandleResultApi>();
 
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
+                      policyBuilder =>
+                      {
+                          // Sử dụng các tham số riêng biệt cho WithOrigins
+                          // hoặc một mảng các chuỗi nếu bạn có nhiều origins
+                          policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod()
+                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+
+                      });
+});
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // tham số trong này chính là scheme
     .AddJwtBearer(options => // AddJWTBearer là authentication handler
@@ -28,18 +61,32 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            ValidIssuer = JwtIssuer,
+            ValidAudiences = JwtAudiences,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Đọc Access Token từ cookie
+                if (context.Request.Cookies.ContainsKey("AccessToken"))
+                {
+                    context.Token = context.Request.Cookies["AccessToken"];
+                }
+                return Task.CompletedTask;
+            }
         };
     });
+
 
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OnlyAdmin", policy =>
     {
-        policy.RequireRole("True");
+        policy.RequireRole("Admin");
     });
 });
 
@@ -74,8 +121,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-DotNetEnv.Env.Load();
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DBCon");
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OnlyAdmin", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+});
 
 
 var app = builder.Build();
@@ -84,10 +136,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocumentTitle = "CONTENT MANAGEMENT APIS";
+    });
 }
 
-app.MapBannerEndpoints();
+app.UseCors("AllowSpecificOrigin");
+app.MapContentManagementEndpoints();
 
 app.Run();
 

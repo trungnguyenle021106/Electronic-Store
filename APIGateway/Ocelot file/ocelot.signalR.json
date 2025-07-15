@@ -1,0 +1,40 @@
+{
+  "Routes": [
+    {
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamPathTemplate": "/gateway/product-apis/productPropertyHub/{catchAll}",
+      "DownstreamPathTemplate": "/productPropertyHub/{catchAll}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ]
+    },
+    {
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamPathTemplate": "/gateway/product-apis/productTypeHub/{catchAll}",
+      "DownstreamPathTemplate": "/productTypeHub/{catchAll}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ]
+    },
+    {
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamPathTemplate": "/gateway/product-apis/productBrandHub/{catchAll}",
+      "DownstreamPathTemplate": "/productBrandHub/{catchAll}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ]
+    }
+  ]
+}

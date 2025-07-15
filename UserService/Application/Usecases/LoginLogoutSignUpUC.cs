@@ -1,15 +1,11 @@
-﻿using ApiDto.Response;
-using CommonDto.Results;
+﻿using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Data;
-using System.Security.Principal;
 using UserService.Application.Service;
 using UserService.Domain.DTO;
 using UserService.Domain.Entities;
 using UserService.Domain.Interface.UnitOfWork;
 using UserService.Domain.Request;
-using UserService.Domain.Response;
 using UserService.Infrastructure.Verify_Email;
 
 namespace UserService.Application.Usecases
@@ -30,11 +26,11 @@ namespace UserService.Application.Usecases
             this.emailValidator = emailValidator;
         }
 
-        public async Task<LoginResult<LoginSignUpDTO>> LoginAccount(string email, string password)
+        public async Task<ServiceResult<LoginSignUpDTO>> LoginAccount(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                return LoginResult<LoginSignUpDTO>.Failure("Email và mật khẩu không được để trống.", LoginErrorType.ValidationError);
+                return ServiceResult<LoginSignUpDTO>.Failure("Email và mật khẩu không được để trống.", ServiceErrorType.ValidationError);
             }
 
             try
@@ -46,25 +42,18 @@ namespace UserService.Application.Usecases
 
                 if (account == null)
                 {
-                    return LoginResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", LoginErrorType.NotFound);
+                    return ServiceResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", ServiceErrorType.NotFound);
                 }
 
                 if (!hashService.VerifyHash(password, account.Password))
                 {
-                    return LoginResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", LoginErrorType.InvalidCredentials);
+                    return ServiceResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", ServiceErrorType.InvalidCredentials);
                 }
-
-
-                //if (account.Role == "Admin")
-                //{
-                //    return LoginResult<LoginSignUpDTO>.Failure("Tài khoản của bạn không hợp lệ.", LoginErrorType.ValidationError);
-                //}
 
                 if (account.Status == "Locked")
                 {
-                    return LoginResult<LoginSignUpDTO>.Failure("Tài khoản của bạn bị khóa.", LoginErrorType.AccountLocked);
+                    return ServiceResult<LoginSignUpDTO>.Failure("Tài khoản của bạn bị khóa.", ServiceErrorType.AccountLocked);
                 }
-
 
                 string accessToken = tokenService.GenerateAccessToken(new JWTClaim
                 (
@@ -83,9 +72,8 @@ namespace UserService.Application.Usecases
                     IsRevoked = false
                 }).ConfigureAwait(false);
 
-
                 await this.unitOfWork.Commit().ConfigureAwait(false);
-                return LoginResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
+                return ServiceResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
                 (
                     account, accessToken, refreshToken
                 ));
@@ -93,30 +81,28 @@ namespace UserService.Application.Usecases
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"An unexpected error occurred during login for email: {email}, error : {ex}");
-                return LoginResult<LoginSignUpDTO>.Failure(
+                return ServiceResult<LoginSignUpDTO>.Failure(
                     "An unexpected internal error occurred during login .",
-                    LoginErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }
 
-        public async Task<CreationResult<LoginSignUpDTO>> SignUp(SignUpRequest signUpRequest)
+        public async Task<ServiceResult<LoginSignUpDTO>> SignUp(SignUpRequest signUpRequest)
         {
             try
             {
                 if (signUpRequest == null)
                 {
-                    return CreationResult<LoginSignUpDTO>
-                       .Failure("No sign up information provided to add.", CreationErrorType.ValidationError);
+                    return ServiceResult<LoginSignUpDTO>
+                       .Failure("No sign up information provided to add.", ServiceErrorType.ValidationError);
                 }
 
-             
                 if (!(await emailValidator.CheckEmailValid(signUpRequest.Email).ConfigureAwait(false)).Status)
                 {
-                    return CreationResult<LoginSignUpDTO>
-                     .Failure("Email is not valid.", CreationErrorType.ValidationError);
+                    return ServiceResult<LoginSignUpDTO>
+                     .Failure("Email is not valid.", ServiceErrorType.ValidationError);
                 }
-
 
                 IQueryable<Account> queryAccount = this.unitOfWork.AccountRepository().GetAll();
                 queryAccount = queryAccount.Where(a => a.Email == signUpRequest.Email);
@@ -124,7 +110,7 @@ namespace UserService.Application.Usecases
                 Account? account = await queryAccount.FirstOrDefaultAsync().ConfigureAwait(false);
                 if (account != null)
                 {
-                    return CreationResult<LoginSignUpDTO>.Failure("Account is exist", CreationErrorType.AlreadyExists);
+                    return ServiceResult<LoginSignUpDTO>.Failure("Account is exist", ServiceErrorType.AlreadyExists);
                 }
 
                 Account newAccount = new Account
@@ -136,14 +122,13 @@ namespace UserService.Application.Usecases
                 };
                 await this.unitOfWork.AccountRepository().Add(newAccount).ConfigureAwait(false);
 
-
                 IQueryable<Customer> queryCustomer = this.unitOfWork.CustomerRepository().GetAll();
                 queryCustomer = queryCustomer.Where(a => a.AccountID == newAccount.ID);
 
                 Customer? customer = await queryCustomer.FirstOrDefaultAsync().ConfigureAwait(false);
                 if (customer != null)
                 {
-                    return CreationResult<LoginSignUpDTO>.Failure("Customer is exist", CreationErrorType.AlreadyExists);
+                    return ServiceResult<LoginSignUpDTO>.Failure("Customer is exist", ServiceErrorType.AlreadyExists);
                 }
 
                 Customer newCustomer = new Customer
@@ -154,10 +139,7 @@ namespace UserService.Application.Usecases
                     Gender = signUpRequest.Gender,
                     Account = newAccount,
                 };
-                await this.unitOfWork.CustomerRepository().Add(newCustomer).ConfigureAwait(false);
-
-
-                string accessToken = tokenService.GenerateAccessToken(new JWTClaim(newAccount.ID, newAccount.Role));
+                await this.unitOfWork.CustomerRepository().Add(newCustomer).ConfigureAwait(false);              
 
                 string refreshTokenString = tokenService.GenerateRefreshToken();
                 string hashRefreshTokenString = hashService.Hash(refreshTokenString);
@@ -174,8 +156,9 @@ namespace UserService.Application.Usecases
 
                 await this.unitOfWork.Commit().ConfigureAwait(false);
 
+                string accessToken = tokenService.GenerateAccessToken(new JWTClaim(newAccount.ID, newAccount.Role));
 
-                return CreationResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
+                return ServiceResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
                 (
                    newAccount, accessToken, refreshToken
                 ));
@@ -184,14 +167,14 @@ namespace UserService.Application.Usecases
             {
                 Console.Error.WriteLine($"Error sign up : {ex}");
 
-                return CreationResult<LoginSignUpDTO>.Failure(
+                return ServiceResult<LoginSignUpDTO>.Failure(
                     "An unexpected internal error occurred during sign up .",
-                    CreationErrorType.InternalError
+                    ServiceErrorType.InternalError
                 );
             }
         }
 
-        public async Task<UpdateResult<RefreshToken>> LogoutSpecificSession(HttpContext httpContext)
+        public async Task<ServiceResult<RefreshToken>> LogoutSpecificSession(HttpContext httpContext)
         {
             try
             {
@@ -200,12 +183,12 @@ namespace UserService.Application.Usecases
 
                 if (refreshToken == null)
                 {
-                    return UpdateResult<RefreshToken>.Failure("Refresh token is not valid", UpdateErrorType.ValidationError);
+                    return ServiceResult<RefreshToken>.Failure("Refresh token is not valid", ServiceErrorType.ValidationError);
                 }
 
                 if (jWTClaim == null)
                 {
-                    return UpdateResult<RefreshToken>.Failure("Access token is not valid", UpdateErrorType.Unauthorized);
+                    return ServiceResult<RefreshToken>.Failure("Access token is not valid", ServiceErrorType.Unauthorized);
                 }
 
                 LogoutDTO logoutDTO = new LogoutDTO(jWTClaim.IDAccount, refreshToken.ID);
@@ -214,7 +197,7 @@ namespace UserService.Application.Usecases
 
                 if (!(logoutDTO.idAccount == refreshToken.AccountID))
                 {
-                    return UpdateResult<RefreshToken>.Failure("This session does not belong to your account.", UpdateErrorType.Unauthorized);
+                    return ServiceResult<RefreshToken>.Failure("This session does not belong to your account.", ServiceErrorType.Unauthorized);
                 }
 
                 refreshToken.IsRevoked = true;
@@ -222,12 +205,12 @@ namespace UserService.Application.Usecases
 
                 await this.unitOfWork.Commit().ConfigureAwait(false);
 
-                return UpdateResult<RefreshToken>.Success(refreshToken);
+                return ServiceResult<RefreshToken>.Success(refreshToken);
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"An unexpected error occurred during logout, error : {ex}");
-                return UpdateResult<RefreshToken>.Failure("An unexpected internal error occurred during logout .", UpdateErrorType.InternalError);
+                return ServiceResult<RefreshToken>.Failure("An unexpected internal error occurred during logout .", ServiceErrorType.InternalError);
 
             }
         }

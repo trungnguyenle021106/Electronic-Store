@@ -1,12 +1,12 @@
 ﻿
-using BannerService.Domain.Entities;
-using BannerService.Domain.Interface.IRepositories;
-using BannerService.Domain.Interface.UnitOfWork;
-using BannerService.Infrastructure.DBContext;
-using BannerService.Infrastructure.Repository;
 using ContentManagementService.Domain.Entities;
+using ContentManagementService.Domain.Interface.IRepositories;
+using ContentManagementService.Domain.Interface.UnitOfWork;
+using ContentManagementService.Domain.Entities;
+using ContentManagementService.Infrastructure.Data.DBContext;
+using ContentManagementService.Infrastructure.Data.Repositories;
 
-namespace BannerService.Application.UnitOfWork
+namespace ContentManagementService.Application.UnitOfWork
 {
     public class ContentManagementUnitOfWork : IUnitOfWork
     {

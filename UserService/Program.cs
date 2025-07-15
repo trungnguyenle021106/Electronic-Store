@@ -13,6 +13,7 @@ using UserService.Domain.Interface.UnitOfWork;
 using UserService.Infrastructure.Data.DBContext;
 using UserService.Infrastructure.Setting;
 using UserService.Infrastructure.Verify_Email;
+using UserService.Interface_Adapters;
 using UserService.Interface_Adapters.APIs;
 
 DotNetEnv.Env.Load();
@@ -51,6 +52,9 @@ builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddSingleton<IAuthorizationHandler, AdminOrSelfAccountIDHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SelfAccountIDHandler>();
 builder.Services.AddSingleton(jwtSettingsInstance);
+
+builder.Services.AddSingleton<HandleResultApi>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -161,7 +165,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocumentTitle = "USER APIS";
+    });
 }
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
