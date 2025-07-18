@@ -3,59 +3,106 @@ using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
 using ProductService.Infrastructure.Data.Repositories;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ProductService.Application.Usecases
 {
     public class CreateProductUC
     {
         private readonly IUnitOfWork _UnitOfWork;
-        public CreateProductUC(IUnitOfWork unitOfWork)
+        private readonly ManageProductImagesUC manageProductImagesUC;
+        public CreateProductUC(IUnitOfWork unitOfWork, ManageProductImagesUC manageProductImagesUC)
         {
-            _UnitOfWork = unitOfWork;
+            this._UnitOfWork = unitOfWork;
+            this.manageProductImagesUC = manageProductImagesUC;
         }
 
-        public async Task<ServiceResult<Product>> CreateProduct(Product product)
+        public async Task<ServiceResult<Product>> CreateProduct(Product product, List<int> productPropertyIDs, IFormFile file)
         {
+            // 1. Kiểm tra đầu vào ban đầu (không thay đổi)
+            if (file == null || file.Length == 0)
+            {
+                return ServiceResult<Product>.Failure("Product image is required and cannot be empty.", ServiceErrorType.ValidationError);
+            }
+            if (product == null)
+            {
+                return ServiceResult<Product>.Failure("No product provided to add.", ServiceErrorType.ValidationError);
+            }
+            if (productPropertyIDs == null || !productPropertyIDs.Any())
+            {
+                return ServiceResult<Product>.Failure("No product property IDs provided to add.", ServiceErrorType.ValidationError);
+            }
+
             try
             {
-                if (product == null)
-                {
-                    return ServiceResult<Product>
-                        .Failure("No product provided to add.", ServiceErrorType.ValidationError);
-                }
-
                 if (this._UnitOfWork.ProductRepository() is Repository<Product> productRepo)
                 {
-                    IQueryable<Product> query = productRepo.GetByNameQueryable(product.Name);
-                    Product? existingProduct = await query.FirstOrDefaultAsync();
+                    // 2. Kiểm tra tên sản phẩm đã tồn tại (không thay đổi)
+                    IQueryable<Product> productQuery = productRepo.GetByNameQueryable(product.Name);
+                    Product? existingProduct = await productQuery.FirstOrDefaultAsync();
 
                     if (existingProduct != null)
                     {
-                        // Business error: Product already exists
-                        return ServiceResult<Product>.Failure(
-                            $"Product with name '{product.Name}' already exists.",
-                            ServiceErrorType.AlreadyExists
-                        );
+                        return ServiceResult<Product>.Failure($"Product with name '{product.Name}' already exists.", ServiceErrorType.AlreadyExists);
                     }
 
-                    await productRepo.AddAsync(product);
-                    await _UnitOfWork.Commit();
-                    return ServiceResult<Product>.Success(product);
+
+                    using (var transaction = await _UnitOfWork.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            await productRepo.AddAsync(product);
+                            await _UnitOfWork.Commit(); // Commit lần 1 để có product.ID.
+
+                            int createdProductId = product.ID;                  
+                            var entitiesToAdd = productPropertyIDs.Distinct().Select(propId => new ProductPropertyDetail
+                            {
+                                ProductID = createdProductId,
+                                ProductPropertyID = propId
+                            }).ToList();
+
+                            await this._UnitOfWork.ProductPropertyDetailRepository().AddRangeAsync(entitiesToAdd);
+
+                            string extension = Path.GetExtension(file.FileName);
+                            string uniqueId = Guid.NewGuid().ToString();
+                            string uniqueFileName = $"{uniqueId}{extension}";
+                            string imageUrl = await manageProductImagesUC.UploadImageAsync(
+                                file.OpenReadStream(),
+                                uniqueFileName,
+                                file.ContentType,
+                                "product_images/",
+                                true
+                            );
+
+                            if (imageUrl == null)
+                            {
+                                await _UnitOfWork.RollbackAsync(transaction);
+                                return ServiceResult<Product>.Failure("Product created but image upload failed. Please try uploading image again.", ServiceErrorType.InternalError);
+                            }
+
+                            // Nếu upload ảnh thành công, cập nhật URL ảnh vào sản phẩm và lưu lại
+                            product.Image = imageUrl;
+                            await _UnitOfWork.Commit(); // Commit lần cuối để lưu URL ảnh
+                            await _UnitOfWork.CommitTransactionAsync(transaction);
+                            return ServiceResult<Product>.Success(product);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Error.WriteLine($"Error creating product during transaction: {ex}");
+                            await _UnitOfWork.RollbackAsync(transaction); // Rollback toàn bộ nếu có lỗi trong DB transaction
+                            throw; // Ném lại lỗi để catch bên ngoài xử lý
+                        }
+                    }
                 }
                 else
                 {
-                    // Configuration error: Repository type mismatch
-                    return ServiceResult<Product>.Failure(
-                        "Internal configuration error: Product repository type mismatch.",
-                        ServiceErrorType.RepositoryTypeMismatch
-                    );
+                    return ServiceResult<Product>.Failure("Internal configuration error: Product repository type mismatch.", ServiceErrorType.RepositoryTypeMismatch);
                 }
             }
             catch (Exception ex)
             {
-                // Catch unexpected system errors (database, network, logic, ...)
                 Console.Error.WriteLine($"Error creating product: {ex}");
-
+                // Ở đây, RollbackProductAdded không cần thiết nếu logic dùng transaction đã được xử lý đúng.
                 return ServiceResult<Product>.Failure(
                     "An unexpected internal error occurred during product creation.",
                     ServiceErrorType.InternalError
@@ -206,7 +253,7 @@ namespace ProductService.Application.Usecases
 
             try
             {
-              
+
                 await this._UnitOfWork.ProductPropertyRepository().AddAsync(productProperty);
                 await _UnitOfWork.Commit();
                 return ServiceResult<ProductProperty>.Success(productProperty);

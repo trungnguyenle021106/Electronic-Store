@@ -2,43 +2,144 @@
 using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
+using ProductService.Infrastructure.Data.Repositories;
+using System.Linq;
 
 namespace ProductService.Application.Usecases
 {
     public class UpdateProductUC
     {
-        private readonly IUnitOfWork unitOfWork;
-        public UpdateProductUC(IUnitOfWork unitOfWork)
+
+        private readonly IUnitOfWork _UnitOfWork;
+        private readonly ManageProductImagesUC manageProductImagesUC;
+        public UpdateProductUC(IUnitOfWork unitOfWork, ManageProductImagesUC manageProductImagesUC)
         {
-            this.unitOfWork = unitOfWork;
+            this._UnitOfWork = unitOfWork;
+            this.manageProductImagesUC = manageProductImagesUC;
         }
 
-        public async Task<ServiceResult<Product>> UpdateProduct(int productID, Product newProduct)
+
+        public async Task<ServiceResult<Product>> UpdateProduct(Product product, List<int> productPropertyIDs, IFormFile file)
         {
+            if (product == null)
+            {
+                return ServiceResult<Product>.Failure("No product data provided for update.", ServiceErrorType.ValidationError);
+            }
+            if (productPropertyIDs == null || !productPropertyIDs.Any())
+            {
+                return ServiceResult<Product>.Failure("No product property IDs provided for update.", ServiceErrorType.ValidationError);
+            }
+
             try
             {
-                IQueryable<Product> productQuery = this.unitOfWork.ProductRepository().GetByIdQueryable(productID);
-                Product? existingProduct = await productQuery.FirstOrDefaultAsync();
+                Product? existingProduct = await this._UnitOfWork.ProductRepository().GetById(product.ID);
+
                 if (existingProduct == null)
                 {
-                    return ServiceResult<Product>.Failure("Product not found.", ServiceErrorType.NotFound);
+                    return ServiceResult<Product>.Failure($"Product with ID '{product.ID}' not found. Update failed.", ServiceErrorType.NotFound);
                 }
 
-                existingProduct.Description = newProduct.Description;
-                existingProduct.Price = newProduct.Price;
-                existingProduct.Quantity = newProduct.Quantity;
-                existingProduct.Status = newProduct.Status;
-                existingProduct.Name = newProduct.Name;
-                existingProduct.ProductTypeID = newProduct.ProductTypeID;
-                existingProduct.ProductBrandID = newProduct.ProductBrandID;
+                using (var transaction = await _UnitOfWork.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        existingProduct.Name = product.Name;
+                        existingProduct.Description = product.Description;
+                        existingProduct.Price = product.Price;
+                        existingProduct.Quantity = product.Quantity;
+                        existingProduct.Status = product.Status;
+                        existingProduct.ProductBrandID = product.ProductBrandID;
+                        existingProduct.ProductTypeID = product.ProductTypeID;
 
-                await this.unitOfWork.Commit();
-                return ServiceResult<Product>.Success(existingProduct);
+                        IQueryable<ProductPropertyDetail> proPropQuery = this._UnitOfWork
+                            .ProductPropertyDetailRepository()
+                            .GetEntitiesByForeignKeyId(product.ID, "ProductID");
+
+                        List<ProductPropertyDetail> existingProperties = await proPropQuery
+                          .ToListAsync()
+                          .ConfigureAwait(false);
+
+                        List<ProductPropertyDetail> productPropertyDetailsToRemove = new List<ProductPropertyDetail>();
+                        foreach (ProductPropertyDetail property in existingProperties)
+                        {
+                            if (!productPropertyIDs.Contains(property.ProductPropertyID))
+                            {
+                                productPropertyDetailsToRemove.Add(property);
+                            }
+                        }
+                        await this._UnitOfWork.ProductPropertyDetailRepository().RemoveRange(productPropertyDetailsToRemove);
+                        await this._UnitOfWork.Commit();
+
+
+                        List<int> existingPropertyIds = await proPropQuery
+                        .Select(ppd => ppd.ProductPropertyID)
+                        .ToListAsync()
+                        .ConfigureAwait(false);
+                        HashSet<int> existingPropertyIdsSet = new HashSet<int>(existingPropertyIds);
+                        List<int> newProductPropertyIDsToAdd = new List<int>();
+
+                        foreach (int newId in productPropertyIDs.Distinct())
+                        {
+                            if (!existingPropertyIdsSet.Contains(newId))
+                            {
+                                newProductPropertyIDsToAdd.Add(newId);
+                            }
+                        }
+
+                        if (!newProductPropertyIDsToAdd.Any())
+                        {
+                            await _UnitOfWork.RollbackAsync(transaction);
+                            return ServiceResult<Product>.Failure("All provided product properties are already associated with this product or are duplicates. No new properties to update.", ServiceErrorType.ValidationError);
+                        }
+
+                        var entitiesToAdd = newProductPropertyIDsToAdd.Select(propId => new ProductPropertyDetail
+                        {
+                            ProductID = product.ID,
+                            ProductPropertyID = propId
+                        }).ToList();
+
+                        await this._UnitOfWork.ProductPropertyDetailRepository().AddRangeAsync(entitiesToAdd);
+
+                        if (file != null)
+                        {
+                            string imageName = Path.GetFileName(product.Image);
+
+                            string imageUrl = await manageProductImagesUC.UploadImageAsync(
+                                file.OpenReadStream(),
+                                imageName,
+                                file.ContentType,
+                                "product_images/",
+                                true
+                            );
+
+                            if (imageUrl == null)
+                            {
+                                await _UnitOfWork.RollbackAsync(transaction);
+                                return ServiceResult<Product>.Failure("Product updated but image upload failed. Please try uploading the image again.", ServiceErrorType.InternalError);
+                            }
+                        }
+
+
+                            // Update image URL and commit
+                            await _UnitOfWork.Commit();
+                        await _UnitOfWork.CommitTransactionAsync(transaction);
+                        return ServiceResult<Product>.Success(product);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"Error updating product during transaction: {ex}");
+                        await _UnitOfWork.RollbackAsync(transaction);
+                        throw;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Lỗi cập nhật Product: " + ex.ToString());
-                return ServiceResult<Product>.Failure("An internal error occurred during product update.", ServiceErrorType.InternalError);
+                Console.Error.WriteLine($"Error updating product: {ex}");
+                return ServiceResult<Product>.Failure(
+                    "An unexpected internal error occurred during product update.",
+                    ServiceErrorType.InternalError
+                );
             }
         }
 
@@ -46,8 +147,8 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                ProductProperty? productProperty = await this.unitOfWork.ProductPropertyRepository().GetById(productPropertyID);
- 
+                ProductProperty? productProperty = await this._UnitOfWork.ProductPropertyRepository().GetById(productPropertyID);
+
                 if (productProperty == null)
                 {
                     return ServiceResult<ProductProperty>.Failure("Product property not found.", ServiceErrorType.NotFound);
@@ -57,7 +158,7 @@ namespace ProductService.Application.Usecases
                 if (!productProperty.Name.Equals(""))
                     productProperty.Name = newproductProperty.Name;
 
-                await this.unitOfWork.Commit();
+                await this._UnitOfWork.Commit();
                 return ServiceResult<ProductProperty>.Success(productProperty);
             }
             catch (Exception ex)
@@ -71,7 +172,7 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                IQueryable<ProductType> query = this.unitOfWork.ProductTypeRepository().GetByIdQueryable(productTypeID);
+                IQueryable<ProductType> query = this._UnitOfWork.ProductTypeRepository().GetByIdQueryable(productTypeID);
                 ProductType? existingProductType = await query.FirstOrDefaultAsync();
                 if (existingProductType == null)
                 {
@@ -79,7 +180,7 @@ namespace ProductService.Application.Usecases
                 }
                 existingProductType.Name = newProductType.Name;
 
-                await this.unitOfWork.Commit();
+                await this._UnitOfWork.Commit();
                 return ServiceResult<ProductType>.Success(existingProductType);
             }
             catch (Exception ex)
@@ -93,7 +194,7 @@ namespace ProductService.Application.Usecases
         {
             try
             {
-                IQueryable<ProductBrand> query = this.unitOfWork.ProductBrandRepository().GetByIdQueryable(productBrandID);
+                IQueryable<ProductBrand> query = this._UnitOfWork.ProductBrandRepository().GetByIdQueryable(productBrandID);
                 ProductBrand? existingProductBrand = await query.FirstOrDefaultAsync();
                 if (existingProductBrand == null)
                 {
@@ -101,7 +202,7 @@ namespace ProductService.Application.Usecases
                 }
                 existingProductBrand.Name = newProductBrand.Name;
 
-                await this.unitOfWork.Commit();
+                await this._UnitOfWork.Commit();
                 return ServiceResult<ProductBrand>.Success(existingProductBrand);
             }
             catch (Exception ex)

@@ -7,10 +7,12 @@ namespace ProductService.Application.Usecases
 {
     public class DeleteProductUC
     {
-        private readonly IUnitOfWork unitOfWork;
-        public DeleteProductUC(IUnitOfWork unitOfWork)
+        private readonly IUnitOfWork _UnitOfWork;
+        private readonly ManageProductImagesUC manageProductImagesUC;
+        public DeleteProductUC(IUnitOfWork unitOfWork, ManageProductImagesUC manageProductImagesUC)
         {
-            this.unitOfWork = unitOfWork;
+            this._UnitOfWork = unitOfWork;
+            this.manageProductImagesUC = manageProductImagesUC;
         }
 
         public async Task<ServiceResult<ProductPropertyDetail>> DeleteProductPropertyDetail(ProductPropertyDetail productPropertyDetail)
@@ -25,7 +27,7 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                IQueryable<ProductPropertyDetail> query = this.unitOfWork.ProductPropertyDetailRepository().
+                IQueryable<ProductPropertyDetail> query = this._UnitOfWork.ProductPropertyDetailRepository().
                     GetByCompositeKey(productPropertyDetail.ProductID, "ProductID",
                     productPropertyDetail.ProductPropertyID, "ProductPropertyID");
 
@@ -38,8 +40,8 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                this.unitOfWork.ProductPropertyDetailRepository().Remove(productPropertyDetail);
-                await this.unitOfWork.Commit();
+                this._UnitOfWork.ProductPropertyDetailRepository().Remove(productPropertyDetail);
+                await this._UnitOfWork.Commit();
 
                 return ServiceResult<ProductPropertyDetail>.Success(productPropertyDetail);
             }
@@ -53,21 +55,18 @@ namespace ProductService.Application.Usecases
             }
         }
 
-        public async Task<ServiceResult<Product>> DeleteProduct(Product product)
-        {
+        public async Task<ServiceResult<Product>> DeleteProduct(int id)
+
+        {  if (id <= 0)
+            {
+                return ServiceResult<Product>.Failure(
+                    "ProductyID not valid.",
+                    ServiceErrorType.ValidationError
+                );
+            }
             try
             {
-                if (product == null)
-                {
-                    return ServiceResult<Product>.Failure(
-                        "Product cannot be null.",
-                        ServiceErrorType.ValidationError
-                    );
-                }
-
-                IQueryable<Product> query = this.unitOfWork.ProductRepository().GetByIdQueryable(product.ID);
-
-                Product? existingProduct = await query.FirstOrDefaultAsync();
+                Product? existingProduct = await this._UnitOfWork.ProductRepository().GetById(id);
                 if (existingProduct == null)
                 {
                     return ServiceResult<Product>.Failure(
@@ -75,11 +74,28 @@ namespace ProductService.Application.Usecases
                         ServiceErrorType.NotFound
                     );
                 }
+                using (var transaction = await _UnitOfWork.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        this._UnitOfWork.ProductRepository().Remove(existingProduct);
+                        await this._UnitOfWork.Commit();
 
-                this.unitOfWork.ProductRepository().Remove(existingProduct);
-                await this.unitOfWork.Commit();
+                        Uri uri = new Uri(existingProduct.Image);
+                        string pathAndQuery = uri.PathAndQuery;
+                        string s3Key = pathAndQuery.TrimStart('/');
+                        await this.manageProductImagesUC.DeleteImageAsync(s3Key);
 
-                return ServiceResult<Product>.Success(existingProduct);
+                        await _UnitOfWork.CommitTransactionAsync(transaction);
+                        return ServiceResult<Product>.Success(existingProduct);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"Error delete product during transaction: {ex}");
+                        await _UnitOfWork.RollbackAsync(transaction); // Rollback toàn bộ nếu có lỗi trong DB transaction
+                        throw; // Ném lại lỗi để catch bên ngoài xử lý
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -102,7 +118,7 @@ namespace ProductService.Application.Usecases
             }
             try
             {
-                IQueryable<ProductProperty> query = this.unitOfWork.ProductPropertyRepository().GetByIdQueryable(id);
+                IQueryable<ProductProperty> query = this._UnitOfWork.ProductPropertyRepository().GetByIdQueryable(id);
 
                 ProductProperty? existingProductProperty = await query.FirstOrDefaultAsync();
                 if (existingProductProperty == null)
@@ -113,8 +129,8 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                this.unitOfWork.ProductPropertyRepository().Remove(existingProductProperty);
-                await this.unitOfWork.Commit();
+                this._UnitOfWork.ProductPropertyRepository().Remove(existingProductProperty);
+                await this._UnitOfWork.Commit();
 
                 return ServiceResult<ProductProperty>.Success(existingProductProperty);
             }
@@ -140,7 +156,7 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                List<ProductPropertyDetail>? deletedDetails = await this.unitOfWork
+                List<ProductPropertyDetail>? deletedDetails = await this._UnitOfWork
                                                                       .ProductPropertyDetailRepository()
                                                                       .RemoveRange(productPropertyDetails);
 
@@ -152,7 +168,7 @@ namespace ProductService.Application.Usecases
                    );
                 }
 
-                await this.unitOfWork.Commit();
+                await this._UnitOfWork.Commit();
 
                 return ServiceResult<ProductPropertyDetail>.Success(deletedDetails);
             }
@@ -177,7 +193,7 @@ namespace ProductService.Application.Usecases
             }
             try
             {
-                ProductType? existingProductType = await this.unitOfWork.ProductTypeRepository().GetById(ID);
+                ProductType? existingProductType = await this._UnitOfWork.ProductTypeRepository().GetById(ID);
                 if (existingProductType == null)
                 {
                     return ServiceResult<ProductType>.Failure(
@@ -186,8 +202,8 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                this.unitOfWork.ProductTypeRepository().Remove(existingProductType);
-                await this.unitOfWork.Commit();
+                this._UnitOfWork.ProductTypeRepository().Remove(existingProductType);
+                await this._UnitOfWork.Commit();
 
                 return ServiceResult<ProductType>.Success(existingProductType);
             }
@@ -212,7 +228,7 @@ namespace ProductService.Application.Usecases
             }
             try
             {
-                ProductBrand? existingProductBrand = await this.unitOfWork.ProductBrandRepository().GetById(ID);
+                ProductBrand? existingProductBrand = await this._UnitOfWork.ProductBrandRepository().GetById(ID);
 
                 if (existingProductBrand == null)
                 {
@@ -222,8 +238,8 @@ namespace ProductService.Application.Usecases
                     );
                 }
 
-                this.unitOfWork.ProductBrandRepository().Remove(existingProductBrand);
-                await this.unitOfWork.Commit();
+                this._UnitOfWork.ProductBrandRepository().Remove(existingProductBrand);
+                await this._UnitOfWork.Commit();
 
                 return ServiceResult<ProductBrand>.Success(existingProductBrand);
             }

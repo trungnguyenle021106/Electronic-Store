@@ -1,8 +1,10 @@
-﻿using CommonDto.ResultDTO;
+﻿using Amazon.Util.Internal;
+using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ProductService.Application.Usecases;
 using ProductService.Domain.DTO;
+using ProductService.Domain.DTO.Request;
 using ProductService.Domain.Entities;
 using ProductService.Infrastructure.Socket;
 
@@ -76,41 +78,23 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void CreateProduct(this WebApplication app)
         {
-            app.MapPost("/products", async (CreateProductUC createProductUC, Product product, HandleResultApi handleResultApi) =>
+            app.MapPost("/products", async (CreateProductUC createProductUC, [FromForm] CreateUpdateProductRequest createProductReq,
+                HandleResultApi handleResultApi, ManageProductImagesUC manageProductImagesUC) =>
             {
-                ServiceResult<Product> result = await createProductUC.CreateProduct(product);
+                Product productEntity = new Product
+                {
+                    Name = createProductReq.Name,
+                    Quantity = createProductReq.Quantity,
+                    ProductBrandID = createProductReq.ProductBrandID,
+                    ProductTypeID = createProductReq.ProductTypeID,
+                    Description = createProductReq.Description,
+                    Price = createProductReq.Price,
+                    Status = createProductReq.Status,
+                };
+                ServiceResult<Product> result = await createProductUC.
+                CreateProduct(productEntity, createProductReq.ProductPropertyIDs, createProductReq.File);
                 return handleResultApi.MapServiceResultToHttp(result);
-
-                //if (result.IsSuccess)
-                //{
-                //    // 201 Created: Sản phẩm được tạo thành công
-                //    return Results.Created($"/products/{result.Item.ID}", result.Item);
-                //}
-                //else
-                //{
-                //    // Xử lý các loại lỗi khác nhau dựa trên ServiceErrorType
-                //    return result.ServiceErrorType switch
-                //    {
-                //        ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Server Configuration Error",
-                //            detail: result.ErrorMessage
-                //        ),
-                //        ServiceErrorType.InternalError => Results.Problem(
-                //             statusCode: StatusCodes.Status500InternalServerError,
-                //             title: "Internal Server Error",
-                //             detail: result.ErrorMessage
-                //         ),
-                //        _ => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        )
-                //    };
-                //}
-            }).RequireAuthorization("OnlyAdmin");
+            }).DisableAntiforgery().RequireAuthorization("OnlyAdmin");
         }
 
         public static void AddPropertiesToProduct(this WebApplication app)
@@ -153,6 +137,16 @@ namespace ProductService.Interface_Adapters.APIs
             GetPagedProducts(app);
             GetPagedProductProperties(app);
             GetProductPropertyNames(app);
+            GetAllPropertiesOfProduct(app);
+        }
+
+        public static void GetAllPropertiesOfProduct(this WebApplication app)
+        {
+            app.MapGet("/products/{productID}/product-properties", async (GetProductUC getProductUC, HandleResultApi handleResultApi, int productID) =>
+            {
+                ServiceResult<ProductProperty> result = await getProductUC.GetAllPropertiesOfProduct(productID);
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void GetProductByID(this WebApplication app)
@@ -161,23 +155,6 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<Product> result = await getProductUC.GetProductByID(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.Item);
-                //}
-                //else
-                //{
-                //    return result.ServiceErrorType switch
-                //    {
-                //        ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        _ => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        )
-                //    };
-                //}
             });
         }
 
@@ -193,10 +170,14 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void GetPagedProducts(this WebApplication app)
         {
-            app.MapGet("/products", async (GetProductUC getProductUC, HandleResultApi handleResultApi
-                , [FromQuery] int page, [FromQuery] int pageSize) =>
+            app.MapGet("/products", async (GetProductUC getProductUC, HandleResultApi handleResultApi,
+                [FromQuery] int page,
+                [FromQuery] int pageSize,
+                [FromQuery] string? searchText,
+                [FromQuery] string? filterBrand, [FromQuery] string? filterType, [FromQuery] string? filterStatus) =>
             {
-                ServiceResult<PagedResult<ProductDTO>> result = await getProductUC.GetPagedProducts(page, pageSize);
+                ServiceResult<PagedResult<ProductDTO>> result = await getProductUC.
+                GetPagedProducts(page, pageSize, searchText, filterBrand, filterType, filterStatus);
                 return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
@@ -268,27 +249,24 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void UpdateProduct(this WebApplication app)
         {
-            app.MapPut("/products/{productID}", async (UpdateProductUC updateProductUC, HandleResultApi handleResultApi, int productID,
-                [FromBody] Product newProduct) =>
+            app.MapPatch("/products/{productID}", async (UpdateProductUC updateProductUC, [FromForm] CreateUpdateProductRequest updateProductReq,
+                HandleResultApi handleResultApi, ManageProductImagesUC manageProductImagesUC, int productID) =>
             {
-                ServiceResult<Product> result = await updateProductUC.UpdateProduct(productID, newProduct);
+                Product productEntity = new Product
+                {
+                    ID = productID,
+                    Name = updateProductReq.Name,
+                    Quantity = updateProductReq.Quantity,
+                    ProductBrandID = updateProductReq.ProductBrandID,
+                    ProductTypeID = updateProductReq.ProductTypeID,
+                    Description = updateProductReq.Description,
+                    Price = updateProductReq.Price,
+                    Status = updateProductReq.Status,
+                    Image = updateProductReq.Image
+                };
+                ServiceResult<Product> result = await updateProductUC.UpdateProduct(productEntity, updateProductReq.ProductPropertyIDs, updateProductReq.File);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.Item);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
-            }).RequireAuthorization("OnlyAdmin");
+            }).DisableAntiforgery().RequireAuthorization("OnlyAdmin");
         }
 
         public static void UpdateProductType(this WebApplication app)
@@ -364,10 +342,10 @@ namespace ProductService.Interface_Adapters.APIs
 
         public static void DeleteProduct(this WebApplication app)
         {
-            app.MapDelete("/products", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
-            [FromBody] Product product) =>
+            app.MapDelete("/products/{productID}", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
+           int productID) =>
             {
-                ServiceResult<Product> result = await deleteProductUC.DeleteProduct(product);
+                ServiceResult<Product> result = await deleteProductUC.DeleteProduct(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }

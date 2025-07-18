@@ -1,7 +1,13 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductDTO } from '../../../Model/Product/DTO/Response/ProductDTO';
 import { ProductService } from '../../../Service/Product/product.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from '../../dialogs/error-dialog/error-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -13,194 +19,155 @@ import { ProductService } from '../../../Service/Product/product.service';
   styleUrl: './product.component.css'
 })
 export class ProductComponent {
-  @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLDivElement>;
-  loading: boolean = false;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  startID: number = 0; // bằng với đợt lấy id phần tử đầu tiên trong mảng ProductDTO
-  lastID: number = 0;// bằng với đợt lấy id phần tử cuối trong mảng ProductDTO
-  HasPreviousPage: boolean = false;
-  HasNextPage: boolean = true;
+  private destroyComponent$ = new Subject<void>();
+  private searchInputSubject = new Subject<string>();
+  pageSize = 5;
+  currentPage = 0;
 
-  page: number = 1;
-  pageSize: number = 10;
 
-  isCreateProductDisplay: boolean = false;
 
+  curProduct: ProductDTO | undefined;
   productDTOs: ProductDTO[] = [];
+  displayedColumns: string[] = ['ID', 'Name', 'Image', 'ProductBrandName', 'ProductTypeName', 'Quantity', 'Price', 'Status', 'Actions'];
+  dataSource = new MatTableDataSource<ProductDTO>();
+  searchValue: string = '';
+  filterValue: string = '';
+  readonly dialog = inject(MatDialog);
 
-  private intersectionObserver!: IntersectionObserver;
-  visibleProductIDs: Set<number> = new Set<number>();
 
   constructor(private router: Router, private productService: ProductService) { }
 
   ngOnInit(): void {
-    this.productDTOs = Array.from({ length: 10 }, (_, i) => ({
-      ID: i + 1,
-      Name: `Laptop gaming MSI Katana 15 B13VFK ${i + 600}VN`,
-      Image: `https://product.hstatic.net/200000722513/product/676vn_21da8c4630014f808b321b3d32118291_69f68ad8d3be44b385bb3da80ec4a9ee_1024x1024.png`,
-      ProductBrandName: (i % 2 === 0) ? 'ASUS' : 'MSI',
-      ProductTypeName: 'LAPTOP',
-      Quantity: 10000 + i * 100,
-      Price: 25000000 + i * 500000,
-      Status: (i % 3 === 0) ? 'Còn hàng' : (i % 3 === 1 ? 'Hết hàng' : 'Đang về')
-    }));
-
-    this.setStartLastID();
+    this.loadUProducts();
+    this.searchInputSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroyComponent$)
+      )
+      .subscribe(() => {
+        this.onSearchChange();
+      });
   }
 
   ngAfterViewInit(): void {
-    if (this.scrollContainerRef && this.scrollContainerRef.nativeElement) {
-      const scrollContainer = this.scrollContainerRef.nativeElement;
+    this.paginator.page
+      .pipe(takeUntil(this.destroyComponent$))
+      .subscribe((event: PageEvent) => {
+        this.onPageChange(event);
+      });
+  }
 
-      // --- Khởi tạo Intersection Observer ---
-      const options: IntersectionObserverInit = {
-        root: scrollContainer, // Phần tử cuộn là root
-        rootMargin: '0px',
-        threshold: 1// Kích hoạt callback khi 10% của phần tử hiển thị
-      };
-
-      this.intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-        entries.forEach(entry => {
-          const productId = (entry.target as HTMLElement).dataset['productId']; // Lấy ID từ data-attribute
-          if (productId) {
-            const id = parseInt(productId, 10);
-            if (entry.isIntersecting) {
-              this.visibleProductIDs.add(id);
-              // console.log(`Hàng ID: ${id} đang hiển thị.`);
-            } else {
-              this.visibleProductIDs.delete(id);
-              // console.log(`Hàng ID: ${id} đã thoát khỏi tầm nhìn.`);
+  private loadUProducts(): void {
+    this.productService.getPagedProducts(this.currentPage + 1, this.pageSize, this.searchValue, this.filterValue)
+      .pipe(takeUntil(this.destroyComponent$)) // Hủy đăng ký khi component bị hủy
+      .subscribe(
+        {
+          next: (response) => {
+            this.dataSource.data = response.Items; // Cập nhật dữ liệu cho MatTable
+            if (this.paginator) {
+              this.paginator.length = response.TotalCount; // Đảm bảo MatPaginator nhận giá trị totalProducts
+              this.paginator.pageIndex = this.currentPage; // Đảm bảo MatPaginator hiển thị đúng trang\
             }
+          },
+          error: (error) => {
+            console.error('Error loading product properties:', error);
           }
-        });
-        this.handleElementOutBound();
-        // Console log tất cả các ID sản phẩm đang hiển thị sau mỗi lần cập nhật
-        console.log('Sản phẩm đang hiển thị:', Array.from(this.visibleProductIDs).sort((a, b) => a - b));
-      }, options);
-
-      // --- Quan sát từng hàng ---
-      // Cần chờ Angular render xong các hàng
-      setTimeout(() => {
-        const rows = scrollContainer.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-          this.intersectionObserver.observe(row);
-        });
-      }, 50); // setTimeout(..., 0) để đảm bảo các phần tử DOM đã được thêm vào bảng
-
-      // scrollContainer.addEventListener('scroll', this.onScroll);
-    }
-  }
-
-  // Phương thức xử lý sự kiện cuộn (để tải thêm dữ liệu)
-  // private onScroll = () => { // Sử dụng arrow function để giữ ngữ cảnh 'this'
-  //   if (this.scrollContainerRef && this.scrollContainerRef.nativeElement) {
-  //     const scrollContainer = this.scrollContainerRef.nativeElement;
-  //     const scrollThreshold = 1;
-  //     if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - scrollThreshold) {
-  //       if (!this.loading) {
-  //         console.log('Đã cuộn tới cuối của container chứa bảng! Đang tải thêm...');
-  //         // this.loadMoreData();
-  //       }
-  //     }
-  //   }
-  // };
-  private handleElementOutBound(): void {
-    let isStart: boolean = true;
-    if (this.visibleProductIDs.has(this.startID)) {
-      isStart = true;
-      console.log("đầu mảng");
-    } else if (this.visibleProductIDs.has(this.lastID)) {
-      isStart = false;
-      console.log("cuối mảng");
-    }
-
-    const temp = this.productDTOs.length + this.pageSize;
-    const remainder = temp - this.productDTOs.length;
-    if (remainder != 0 && isStart && this.HasPreviousPage) {
-      const startNumber = this.productDTOs.length - this.pageSize - 1;
-      const endNumber = this.productDTOs.length - 1
-      this.productDTOs.splice(startNumber, endNumber);
-      this.loadMoreData(false);
-    }
-    else if (remainder != 0 && !isStart && this.HasNextPage) {
-      const startNumber = 0;
-      const endNumber = this.pageSize - 1;
-      this.productDTOs.splice(startNumber, endNumber);
-      this.loadMoreData(true);
-      this.HasNextPage = false
-    }
-  }
-
-  loadMoreData(isLoadNext: boolean): void {
-    this.loading = true;
-    setTimeout(() => {
-      const startIndex = this.productDTOs.length;
-      const newItemsCount = this.pageSize; // Thêm 15 mục mỗi lần
-      const newProducts: ProductDTO[] = [];
-      for (let i = 0; i < newItemsCount; i++) {
-        const newId = startIndex + i + 1;
-        let newProduct = {
-          ID: newId,
-          Name: `Laptop gaming MSI Katana 15 B13VFK ${newId + 600}VN`,
-          Image: `https://product.hstatic.net/200000722513/product/676vn_21da8c4630014f808b321b3d32118291_69f68ad8d3be44b385bb3da80ec4a9ee_1024x1024.png`,
-          ProductBrandName: (newId % 2 === 0) ? 'ASUS' : 'MSI',
-          ProductTypeName: 'LAPTOP',
-          Quantity: 10000 + newId * 100,
-          Price: 25000000 + newId * 500000,
-          Status: (newId % 3 === 0) ? 'Còn hàng' : (newId % 3 === 1 ? 'Hết hàng' : 'Đang về')
-        };
-        if (isLoadNext) {
-          newProduct.Name += "next";
-        } else {
-          newProduct.Name += "prev";
         }
-        newProducts.push(newProduct);
-        this.productDTOs.push(newProduct);
-      }
-      this.setStartLastID();
-      this.loading = false;
+      );
+  }
 
-      console.log('Đã thêm dữ liệu mới. Tổng số sản phẩm:', this.productDTOs.length);
-
-      // Quan trọng: Quan sát các hàng mới được thêm vào DOM
-      // Cần đợi Angular cập nhật DOM sau khi this.productDTOs thay đổi
-      setTimeout(() => {
-        if (this.scrollContainerRef && this.scrollContainerRef.nativeElement && this.intersectionObserver) {
-          const newRows = this.scrollContainerRef.nativeElement.querySelectorAll(`tbody tr[data-product-id$="${startIndex + newItemsCount}"] ~ tr`);
-          // Cách trên lấy các hàng sau hàng cuối cùng của đợt trước.
-          // Một cách đơn giản hơn nếu bạn chỉ quan tâm đến các hàng mới:
-          // newProducts.forEach(p => {
-          //   const rowElement = this.scrollContainerRef.nativeElement.querySelector(`tbody tr[data-product-id="${p.ID}"]`);
-          //   if (rowElement) {
-          //     this.intersectionObserver.observe(rowElement);
-          //   }
-          // });
-          newRows.forEach(row => {
-            this.intersectionObserver.observe(row);
-          });
+  DeleteProduct() {
+    if (this.curProduct) {
+      this.productService.deleteProduct(this.curProduct.ID).subscribe({
+        next: (response) => {
+          this.loadUProducts();
+        },
+        error: (error) => {
+          this.openErrorDialog("300ms", "150ms", "Lỗi xóa sản phẩm", error.message)
+          console.log(error);
         }
-      }, 0);
-    }, 500);
+      })
+    }
   }
 
-
-  private setStartLastID(): void {
-    this.startID = this.productDTOs[0].ID;
-    this.lastID = this.productDTOs[this.productDTOs.length - 1].ID;
-  }
 
   OnClickCreateProduct(): void {
-    // this.router.navigate(['create-product']);
-        this.router.navigate(['product-form']);
+    this.router.navigate(['product-form'], {
+      queryParams: {
+        typeProductForm: "Create",
+      }
+    });
+  }
+
+  OnClickUpdateProduct(product: ProductDTO): void {
+    this.router.navigate(['product-form'], {
+      queryParams: {
+        typeProductForm: "Update",
+        productID: product.ID
+      }
+    });
+  }
+
+  OnClickDeleteProduct(product: ProductDTO): void {
+    this.curProduct = product;
+    this.openConfirmDialog("300ms", "150ms", "xóa sản phẩm");
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadUProducts();
+  }
+
+  onSearchInput(event: Event): void {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.searchValue = inputValue; // Cập nhật biến searchKeyword ngay lập tức
+    this.searchInputSubject.next(inputValue);
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 0;
+    this.loadUProducts();
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 0;
+    this.loadUProducts();
+  }
+
+  openConfirmDialog(enterAnimationDuration: string, exitAnimationDuration: string, actionName: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '300px', // Tăng width để dễ nhìn hơn
+      enterAnimationDuration,
+      exitAnimationDuration,
+      // ✨ TRUYỀN PHƯƠNG THỨC VÀO ĐÂY QUA THUỘC TÍNH 'data' ✨
+      data: {
+        actionName: actionName,
+        onConfirm: () => this.DeleteProduct()
+      }
+    });
+  }
+
+  openErrorDialog(enterAnimationDuration: string, exitAnimationDuration: string, errorTitle: string, errorMessage: string): void {
+    this.dialog.open(ErrorDialogComponent, {
+      width: '300px', // Kích thước phù hợp với dialog lỗi
+      enterAnimationDuration,
+      exitAnimationDuration,
+      // Truyền tiêu đề và thông báo lỗi vào dialog
+      data: {
+        title: errorTitle,
+        message: errorMessage
+      },
+      disableClose: true, // Thường là lỗi thì không cho click ra ngoài đóng
+      hasBackdrop: true, // Luôn có backdrop
+    });
   }
 
   ngOnDestroy(): void {
-    // Rất quan trọng: Hủy quan sát Intersection Observer và gỡ bỏ listener khi component bị hủy
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect(); // Ngừng quan sát tất cả các phần tử
-    }
-    // if (this.scrollContainerRef && this.scrollContainerRef.nativeElement && this.onScroll) {
-    //   this.scrollContainerRef.nativeElement.removeEventListener('scroll', this.onScroll);
-    // }
+    this.destroyComponent$.next();
+    this.destroyComponent$.complete();
   }
 }

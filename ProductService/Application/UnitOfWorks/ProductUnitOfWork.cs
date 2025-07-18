@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Storage;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.IRepositories;
 using ProductService.Domain.Interface.UnitOfWork;
@@ -32,11 +33,11 @@ namespace ProductService.Application.UnitOfWork
             await _Context.SaveChangesAsync();
         }
 
-        public void Rollback()
+        public async Task RollbackAsync(IDbContextTransaction transaction)
         {
-            if (_Context.Database.CurrentTransaction != null)
+            if (transaction != null)
             {
-                _Context.Database.CurrentTransaction.Rollback();
+                await transaction.RollbackAsync();
             }
         }
 
@@ -63,6 +64,19 @@ namespace ProductService.Application.UnitOfWork
         public IRepository<ProductBrand> ProductBrandRepository()
         {
            return this._ProductBrandRepository;
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _Context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync(IDbContextTransaction transaction) // <-- Triển khai
+        {
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
         }
     }
 }

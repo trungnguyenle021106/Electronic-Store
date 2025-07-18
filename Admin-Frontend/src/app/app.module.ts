@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { NavigationComponent } from './View/navigation/navigation.component';
-import { CreateProductComponent } from './View/create-product/create-product.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- Import ReactiveFormsModule
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -25,32 +24,36 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { PropertyComponent } from './View/products/property/property.component';
 import { ProductComponent } from './View/products/product/product.component';
 import { PropertyFormComponent } from './View/products/property-form/property-form.component';
-import { ProductPropertiesSelectorComponent } from './View/products/product-properties-selector/product-properties-selector.component';
 import { ProductTypeComponent } from './View/products/product-type/product-type.component';
 import { ProductBrandComponent } from './View/products/product-brand/product-brand.component';
 import { ProductBrandFormComponent } from './View/products/product-brand-form/product-brand-form.component';
 import { ProductTypeFormComponent } from './View/products/product-type-form/product-type-form.component';
-import { ProductFormComponent } from './View/products/product-form/product-form.component';
+
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
+import { ProductFormComponent } from './View/products/product-forms/product-form/product-form.component';
+import { SelectProductPropertiesComponent } from './View/products/product-forms/select-product-properties/select-product-properties.component';
+import { ConfirmDialogComponent } from './View/dialogs/confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from './View/dialogs/error-dialog/error-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
     ProductComponent,
     NavigationComponent,
-    CreateProductComponent,
     PropertyComponent,
     LoginComponent,
     ContentManagementComponent,
-    ProductPropertiesSelectorComponent,
     PropertyFormComponent,
     ProductTypeComponent,
     ProductBrandComponent,
     ProductBrandFormComponent,
     ProductTypeFormComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    SelectProductPropertiesComponent,
+    ConfirmDialogComponent,
+    ErrorDialogComponent
   ],
   imports: [
     BrowserModule,

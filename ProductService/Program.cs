@@ -1,6 +1,8 @@
-﻿using CommonDto.HandleErrorResult;
+﻿using Amazon.S3;
+using CommonDto.HandleErrorResult;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductService.Application.UnitOfWork;
@@ -20,6 +22,10 @@ var JwtAudiences = Environment.GetEnvironmentVariable("Jwt__Audience")?.Split(',
 var key = Encoding.UTF8.GetBytes(JwtKey);
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = null;
@@ -38,6 +44,13 @@ builder.Services.AddDbContext<ProductContext>(options =>
 
 builder.Services.AddScoped<IUnitOfWork, ProductUnitOfWork>();
 
+builder.Services.AddScoped<ManageProductImagesUC>(serviceProvider =>
+{
+    var s3Client = serviceProvider.GetRequiredService<IAmazonS3>();
+    var logger = serviceProvider.GetRequiredService<ILogger<ManageProductImagesUC>>();
+    // Truyền các giá trị string đã lấy từ cấu hình vào constructor
+    return new ManageProductImagesUC(s3Client, logger, "electric-store"); // Thêm s3Region nếu constructor có
+});
 builder.Services.AddScoped<CreateProductUC>();
 builder.Services.AddScoped<DeleteProductUC>();
 builder.Services.AddScoped<GetProductUC>();
@@ -190,5 +203,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapProductEndpoints();
+
 app.Run();
 

@@ -1,4 +1,5 @@
-﻿using ProductService.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.IRepositories;
 
 namespace ProductService.Domain.Interface.UnitOfWork
@@ -10,7 +11,11 @@ namespace ProductService.Domain.Interface.UnitOfWork
         IRepository<ProductBrand> ProductBrandRepository();
         IRepository<ProductProperty> ProductPropertyRepository();
         IRepository<ProductPropertyDetail> ProductPropertyDetailRepository();
+
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitTransactionAsync(IDbContextTransaction transaction);
+        Task RollbackAsync(IDbContextTransaction transaction);
         Task Commit();
-        void Rollback();
+
     }
 }
