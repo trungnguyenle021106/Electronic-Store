@@ -1,0 +1,116 @@
+<div class="container">
+    <div class="main-content">
+        <form [formGroup]="productForm" class="form-container">
+            <div class="form-title">{{describeAction}}</div>
+
+            <!-- Hình ảnh sản phẩm -->
+            <div class="form-group">
+                <label for="product-image">Hình ảnh sản phẩm</label>
+                <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+                <div *ngIf="!selectedFile && !selectedImage" class="custom-file-label error">{{ imageFileName }}</div>
+                <div *ngIf="selectedFile || selectedImage" class="custom-file-label">{{ imageFileName }}</div>
+                <div class="image-preview">
+                    <img *ngIf="selectedImage" [src]="selectedImage" alt="Ảnh sản phẩm" />
+                    <button *ngIf="selectedImage" type="button" class="remove-img-btn" (click)="clearImage()">Xóa
+                        ảnh</button>
+                </div>
+            </div>
+
+            <!-- Tên sản phẩm -->
+            <div class="form-group">
+                <label for="product-name">Tên sản phẩm</label>
+                <input type="text" id="product-name" formControlName="Name" placeholder="Nhập tên sản phẩm" />
+                <div *ngIf="productForm.get('Name')?.invalid && productForm.get('Name')?.touched" class="error">
+                    Tên sản phẩm không được bỏ trống.
+                </div>
+            </div>
+
+
+            <!-- Loại sản phẩm, thương hiệu, trạng thái -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="product-type">Loại sản phẩm</label>
+                    <select id="product-type" formControlName="ProductTypeID">
+                        <option [ngValue]="''" disabled selected>Chọn loại sản phẩm</option>
+                        <option *ngFor="let type of productTypes" [ngValue]="type.ID">{{ type.Name }}</option>
+                    </select>
+                    <div *ngIf="productForm.get('ProductTypeID')?.invalid && productForm.get('ProductTypeID')?.touched"
+                        class="error">
+                        Loại sản phẩm không được bỏ trống.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-brand">Thương hiệu</label>
+                    <select id="product-brand" formControlName="ProductBrandID">
+                        <option [ngValue]="''" disabled selected>Chọn thương hiệu</option>
+                        <option *ngFor="let brand of productBrands" [ngValue]="brand.ID">{{ brand.Name }}</option>
+                    </select>
+                    <div *ngIf="productForm.get('ProductBrandID')?.invalid && productForm.get('ProductBrandID')?.touched"
+                        class="error">
+                        Hãng sản phẩm không được bỏ trống.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-status">Trạng thái</label>
+                    <select id="product-status" formControlName="Status">
+                        <option [ngValue]="''" disabled selected>Chọn trạng thái</option>
+                        <option *ngFor="let status of productStatus" [ngValue]="status">{{ status }}</option>
+                    </select>
+                    <div *ngIf="productForm.get('Status')?.invalid && productForm.get('Status')?.touched" class="error">
+                        Trạng thái sản phẩm không được bỏ trống.
+                    </div>
+                </div>
+            </div>
+            <!-- Giá và số lượng -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="product-price">Giá</label>
+                    <input type="number" id="product-price" formControlName="Price" placeholder="Giá sản phẩm" />
+                    <div *ngIf="productForm.get('Price')?.invalid && productForm.get('Price')?.touched" class="error">
+                        Giá sản phẩm phải lớn hơn hoặc bằng 0.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-quantity">Số lượng</label>
+                    <input type="number" id="product-quantity" formControlName="Quantity" placeholder="Số lượng" />
+                    <div *ngIf="productForm.get('Quantity')?.invalid && productForm.get('Quantity')?.touched"
+                        class="error">
+                        Số lượng phải lớn hơn hoặc bằng 1.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mô tả sản phẩm -->
+            <div class="form-group">
+                <label for="product-desc">Mô tả sản phẩm</label>
+                <textarea class="describe-text" formControlName="Description"
+                    placeholder="Nhập mô tả sản phẩm"></textarea>
+                <div *ngIf="productForm.get('Description')?.invalid && productForm.get('Description')?.touched"
+                    class="error">
+                    Mô tả không được bỏ trống.
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit" (click)="onSubmit()"> {{actionName}}</button>
+            </div>
+        </form>
+    </div>
+    <div class="sidebar">
+
+        <div class="top-ad">
+            <app-select-product-properties [isSelectedPropertyForm]="true" [selectedItemReceiver]="senderSelectedItem"
+                (unSelectedItemSender)="OnItemUnSelected($event)" [curProductID]="curProductID">
+            </app-select-product-properties>
+        </div>
+
+        <div class="bottom-ad">
+            <app-select-product-properties [isSelectedPropertyForm]="false"
+                (selectedItemSender)="OnItemSelected($event)" [unSelectedItemReceiver]="senderUnSelectedItem"
+                [curProductID]="curProductID">
+            </app-select-product-properties>
+        </div>
+
+    </div>
+</div>

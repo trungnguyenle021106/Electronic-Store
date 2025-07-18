@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreateProductComponent } from './View/create-product/create-product.component';
 import { LoginComponent } from './View/login/login.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
@@ -9,7 +8,8 @@ import { ProductComponent } from './View/products/product/product.component';
 import { PropertyComponent } from './View/products/property/property.component';
 import { ProductTypeComponent } from './View/products/product-type/product-type.component';
 import { ProductBrandComponent } from './View/products/product-brand/product-brand.component';
-import { ProductFormComponent } from './View/products/product-form/product-form.component';
+import { ProductFormComponent } from './View/products/product-forms/product-form/product-form.component';
+
 
 const routes: Routes = [
   // Route cho trang đăng nhập - KHÔNG CÓ GUARD
@@ -46,11 +46,6 @@ const routes: Routes = [
   {
     path: 'property',
     component: PropertyComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'create-product',
-    component: CreateProductComponent,
     canActivate: [authGuard]
   },
   {

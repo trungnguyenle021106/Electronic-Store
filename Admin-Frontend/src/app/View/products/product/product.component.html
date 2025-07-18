@@ -4,11 +4,11 @@
             <h1>SẢN PHẨM</h1>
         </div>
         <div class="actions">
-            <input type="text" placeholder="Tìm kiếm...">
-            <select>
+            <input type="text" placeholder="Tìm kiếm..." [(ngModel)]="searchValue" (input)="onSearchInput($event)">
+            <!-- <select>
                 <option>Dropdown 1</option>
                 <option>Dropdown 2</option>
-            </select>
+            </select> -->
             <button (click)="OnClickCreateProduct()" style="background-color: #1abc9c; color: white; padding: 10px 20px; border: none; 
                 border-radius: 5px; cursor: pointer; font-size: 20px">
                 Thêm sản phẩm
@@ -16,40 +16,70 @@
         </div>
     </div>
 
-  <div #scrollContainer class="table-container">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th class="id">ID</th>
-                <th class="name">TÊN</th>
-                <th class="image">ẢNH</th>
-                <th class="brand">HÃNG</th>
-                <th class="type">LOẠI</th>
-                <th class="amount">SỐ LƯỢNG</th>
-                <th>GIÁ</th>
-                <th class="status">TRẠNG THÁI</th>
-                <th class="action">HÀNH ĐỘNG</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let productDTO of productDTOs; let i = index" [attr.data-product-id]="productDTO.ID">
-                <td>{{ productDTO.ID }}</td>
-                <td>{{ productDTO.Name }}</td>
-                <td class="image">
-                    <img [src]="productDTO.Image" alt="Sản phẩm" style="border-radius: 5px;">
-                </td>
-                <td>{{ productDTO.ProductBrandName }}</td>
-                <td>{{ productDTO.ProductTypeName }}</td>
-                <td>{{ productDTO.Quantity }}</td>
-                <td>{{ productDTO.Price | currency:'VND':'symbol':'1.0-0' }}</td>
-                <td>{{ productDTO.Status }}</td>
-                <td class="actions">
-                    <button class="edit">Sửa</button>
-                    <button class="delete">Xóa</button>
-                    <button class="detail">Chi tiết</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="table-container">
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource">
+
+                <ng-container matColumnDef="ID">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let element"> {{element.ID}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef> TÊN </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Image" style="width: 200px;">
+                    <th mat-header-cell *matHeaderCellDef> ẢNH </th>
+                    <td mat-cell *matCellDef="let element">
+                        <img [src]="element.Image" alt="Sản phẩm"
+                            style="border-radius: 5px; width: 50px; height: 50px; object-fit: cover;">
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ProductBrandName">
+                    <th mat-header-cell *matHeaderCellDef> HÃNG </th>
+                    <td mat-cell *matCellDef="let element"> {{element.ProductBrandName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ProductTypeName">
+                    <th mat-header-cell *matHeaderCellDef> LOẠI </th>
+                    <td mat-cell *matCellDef="let element"> {{element.ProductTypeName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Quantity">
+                    <th mat-header-cell *matHeaderCellDef> SỐ LƯỢNG </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Quantity}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Price">
+                    <th mat-header-cell *matHeaderCellDef> GIÁ </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Price | currency:'VND':'symbol':'1.0-0'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Status">
+                    <th mat-header-cell *matHeaderCellDef> TRẠNG THÁI </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Status}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Actions">
+                    <th mat-header-cell *matHeaderCellDef> HÀNH ĐỘNG </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary" (click)="OnClickUpdateProduct(element)"
+                            style="margin-right: 5px;">Xem chi tiết</button>
+                        <button mat-raised-button color="warn" (click)="OnClickDeleteProduct(element)"
+                            style="margin-right: 5px;">Xóa</button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" pageSize="pageSize" [pageIndex]="currentPage"
+                showFirstLastButtons aria-label="Chọn trang">
+            </mat-paginator>
+        </div>
+    </div>
 </div>
