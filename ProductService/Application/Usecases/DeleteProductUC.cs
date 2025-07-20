@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿
+using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
@@ -57,7 +58,8 @@ namespace ProductService.Application.Usecases
 
         public async Task<ServiceResult<Product>> DeleteProduct(int id)
 
-        {  if (id <= 0)
+        {
+            if (id <= 0)
             {
                 return ServiceResult<Product>.Failure(
                     "ProductyID not valid.",
@@ -155,10 +157,8 @@ namespace ProductService.Application.Usecases
                         ServiceErrorType.ValidationError
                     );
                 }
-
-                List<ProductPropertyDetail>? deletedDetails = await this._UnitOfWork
-                                                                      .ProductPropertyDetailRepository()
-                                                                      .RemoveRange(productPropertyDetails);
+                await this._UnitOfWork.ProductPropertyDetailRepository().RemoveRange(productPropertyDetails);
+                List<ProductPropertyDetail>? deletedDetails = productPropertyDetails;
 
                 if (deletedDetails == null || !deletedDetails.Any())
                 {

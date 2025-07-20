@@ -11,7 +11,6 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { LoginComponent } from './View/login/login.component';
 import { AuthInterceptor } from './Interceptors/interceptor';
 import { NgModule } from '@angular/core';
-import { ContentManagementComponent } from './View/content-management/content-management.component';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,6 +36,9 @@ import { ProductFormComponent } from './View/products/product-forms/product-form
 import { SelectProductPropertiesComponent } from './View/products/product-forms/select-product-properties/select-product-properties.component';
 import { ConfirmDialogComponent } from './View/dialogs/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from './View/dialogs/error-dialog/error-dialog.component';
+import { ContentManagementFormComponent } from './View/content-managements/content-management-forms/content-management-form/content-management-form.component';
+import { ContentManagementComponent } from './View/content-managements/content-management/content-management.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -53,7 +55,8 @@ import { ErrorDialogComponent } from './View/dialogs/error-dialog/error-dialog.c
     ProductFormComponent,
     SelectProductPropertiesComponent,
     ConfirmDialogComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    ContentManagementFormComponent
   ],
   imports: [
     BrowserModule,

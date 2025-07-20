@@ -57,5 +57,38 @@ namespace APIGateway.Infrastructure.Service
                 return ServiceResult<Filter>.Failure(errorMessage, ServiceErrorType);
             }
         }
+
+        public async Task<ServiceResult<FilterDetail>> GetAllFilterDetailByFilterID(int filterID)
+        {
+            using var response = await _httpClient.GetAsync($"/filters/{filterID}/details");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var results = await response.Content.ReadFromJsonAsync<List<FilterDetail>>();
+                    if (results == null)
+                    {
+                        _logger.LogWarning("Received successful response from Product Service, but content was empty or null.");
+                        return ServiceResult<FilterDetail>.Success(new List<FilterDetail>());
+                    }
+                    return ServiceResult<FilterDetail>.Success(results);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to deserialize Product Service response.");
+                    return ServiceResult<FilterDetail>.Failure("Failed to process service response.", ServiceErrorType.InternalError);
+                }
+            }
+            else
+            {
+                string errorContent = await response.Content.ReadAsStringAsync();
+                string errorMessage = $"Error calling ProductPropertyService: HTTP {response.StatusCode} - {errorContent}";
+                _logger.LogError(errorMessage);
+
+                ServiceErrorType ServiceErrorType = this.handleServiceError.MapStatusCodeToServiceErrorType(response.StatusCode, errorContent);
+                return ServiceResult<FilterDetail>.Failure(errorMessage, ServiceErrorType);
+            }
+        }
     }
 }

@@ -32,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiDto\CommonDto.csproj" />
     <ProjectReference Include="..\AuthorizationPolicy\AuthorizationPolicy.csproj" />
+    <ProjectReference Include="..\CommonDto\CommonDto.csproj" />
   </ItemGroup>
 
 </Project>

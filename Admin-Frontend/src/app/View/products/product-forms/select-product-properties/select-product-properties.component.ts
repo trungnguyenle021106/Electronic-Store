@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { ProductProperty } from '../../../../Model/Product/ProductProperty';
 import { ProductService } from '../../../../Service/Product/product.service';
 import { Product } from '../../../../Model/Product/Product';
+import { ContentManagementService } from '../../../../Service/ContentManagement/content-management.service';
 
 
 
@@ -23,8 +24,9 @@ export class SelectProductPropertiesComponent {
   @Input() unSelectedItemReceiver: ProductProperty | undefined;
   @Output() unSelectedItemSender = new EventEmitter<ProductProperty>();
 
-  @Input() curProductID: number | undefined;
+  @Input() curItemID: number | undefined;
   @Input() isSelectedPropertyForm: boolean = false;
+  @Input() typeService: string = "";
   // --- Dữ liệu và logic cho thanh tìm kiếm và lọc HTML thuần ---
 
   uniquePropertyNames: string[] = []
@@ -48,18 +50,21 @@ export class SelectProductPropertiesComponent {
   private destroyComponent$ = new Subject<void>();
   private searchInputSubject = new Subject<string>();
 
-  constructor(private productPropertyService: PropertyService, private productService: ProductService) {
+  constructor(private productPropertyService: PropertyService, private productService: ProductService, private contentManagementService : ContentManagementService) {
 
   }
 
   ngOnInit() {
+    console.log(this.isSelectedPropertyForm +", " + this.typeService)
     if (!this.isSelectedPropertyForm) {
       this.loadUnselectProductProperties();
       this.loadUniquePropertyNames();
     }
-    else if (this.isSelectedPropertyForm && this.curProductID) {
-      this.loadselectProductProperties();
-    }
+    // else if (this.isSelectedPropertyForm && this.curItemID && this.typeService == "Product") {
+    //   this.loadSelectProductPropertiesForProduct();
+    // } else if (this.isSelectedPropertyForm && this.curItemID && this.typeService == "Filter") {
+    //   this.loadSelectProductPropertiesForFilter();
+    // }
 
     this.searchInputSubject
       .pipe(
@@ -93,15 +98,19 @@ export class SelectProductPropertiesComponent {
       this.HandleuUnSelectedItemReceiver(changes);
     }
 
-    if (changes['curProductID'] && changes['curProductID'].currentValue) {
-      this.HandleCurProductID(changes);
+    if (changes['curItemID'] && changes['curItemID'].currentValue) {
+      this.HandleCurItemID(changes);
     }
 
   }
 
-  private HandleCurProductID(changes: SimpleChanges) {
-    this.curProductID = changes['curProductID'].currentValue;
-    this.loadselectProductProperties();
+  private HandleCurItemID(changes: SimpleChanges) {
+    this.curItemID = changes['curItemID'].currentValue;
+    if ( this.curItemID && this.typeService == "Product") {
+      this.loadSelectProductPropertiesForProduct();
+    } else if (this.curItemID && this.typeService == "Filter") {
+     this.loadSelectProductPropertiesForFilter();
+    }
   }
 
   private HandleSelectedItemReceiver(changes: SimpleChanges) {
@@ -181,9 +190,9 @@ export class SelectProductPropertiesComponent {
       );
   }
 
-  private loadselectProductProperties(): void {
-    if (this.curProductID) {
-      this.productService.getAllPropertiesOfProduct(this.curProductID)
+  private loadSelectProductPropertiesForFilter(): void {
+    if (this.curItemID) {
+      this.contentManagementService.getAllPropertiesOfFilter(this.curItemID)
         .pipe(takeUntil(this.destroyComponent$)) // Hủy đăng ký khi component bị hủy
         .subscribe(
           {
@@ -192,6 +201,30 @@ export class SelectProductPropertiesComponent {
                 this.HandleLoadUpdateSelectForm(response);
               } else {
                 this.HandleLoadUpdateUnselectForm(response);;
+              }
+            },
+            error: (error) => {
+              console.error('Error loading product properties:', error);
+            }
+          }
+        );
+    }
+  }
+
+
+  private loadSelectProductPropertiesForProduct(): void {
+    if (this.curItemID) {
+      this.productService.getAllPropertiesOfProduct(this.curItemID)
+        .pipe(takeUntil(this.destroyComponent$)) // Hủy đăng ký khi component bị hủy
+        .subscribe(
+          {
+            next: (response) => {
+              if (this.isSelectedPropertyForm) {
+                console.log("das")
+                this.HandleLoadUpdateSelectForm(response);
+              } else {
+                this.HandleLoadUpdateUnselectForm(response);
+                 console.log("dsadasas")
               }
             },
             error: (error) => {

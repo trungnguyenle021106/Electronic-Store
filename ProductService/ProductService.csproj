@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiDto\CommonDto.csproj" />
+    <ProjectReference Include="..\CommonDto\CommonDto.csproj" />
   </ItemGroup>
 
 </Project>

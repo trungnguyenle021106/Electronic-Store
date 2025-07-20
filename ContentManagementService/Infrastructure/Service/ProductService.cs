@@ -1,9 +1,8 @@
-﻿using APIGateway.Infrastructure.DTO.Product;
-using CommonDto.HandleErrorResult;
+﻿using CommonDto.HandleErrorResult;
 using CommonDto.ResultDTO;
+using ContentManagementService.Infrastructure.DTO;
 
-
-namespace APIGateway.Infrastructure.Service
+namespace ContentManagementService.Infrastructure.Service
 {
     public class ProductService
     {
@@ -47,7 +46,7 @@ namespace APIGateway.Infrastructure.Service
                 string errorMessage = $"Error calling ProductPropertyService: HTTP {response.StatusCode} - {errorContent}";
                 _logger.LogError(errorMessage);
 
-                ServiceErrorType ServiceErrorType =  this.handleServiceError.MapStatusCodeToServiceErrorType(response.StatusCode, errorContent);        
+                ServiceErrorType ServiceErrorType = this.handleServiceError.MapStatusCodeToServiceErrorType(response.StatusCode, errorContent);
                 return ServiceResult<ProductProperty>.Failure(errorMessage, ServiceErrorType);
             }
         }

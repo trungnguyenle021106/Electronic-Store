@@ -72,7 +72,7 @@ export class ProductFormComponent {
         this.setForCreate();
       }
       else if (this.typeProductForm == "Update") {
-        const productID: number = params['productID'];
+        const productID: number = params['itemID'];
         this.curProductID = productID;
         this.setForUpdate(productID);
       }
@@ -224,7 +224,8 @@ export class ProductFormComponent {
       next: (response) => {
         this.productForm.patchValue(response);
         if (response.Image) {
-          this.selectedImage = response.Image;
+           const timestamp = Date.now()
+          this.selectedImage = response.Image + `?v=${timestamp}`;
           this.urlImageUpdate = response.Image;
           const lastSlashIndex = response.Image.lastIndexOf('/');
           const imageName = response.Image.substring(lastSlashIndex + 1);

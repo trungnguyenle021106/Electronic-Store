@@ -3,6 +3,7 @@ using ContentManagementService.Application.Usecases;
 using ContentManagementService.Domain.Entities;
 using ContentManagementService.Domain.Request;
 using ContentManagementService.Infrastructure.Data.DBContext;
+using ContentManagementService.Infrastructure.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContentManagementService.Interface_Adapters.APIs
@@ -12,11 +13,12 @@ namespace ContentManagementService.Interface_Adapters.APIs
         public static void MapContentManagementEndpoints(this WebApplication app)
         {
             MapCreateContentManagementUseCaseAPIs(app);
-            MapGetBannerUsecaseAPIs(app);
-            MapUpdateBannerUseCaseAPIs(app);
+            MapGetFilterUsecaseAPIs(app);
+            MapUpdateFilterUseCaseAPIs(app);
+            MapDeleteFilterUseCaseAPIs(app);
         }
 
-        #region Create Banner USECASE
+        #region Create Filter USECASE
         public static void MapCreateContentManagementUseCaseAPIs(this WebApplication app)
         {
             CreateFilterAndFilterDetails(app);
@@ -24,88 +26,91 @@ namespace ContentManagementService.Interface_Adapters.APIs
 
         public static void CreateFilterAndFilterDetails(this WebApplication app)
         {
-            app.MapPost("/filters", async (HttpContext httpContext, CreateContentUC createContentUC, HandleResultApi handleResultApi,
-                [FromBody] CreateFilterRequest createFilterRequest) =>
+            app.MapPost("/filters", async (HttpContext httpContext, CreateContentManagementUC createContentUC, HandleResultApi handleResultApi,
+                [FromBody] CreateUpdateFilterRequest createFilterRequest) =>
             {
                 ServiceResult<Filter> result = await createContentUC.CreateFilterAndFilterDetails(createFilterRequest);
 
-              return  handleResultApi.MappingErrorHttp(result);            
+                return handleResultApi.MappingErrorHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
-        #region Get Banner USECASE
-        public static void MapGetBannerUsecaseAPIs(this WebApplication app)
+        #region Get Filter USECASE
+        public static void MapGetFilterUsecaseAPIs(this WebApplication app)
         {
-            MapGetBannerByID(app);
-            MapGetAllBanners(app);
+            GetPagedFilter(app);
+            GetAllProductPropertiesOfFilter(app);
+            GetFilterById(app);
         }
 
-        public static void MapGetBannerByID(this WebApplication app)
+        public static void GetPagedFilter(this WebApplication app)
         {
-            //app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, int bannerId) =>
-            //{
-            //    try
-            //    {
-            //        return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByID(bannerId));
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Results.BadRequest(ex.Message);
-            //    }
-            //}).RequireAuthorization("OnlyAdmin");
+            app.MapGet("/filters", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
+                [FromQuery] int page,
+                [FromQuery] int pageSize,
+                [FromQuery] string? searchText,
+                [FromQuery] string? filter) =>
+            {
+                ServiceResult<PagedResult<Filter>> result = await getContentManagementUC.GetPagedFilters(page,pageSize,searchText,filter);
+                return handleResultApi.MappingErrorHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
 
-        public static void MapGetBannerByPosition(this WebApplication app)
+        public static void GetAllProductPropertiesOfFilter(this WebApplication app)
         {
-            //app.MapGet("/banners/{bannerId}", async (ContentManagementContext bannerContext, string position) =>
-            //{
-            //    try
-            //    {
-            //        return Results.Ok(await new GetFilterUC(bannerContext).GetFilterByPosition(position));
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Results.BadRequest(ex.Message);
-            //    }
-            //}).RequireAuthorization();
+            app.MapGet("/filters/{filterID}/product-properties", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
+                int filterID) =>
+            {
+                ServiceResult<ProductProperty> result = await getContentManagementUC.GetAllProductPropertiesOfFilter(filterID);
+                return handleResultApi.MappingErrorHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
 
-        public static void MapGetAllBanners(this WebApplication app)
+        public static void GetFilterById(this WebApplication app)
         {
-            //app.MapGet("/banners", async (ContentManagementContext bannerContext) =>
-            //{
-            //    try
-            //    {
-            //        return Results.Ok(await new GetFilterUC(bannerContext).GetAllBanner());
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Results.BadRequest(ex.Message);
-            //    }
-            //}).RequireAuthorization("OnlyAdmin");
+            app.MapGet("/filters/{id}", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
+                int id) =>
+            {
+                ServiceResult<Filter> result = await getContentManagementUC.GetFilterByID(id);
+                return handleResultApi.MappingErrorHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
 
-        #region Update Banner USECASE
-        public static void MapUpdateBannerUseCaseAPIs(this WebApplication app)
+        #region Update Filter USECASE
+        public static void MapUpdateFilterUseCaseAPIs
+            (this WebApplication app)
         {
-            MapUpdateBanner(app);
+            MapUpdateFilter(app);
         }
 
-        public static void MapUpdateBanner(this WebApplication app)
+        public static void MapUpdateFilter(this WebApplication app)
         {
-            //app.MapPatch("/banners/{bannerID}/status", async (ContentManagementContext bannerContext, int bannerID, [FromBody] Filter newBanner) =>
-            //{
-            //    try
-            //    {
-            //        return Results.Ok(await new UpdateFilterUC(bannerContext).UpdateBanner(bannerID, newBanner));
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Results.BadRequest(ex.Message);
-            //    }
-            //}).RequireAuthorization("OnlyAdmin");
+            app.MapPut("/filters", async (HttpContext httpContext, UpdateContentManagementUC updateContentManagementUC, HandleResultApi handleResultApi,
+                [FromBody] CreateUpdateFilterRequest updateFilterRequest) =>
+            {
+                ServiceResult<Filter> result = await updateContentManagementUC.UpdateFilterAndFilterDetails(updateFilterRequest);
+                return handleResultApi.MappingErrorHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
+        #endregion
+
+        #region Delete Filter USECASE
+
+        public static void MapDeleteFilterUseCaseAPIs(this WebApplication app)
+        {
+            DeleteFilter(app);
+        }
+
+        public static void DeleteFilter(this WebApplication app)
+        {
+            app.MapDelete("/filters/{id}", async (HttpContext httpContext, DeleteContentManagement deleteContentManagement, HandleResultApi handleResultApi,
+                int id) =>
+            {
+                ServiceResult<Filter> result = await deleteContentManagement.DeleteFilter(id);
+                return handleResultApi.MappingErrorHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
     }

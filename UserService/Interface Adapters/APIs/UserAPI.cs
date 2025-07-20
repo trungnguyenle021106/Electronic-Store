@@ -213,21 +213,7 @@ namespace UserService.Interface_Adapters.APIs
 
                 ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByAccountID(accountID).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.Item);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
+            
             }).RequireAuthorization("OnlyCustomer");
         }
         [Obsolete]

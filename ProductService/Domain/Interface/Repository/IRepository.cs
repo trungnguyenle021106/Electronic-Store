@@ -11,7 +11,7 @@
         void Remove(TEntity entity);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         IQueryable<TEntity> GetByCompositeKey(int id1, string keyProperty1Name, int id2, string keyProperty2Name);
-        Task<List<TEntity>?> RemoveRange(IEnumerable<TEntity> entitiesToDelete);
+        Task RemoveRange(IEnumerable<TEntity> entitiesToDelete);
 
     }
 }

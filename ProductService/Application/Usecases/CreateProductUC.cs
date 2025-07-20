@@ -82,7 +82,6 @@ namespace ProductService.Application.Usecases
 
                             // Nếu upload ảnh thành công, cập nhật URL ảnh vào sản phẩm và lưu lại
                             product.Image = imageUrl;
-                            await _UnitOfWork.Commit(); // Commit lần cuối để lưu URL ảnh
                             await _UnitOfWork.CommitTransactionAsync(transaction);
                             return ServiceResult<Product>.Success(product);
                         }

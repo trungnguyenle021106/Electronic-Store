@@ -61,5 +61,10 @@ namespace ContentManagementService.Infrastructure.Data.Repositories
         {
             await _DBSet.AddRangeAsync(entities);
         }
+        public Task RemoveRange(IEnumerable<T> entitiesToDelete)
+        {
+            _DBSet.RemoveRange(entitiesToDelete);
+            return Task.CompletedTask;
+        }
     }
 }

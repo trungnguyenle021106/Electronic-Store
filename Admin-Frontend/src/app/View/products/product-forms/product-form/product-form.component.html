@@ -101,14 +101,14 @@
 
         <div class="top-ad">
             <app-select-product-properties [isSelectedPropertyForm]="true" [selectedItemReceiver]="senderSelectedItem"
-                (unSelectedItemSender)="OnItemUnSelected($event)" [curProductID]="curProductID">
+                (unSelectedItemSender)="OnItemUnSelected($event)" [curItemID]="curProductID" [typeService]="'Product'">
             </app-select-product-properties>
         </div>
 
         <div class="bottom-ad">
             <app-select-product-properties [isSelectedPropertyForm]="false"
                 (selectedItemSender)="OnItemSelected($event)" [unSelectedItemReceiver]="senderUnSelectedItem"
-                [curProductID]="curProductID">
+                [curItemID]="curProductID" [typeService]="'Product'"> 
             </app-select-product-properties>
         </div>
 

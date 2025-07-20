@@ -1,10 +1,7 @@
-﻿using CommonDto.HandleErrorResult;
-using ContentManagementService.Application.UnitOfWork;
+﻿using ContentManagementService.Application.UnitOfWork;
 using ContentManagementService.Application.Usecases;
 using ContentManagementService.Domain.Interface.UnitOfWork;
 using ContentManagementService.Infrastructure.Data.DBContext;
-using ContentManagementService.Infrastructure.Handler;
-using ContentManagementService.Infrastructure.Service;
 using ContentManagementService.Interface_Adapters;
 using ContentManagementService.Interface_Adapters.APIs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,35 +28,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContentManagementContext>(options =>
       options.UseSqlServer(MyConnectionString));
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<AuthHeaderHandler>();
-
 builder.Services.AddScoped<IUnitOfWork, ContentManagementUnitOfWork>();
 
-builder.Services.AddHttpClient<ProductService>()
-    .ConfigureHttpClient(httpClient =>
-    {
-        httpClient.BaseAddress = new Uri("http://localhost:5272/");
-    })
-    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
-    .AddHttpMessageHandler<AuthHeaderHandler>()
-    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL)
-    .ConfigurePrimaryHttpMessageHandler(() =>
-    {
-        return new HttpClientHandler
-        {
-            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
-            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
-            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-    });
-builder.Services.AddScoped<CreateContentManagementUC>();
-builder.Services.AddScoped<UpdateContentManagementUC>();
-builder.Services.AddScoped<GetContentManagementUC>();
-builder.Services.AddScoped<DeleteContentManagement>();
+builder.Services.AddScoped<CreateContentUC>();
 
-builder.Services.AddSingleton<HandleResultApi>();
-builder.Services.AddSingleton<HandleServiceError>();
 builder.Services.AddSingleton<HandleResultApi>();
 
 

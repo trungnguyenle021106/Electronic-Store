@@ -3,12 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './View/login/login.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
-import { ContentManagementComponent } from './View/content-management/content-management.component';
+
 import { ProductComponent } from './View/products/product/product.component';
 import { PropertyComponent } from './View/products/property/property.component';
 import { ProductTypeComponent } from './View/products/product-type/product-type.component';
 import { ProductBrandComponent } from './View/products/product-brand/product-brand.component';
 import { ProductFormComponent } from './View/products/product-forms/product-form/product-form.component';
+import { ContentManagementComponent } from './View/content-managements/content-management/content-management.component';
 
 
 const routes: Routes = [

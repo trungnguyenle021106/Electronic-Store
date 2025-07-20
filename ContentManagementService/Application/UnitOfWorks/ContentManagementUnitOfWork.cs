@@ -5,6 +5,7 @@ using ContentManagementService.Domain.Interface.UnitOfWork;
 using ContentManagementService.Domain.Entities;
 using ContentManagementService.Infrastructure.Data.DBContext;
 using ContentManagementService.Infrastructure.Data.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ContentManagementService.Application.UnitOfWork
 {
@@ -42,6 +43,29 @@ namespace ContentManagementService.Application.UnitOfWork
             if (_Context.Database.CurrentTransaction != null)
             {
                 _Context.Database.CurrentTransaction.Rollback();
+            }
+        }
+
+        public async Task RollbackAsync(IDbContextTransaction transaction)
+        {
+
+            if (transaction != null)
+            {
+                await transaction.RollbackAsync();
+            }
+        }
+
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _Context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync(IDbContextTransaction transaction) // <-- Triển khai
+        {
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
             }
         }
     }

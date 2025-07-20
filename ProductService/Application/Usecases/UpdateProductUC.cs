@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿
+using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
@@ -67,9 +68,11 @@ namespace ProductService.Application.Usecases
                                 productPropertyDetailsToRemove.Add(property);
                             }
                         }
-                        await this._UnitOfWork.ProductPropertyDetailRepository().RemoveRange(productPropertyDetailsToRemove);
-                        await this._UnitOfWork.Commit();
-
+                        if (productPropertyDetailsToRemove.Any())
+                        {
+                            await this._UnitOfWork.ProductPropertyDetailRepository().RemoveRange(productPropertyDetailsToRemove);
+                            await this._UnitOfWork.Commit();
+                        }
 
                         List<int> existingPropertyIds = await proPropQuery
                         .Select(ppd => ppd.ProductPropertyID)
@@ -86,19 +89,18 @@ namespace ProductService.Application.Usecases
                             }
                         }
 
-                        if (!newProductPropertyIDsToAdd.Any())
+                        if (newProductPropertyIDsToAdd.Any())
                         {
-                            await _UnitOfWork.RollbackAsync(transaction);
-                            return ServiceResult<Product>.Failure("All provided product properties are already associated with this product or are duplicates. No new properties to update.", ServiceErrorType.ValidationError);
+                            var entitiesToAdd = newProductPropertyIDsToAdd.Select(propId => new ProductPropertyDetail
+                            {
+                                ProductID = product.ID,
+                                ProductPropertyID = propId
+                            }).ToList();
+
+                            await this._UnitOfWork.ProductPropertyDetailRepository().AddRangeAsync(entitiesToAdd);
+                            await _UnitOfWork.Commit();
                         }
 
-                        var entitiesToAdd = newProductPropertyIDsToAdd.Select(propId => new ProductPropertyDetail
-                        {
-                            ProductID = product.ID,
-                            ProductPropertyID = propId
-                        }).ToList();
-
-                        await this._UnitOfWork.ProductPropertyDetailRepository().AddRangeAsync(entitiesToAdd);
 
                         if (file != null)
                         {
@@ -119,9 +121,7 @@ namespace ProductService.Application.Usecases
                             }
                         }
 
-
-                            // Update image URL and commit
-                            await _UnitOfWork.Commit();
+                        await _UnitOfWork.Commit();
                         await _UnitOfWork.CommitTransactionAsync(transaction);
                         return ServiceResult<Product>.Success(product);
                     }
