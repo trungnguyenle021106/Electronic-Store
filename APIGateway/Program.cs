@@ -2,7 +2,6 @@
 using APIGateway.Handler;
 using APIGateway.Infrastructure.Service;
 using APIGateway.Interface_Adapters.APIs;
-using Azure.Core;
 using CommonDto.HandleErrorResult;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -182,7 +181,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGatewayEndpoints();
+//app.MapGatewayEndpoints(); Code cũ triển khai kết hợp các service trên gateway
 
 
 await app.UseOcelot();

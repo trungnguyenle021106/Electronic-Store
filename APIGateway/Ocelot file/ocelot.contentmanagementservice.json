@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/banners",
+      "DownstreamPathTemplate": "/filters",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,12 +9,12 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/bannersapi/banners",
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "bannersapi"
     },
     {
-      "DownstreamPathTemplate": "/banners",
+      "DownstreamPathTemplate": "/filters/{filterID}/product-properties",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -22,12 +22,25 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/bannersapi/banners",
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}/product-properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5271
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "bannersapi"
     },
     {
-      "DownstreamPathTemplate": "/banners/{bannerId}",
+      "DownstreamPathTemplate": "/filters/{filterID}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -35,12 +48,12 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/bannersapi/banners/{bannerId}",
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "bannersapi"
     },
     {
-      "DownstreamPathTemplate": "/banners/{bannerID}/status",
+      "DownstreamPathTemplate": "/filters/{filterID}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -48,8 +61,21 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/bannersapi/banners/{bannerID}/status",
-      "UpstreamHttpMethod": [ "PATCH" ],
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters/{filterID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5271
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
       "SwaggerKey": "bannersapi"
     }
   ]

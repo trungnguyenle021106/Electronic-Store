@@ -2,6 +2,7 @@
 
 namespace ContentManagementService.Domain.Request
 {
-    public record CreateFilterRequest
+    public record CreateUpdateFilterRequest
+
     (Filter Filter, List<int> productPropertyIDs);
 }

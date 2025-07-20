@@ -69,9 +69,7 @@ namespace ProductService.Application.Usecases
                     Key = s3Key,
                     ContentType = contentType,
                     InputStream = imageStream,
-                 
                 };
-
                 PutObjectResponse response = await _s3Client.PutObjectAsync(putRequest);
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)

@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿
+using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIGateway.Interface_Adapters.APIs

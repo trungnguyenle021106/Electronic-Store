@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="main-content">
+        <form [formGroup]="filterForm" class="form-container">
+            <div class="form-title">{{describeAction}}</div>
+
+            <!-- Tên sản phẩm -->
+            <div class="form-group">
+                <label for="product-name">Vị trí</label>
+                <input type="text" id="product-name" formControlName="Position" placeholder="Nhập vị trí" />
+                <div *ngIf="filterForm.get('Position')?.invalid && filterForm.get('Position')?.touched" class="error">
+                    Vị trí không được bỏ trống.
+                </div>
+            </div>
+
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit" (click)="onSubmit()"> {{actionName}}</button>
+            </div>
+        </form>
+    </div>
+    <div class="sidebar">
+
+        <div class="top-ad">
+            <app-select-product-properties [isSelectedPropertyForm]="true" [selectedItemReceiver]="senderSelectedItem"
+                (unSelectedItemSender)="OnItemUnSelected($event)" [curItemID]="curFilterID" [typeService]="'Filter'">
+            </app-select-product-properties>
+        </div>
+
+        <div class="bottom-ad">
+            <app-select-product-properties [isSelectedPropertyForm]="false"
+                (selectedItemSender)="OnItemSelected($event)" [unSelectedItemReceiver]="senderUnSelectedItem"
+                [curItemID]="curFilterID" [typeService]="'Filter'">
+            </app-select-product-properties>
+        </div>
+
+    </div>
+</div>

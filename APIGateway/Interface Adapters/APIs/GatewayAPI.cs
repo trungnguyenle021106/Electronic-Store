@@ -1,6 +1,7 @@
 ﻿using APIGateway.Application.Usecases;
 using APIGateway.Infrastructure.DTO.ContentManagement;
 using APIGateway.Infrastructure.DTO.ContentManagement.Request;
+using APIGateway.Infrastructure.DTO.Product;
 using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,18 +21,20 @@ namespace APIGateway.Interface_Adapters.APIs
                 appBuilder.UseEndpoints(endpoints =>
                 {
                     endpoints.GWMapCreateUseCaseAPIs();
+                    endpoints.GWMapGetUseCaseAPIs();
                 });
             });
-            //GWMapCreateUseCaseAPIs(app);
-            //MapGetProductUseCaseAPIs(app);
-            //MapUpdateProductUseCaseAPIs(app);
-            //MapDeleteProductUseCaseAPIs(app);
         }
 
-        #region Create Product USECASE
+        #region Create USECASE
 
 
         public static void GWMapCreateUseCaseAPIs(this IEndpointRouteBuilder endpoints)
+        {
+            CreateFilterAndFilterDetails(endpoints);
+        }
+
+        public static void CreateFilterAndFilterDetails(this IEndpointRouteBuilder endpoints)
         {
             endpoints.MapPost("/filters", async (GWCreateUC gWCreateUC, [FromBody] CreateFilterRequest createFilterRequest, HandleResultApi handleResultApi) =>
             {
@@ -40,140 +43,23 @@ namespace APIGateway.Interface_Adapters.APIs
             }).RequireAuthorization("OnlyAdmin");
         }
 
-        public static void CreateFilterAndFilterDetails(this WebApplication app)
+        #endregion
+
+        #region Get  USECASE
+        public static void GWMapGetUseCaseAPIs(this IEndpointRouteBuilder endpoints)
         {
-            app.MapPost("/filters", async (GWCreateUC gWCreateUC, [FromBody] CreateFilterRequest createFilterRequest, HandleResultApi handleResultApi) =>
+            GetAllPropertiesOfFilter(endpoints);
+        }
+
+       public static void GetAllPropertiesOfFilter(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet("/filters/{filterID}/properties", async (GWGetUC gWGetUC, int filterID, HandleResultApi handleResultApi) =>
             {
-              ServiceResult<Filter> result = await gWCreateUC.CreateFilterAndFilterDetails(createFilterRequest);
+                ServiceResult<ProductProperty> result = await gWGetUC.getAllPropertiesOfFilter(filterID);
                 return handleResultApi.MappingErrorHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
 
-        #endregion
-
-        #region Get Product USECASE
-        public static void MapGetProductUseCaseAPIs(this WebApplication app)
-        {
-            GetProductByID(app);
-        }
-
-        public static void GetProductByID(this WebApplication app)
-        {
-            //app.MapGet("/products/{productID}", async (GetProductUC getProductUC, int productID) =>
-            //{
-            //    QueryResult<Product> result = await getProductUC.GetProductByID(productID);
-
-            //    if (result.IsSuccess)
-            //    {
-            //        return Results.Ok(result.Item);
-            //    }
-            //    else
-            //    {
-            //        return result.ErrorType switch
-            //        {
-            //            RetrievalErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-            //            RetrievalErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-            //            _ => Results.Problem(
-            //                statusCode: StatusCodes.Status500InternalServerError,
-            //                title: "Unknown Error",
-            //                detail: result.ErrorMessage
-            //            )
-            //        };
-            //    }
-            //});
-        }
-
-        #endregion
-
-        #region Update Product USECASE
-        public static void MapUpdateProductUseCaseAPIs(this WebApplication app)
-        {
-            UpdateProduct(app);
-            UpdateProductProperty(app);
-        }
-
-        public static void UpdateProduct(this WebApplication app)
-        {
-            //app.MapPut("/products/{productID}", async (UpdateProductUC updateProductUC, int productID,
-            //    [FromBody] Product newProduct) =>
-            //{
-            //    UpdateResult<Product> result = await updateProductUC.
-            //    UpdateProduct(productID, newProduct);
-            //    if (result.IsSuccess)
-            //    {
-            //        return Results.Ok(result.UpdatedItem);
-            //    }
-
-            //    return result.ErrorType switch
-            //    {
-            //        UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-            //        UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-            //        _ => Results.Problem(
-            //            statusCode: StatusCodes.Status500InternalServerError,
-            //            title: "Unknown Error",
-            //            detail: result.ErrorMessage
-            //        )
-            //    };
-            //}).RequireAuthorization("OnlyAdmin");
-        }
-
-        public static void UpdateProductProperty(this WebApplication app)
-        {
-            //app.MapPatch("/productProperties/{productPropertyID}", async (UpdateProductUC updateProductUC,
-            //    int productPropertyID, [FromBody] ProductProperty newProductProperty) =>
-            //{
-            //    UpdateResult<ProductProperty> result = await updateProductUC.
-            //    UpdateProductProperty(productPropertyID, newProductProperty);
-            //    if (result.IsSuccess)
-            //    {
-            //        return Results.Ok(result.UpdatedItem);
-            //    }
-
-            //    return result.ErrorType switch
-            //    {
-            //        UpdateErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-            //        UpdateErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-            //        _ => Results.Problem(
-            //            statusCode: StatusCodes.Status500InternalServerError,
-            //            title: "Unknown Error",
-            //            detail: result.ErrorMessage
-            //        )
-            //    };
-            //}).RequireAuthorization("OnlyAdmin");
-        }
-        #endregion
-
-        #region Delete Product USECASE
-        public static void MapDeleteProductUseCaseAPIs(this WebApplication app)
-        {
-            DeleteProduct(app);
-        
-        }
-
-        public static void DeleteProduct(this WebApplication app)
-        {
-            //app.MapDelete("/products", async (DeleteProductUC deleteProductUC,
-            //[FromBody] Product product) =>
-            //{
-            //    DeletionResult<Product> result = await deleteProductUC.DeleteProduct(product);
-
-            //    if (result.IsSuccess)
-            //    {
-            //        return Results.Ok(result.DeletedItem);
-            //    }
-
-            //    return result.ErrorType switch
-            //    {
-            //        DeletionErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-            //        DeletionErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-            //        _ => Results.Problem(
-            //            statusCode: StatusCodes.Status500InternalServerError,
-            //            title: "Unknown Error",
-            //            detail: result.ErrorMessage
-            //        )
-            //    };
-            //}).RequireAuthorization("OnlyAdmin");
-        }
         #endregion
     }
 }

@@ -107,38 +107,10 @@ namespace ProductService.Infrastructure.Data.Repositories
             return _DBSet.Where(predicate);
         }
 
-        public async Task<List<T>?> RemoveRange(IEnumerable<T> entitiesToDelete)
+        public Task RemoveRange(IEnumerable<T> entitiesToDelete)
         {
-            if (entitiesToDelete == null || !entitiesToDelete.Any())
-            {
-                return null;
-            }
-
-            PropertyInfo? idProperty = typeof(T).GetProperty("ID", BindingFlags.Public | BindingFlags.Instance);
-            if (idProperty == null || idProperty.PropertyType != typeof(int))
-            {
-                throw new InvalidOperationException(
-                    $"This entity '{typeof(T).Name}' have not 'ID' field." +
-                    " This RemoveRange method only support enntity have 'ID' field."
-                );
-            }
-
-            var ids = entitiesToDelete.Select(e => (int)idProperty.GetValue(e)!).ToList();
-            if (!ids.Any()) return null;
-
-
-            var existingEntities = await _DBSet.Where(e => ids.Contains((int)idProperty.GetValue(e)!))
-                                                .ToListAsync();
-
-            if (!existingEntities.Any())
-            {
-                return new List<T>();
-            }
-
-            _DBSet.RemoveRange(existingEntities);
-
-            return existingEntities;
-
+            _DBSet.RemoveRange(entitiesToDelete);
+            return Task.CompletedTask;
         }
     }
 }

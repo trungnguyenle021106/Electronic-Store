@@ -81,7 +81,7 @@ th.mat-mdc-header-cell { /* Thay đổi từ mat-header-cell sang mat-mdc-header
     font-weight: 600;
     font-size: 20px;
     padding: 12px 16px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #e0e0e0;
     white-space: nowrap;
 }
@@ -92,6 +92,7 @@ td.mat-mdc-cell { /* Thay đổi từ mat-cell sang mat-mdc-cell */
     color: black;
     font-size: 18px;
     vertical-align: middle;
+    text-align: center;
 }
 
 th.mat-column-Image, /* Đây là class tự động thêm vào th/td */

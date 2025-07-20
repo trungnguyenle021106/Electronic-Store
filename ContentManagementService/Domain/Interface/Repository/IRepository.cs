@@ -1,4 +1,6 @@
-﻿namespace ContentManagementService.Domain.Interface.IRepositories
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ContentManagementService.Domain.Interface.IRepositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
@@ -10,5 +12,7 @@
         TEntity Update(TEntity entity);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         void Delete(TEntity entity);
+        Task RemoveRange(IEnumerable<TEntity> entitiesToDelete);
+
     }
 }

@@ -1,24 +1,24 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { ProductDTO } from '../../../Model/Product/DTO/Response/ProductDTO';
-import { ProductService } from '../../../Service/Product/product.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { Component, inject, ViewChild } from '@angular/core';
+import { ContentManagementService } from '../../../Service/ContentManagement/content-management.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { Filter } from '../../../Model/Filter/Filter';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { PropertyService } from '../../../Service/Product/property.service';
+import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from '../../dialogs/error-dialog/error-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-
 
 
 
 @Component({
-  selector: 'app-product',
+  selector: 'app-content-management',
   standalone: false,
-  templateUrl: './product.component.html',
-  styleUrl: './product.component.css'
+  templateUrl: './content-management.component.html',
+  styleUrl: './content-management.component.css'
 })
-export class ProductComponent {
+export class ContentManagementComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   private destroyComponent$ = new Subject<void>();
@@ -27,21 +27,18 @@ export class ProductComponent {
   currentPage = 0;
 
 
- timestamp = Date.now()
-  curProduct: ProductDTO | undefined;
-  // productDTOs: ProductDTO[] = [];
-  displayedColumns: string[] = ['ID', 'Name', 'Image', 'ProductBrandName', 'ProductTypeName', 'Quantity', 'Price', 'Status', 'Actions'];
-  dataSource = new MatTableDataSource<ProductDTO>();
+
+  curFilter: Filter | undefined;
+  displayedColumns: string[] = ['ID', 'Position', 'Actions'];
+  dataSource = new MatTableDataSource<Filter>();
   searchValue: string = '';
-  filterValue: string = '';
   readonly dialog = inject(MatDialog);
 
 
-  constructor(private router: Router, private productService: ProductService) { }
+  constructor(private router: Router, private productPropertyService: PropertyService, private contenService: ContentManagementService) { }
 
   ngOnInit(): void {
-    console.log(this.timestamp)
-    this.loadUProducts();
+    this.loadFilters();
     this.searchInputSubject
       .pipe(
         debounceTime(300),
@@ -61,8 +58,8 @@ export class ProductComponent {
       });
   }
 
-  private loadUProducts(): void {
-    this.productService.getPagedProducts(this.currentPage + 1, this.pageSize, this.searchValue, this.filterValue)
+  private loadFilters(): void {
+    this.contenService.getPagedFilters(this.currentPage + 1, this.pageSize, this.searchValue)
       .pipe(takeUntil(this.destroyComponent$)) // Hủy đăng ký khi component bị hủy
       .subscribe(
         {
@@ -80,11 +77,11 @@ export class ProductComponent {
       );
   }
 
-  DeleteProduct() {
-    if (this.curProduct) {
-      this.productService.deleteProduct(this.curProduct.ID).subscribe({
+  DeleteFilter() {
+    if (this.curFilter && this.curFilter.ID) {
+      this.contenService.deleteFilter(this.curFilter.ID).subscribe({
         next: (response) => {
-          this.loadUProducts();
+          this.loadFilters();
         },
         error: (error) => {
           this.openErrorDialog("300ms", "150ms", "Lỗi xóa sản phẩm", error.message)
@@ -95,7 +92,7 @@ export class ProductComponent {
   }
 
 
-  OnClickCreateProduct(): void {
+  OnClickCreateFilter(): void {
     this.router.navigate(['product-form'], {
       queryParams: {
         typeProductForm: "Create",
@@ -103,24 +100,24 @@ export class ProductComponent {
     });
   }
 
-  OnClickUpdateProduct(product: ProductDTO): void {
+  OnClickUpdateFilteer(filter: Filter): void {
     this.router.navigate(['product-form'], {
       queryParams: {
-        typeProductForm: "Update",
-        itemID: product.ID
+        typeContentManagementForm: "Update",
+        filterID: filter.ID
       }
     });
   }
 
-  OnClickDeleteProduct(product: ProductDTO): void {
-    this.curProduct = product;
-    this.openConfirmDialog("300ms", "150ms", "xóa sản phẩm");
+  OnClickDeleteFilter(filter: Filter): void {
+    this.curFilter = filter;
+    this.openConfirmDialog("300ms", "150ms", "xóa filter");
   }
 
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.loadUProducts();
+    this.loadFilters();
   }
 
   onSearchInput(event: Event): void {
@@ -131,12 +128,12 @@ export class ProductComponent {
 
   onSearchChange(): void {
     this.currentPage = 0;
-    this.loadUProducts();
+    this.loadFilters();
   }
 
   onFilterChange(): void {
     this.currentPage = 0;
-    this.loadUProducts();
+    this.loadFilters();
   }
 
   openConfirmDialog(enterAnimationDuration: string, exitAnimationDuration: string, actionName: string): void {
@@ -147,7 +144,7 @@ export class ProductComponent {
       // ✨ TRUYỀN PHƯƠNG THỨC VÀO ĐÂY QUA THUỘC TÍNH 'data' ✨
       data: {
         actionName: actionName,
-        onConfirm: () => this.DeleteProduct()
+        onConfirm: () => this.DeleteFilter()
       }
     });
   }
