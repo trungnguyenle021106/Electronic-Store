@@ -188,8 +188,8 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapGet("/product-properties", async (
                 GetProductUC getProductUC,
                 HandleResultApi handleResultApi,
-                [FromQuery] int page,
-                [FromQuery] int pageSize,
+                [FromQuery] int? page,
+                [FromQuery] int? pageSize,
                 [FromQuery] string? searchText,
                 [FromQuery] string? filter
             ) =>

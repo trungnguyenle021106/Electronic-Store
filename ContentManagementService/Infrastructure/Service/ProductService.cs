@@ -20,19 +20,20 @@ namespace ContentManagementService.Infrastructure.Service
 
         public async Task<ServiceResult<ProductProperty>> GetAllProductProperties()
         {
-            using var response = await _httpClient.GetAsync("productProperties");
+            using var response = await _httpClient.GetAsync("product-properties");
 
             if (response.IsSuccessStatusCode)
             {
                 try
                 {
-                    var results = await response.Content.ReadFromJsonAsync<List<ProductProperty>>();
+                    var results = await response.Content.ReadFromJsonAsync<PagedResult<ProductProperty>>();
                     if (results == null)
                     {
                         _logger.LogWarning("Received successful response from Product Service, but content was empty or null.");
                         return ServiceResult<ProductProperty>.Success(new List<ProductProperty>());
                     }
-                    return ServiceResult<ProductProperty>.Success(results);
+
+                    return ServiceResult<ProductProperty>.Success(results.Items.ToList());
                 }
                 catch (Exception ex)
                 {

@@ -11,7 +11,7 @@ import { ProductProperty } from '../../Model/Product/ProductProperty';
   providedIn: 'root'
 })
 export class ContentManagementService {
-  private baseApiUrl = 'http://localhost:5293/gateway'; //gateway/content-managements
+  private baseApiUrl = 'http://localhost:5293/gateway/content-management-apis'; 
 
   constructor(private http: HttpClient) { }
 
@@ -76,7 +76,7 @@ export class ContentManagementService {
   }
 
   getAllPropertiesOfFilter(id: number) {
-    let apiUrl: string = `${this.baseApiUrl}/products/${id}/product-properties`;
+    let apiUrl: string = `${this.baseApiUrl}/filters/${id}/product-properties`;
     return this.http.get<ProductProperty[]>(apiUrl, { withCredentials: true });
   }
 }

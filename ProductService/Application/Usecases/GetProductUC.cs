@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.DTO;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
+using System.Linq;
 
 
 namespace ProductService.Application.Usecases
@@ -57,8 +58,8 @@ namespace ProductService.Application.Usecases
         }
 
         public async Task<ServiceResult<PagedResult<ProductProperty>>> GetPagedProductProperties(
-          int page,
-          int pageSize,
+          int? page,
+          int? pageSize,
           string? searchText, // Dùng string? cho phép null
           string? filter)    // Dùng string? cho phép null
         {
@@ -87,30 +88,37 @@ namespace ProductService.Application.Usecases
                     query = query.Where(pp => pp.Name != null && pp.Name.ToLower().Contains(filterLower));
                 }
 
-                // 3. Lấy tổng số lượng bản ghi sau khi áp dụng tất cả các điều kiện lọc và tìm kiếm
+
                 int totalCount = await query.CountAsync();
 
-                // 4. Kiểm tra trang hợp lệ
-                if (page < 1)
+                List<ProductProperty> list = new List<ProductProperty>(); ;
+                if (page.HasValue && pageSize.HasValue)
                 {
-                    page = 1;
+                    // 4. Kiểm tra trang hợp lệ
+                    if (page < 1)
+                    {
+                        page = 1;
+                    }
+
+                    query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
+
+                    list = await query
+                   .Skip((int)((page - 1) * pageSize))
+                   .Take((int)pageSize)
+                   .ToListAsync();
                 }
-
-                // 5. Áp dụng sắp xếp mặc định (nếu bạn không có tham số sắp xếp từ frontend)
-                // Luôn sắp xếp trước khi phân trang để đảm bảo kết quả nhất quán
-                query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
-
-                // 6. Áp dụng phân trang (Skip và Take)
-                List<ProductProperty>? list = await query
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                else
+                {
+                    list = await query.ToListAsync();
+                    page = 1; // Nếu không có phân trang, đặt trang về 1
+                    pageSize = totalCount; // Nếu không có phân trang, đặt pageSize bằng tổng số bản ghi
+                }
 
                 return ServiceResult<PagedResult<ProductProperty>>.Success(new PagedResult<ProductProperty>
                 {
                     Items = list,
-                    Page = page,
-                    PageSize = pageSize,
+                    Page = (int)page,
+                    PageSize = (int)pageSize,
                     TotalCount = totalCount // Sử dụng totalCount đã được lọc/tìm kiếm
                 });
             }
@@ -118,6 +126,23 @@ namespace ProductService.Application.Usecases
             {
                 Console.WriteLine($"Lỗi lấy thuộc tính sản phẩm, lỗi : {ex.Message}");
                 return ServiceResult<PagedResult<ProductProperty>>.Failure("An unexpected internal error occurred while GetPagedProductProperties.",
+                                    ServiceErrorType.InternalError);
+            }
+        }
+
+        public async Task<ServiceResult<ProductProperty>> GetAllProductProperties()
+        {
+            try
+            {
+                IQueryable<ProductProperty> query = this.unitOfWork.ProductPropertyRepository().GetAll();
+                List<ProductProperty>? list = await query.ToListAsync();
+
+                return ServiceResult<ProductProperty>.Success(list);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy thuộc tính sản phẩm, lỗi : {ex.Message}");
+                return ServiceResult<ProductProperty>.Failure("An unexpected internal error occurred while GetProductProperties.",
                                     ServiceErrorType.InternalError);
             }
         }
