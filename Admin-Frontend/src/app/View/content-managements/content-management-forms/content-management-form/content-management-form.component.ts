@@ -41,6 +41,9 @@ export class ContentManagementFormComponent {
     this.route.queryParams.subscribe(params => {
       this.typeFilterForm = params['typeFilterForm'];
 
+      // Log giá trị sau khi nó đã được gán
+      console.log("Giá trị của typeFilterForm sau khi nhận từ URL:", this.typeFilterForm);
+
       if (this.typeFilterForm == "Create") {
         this.setForCreate();
       }
@@ -127,6 +130,7 @@ export class ContentManagementFormComponent {
     this.describeAction = "Cập nhật filter"
     this.contentManagementService.getFilterByID(filterID).subscribe({
       next: (response) => {
+        console.log(response)
         this.filterForm.patchValue(response);
       }, error: (error) => {
         console.log(error)

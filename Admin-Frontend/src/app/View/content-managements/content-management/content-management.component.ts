@@ -93,18 +93,18 @@ export class ContentManagementComponent {
 
 
   OnClickCreateFilter(): void {
-    this.router.navigate(['product-form'], {
+    this.router.navigate(['content-management-form'], {
       queryParams: {
-        typeProductForm: "Create",
+        typeFilterForm: "Create",
       }
     });
   }
 
   OnClickUpdateFilteer(filter: Filter): void {
-    this.router.navigate(['product-form'], {
+    this.router.navigate(['content-management-form'], {
       queryParams: {
-        typeContentManagementForm: "Update",
-        filterID: filter.ID
+        typeFilterForm: "Update",
+        itemID: filter.ID
       }
     });
   }

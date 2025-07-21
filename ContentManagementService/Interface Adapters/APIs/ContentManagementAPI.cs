@@ -62,6 +62,7 @@ namespace ContentManagementService.Interface_Adapters.APIs
             app.MapGet("/filters/{filterID}/product-properties", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
                 int filterID) =>
             {
+                Console.WriteLine("get al prop");
                 ServiceResult<ProductProperty> result = await getContentManagementUC.GetAllProductPropertiesOfFilter(filterID);
                 return handleResultApi.MappingErrorHttp(result);
             }).RequireAuthorization("OnlyAdmin");

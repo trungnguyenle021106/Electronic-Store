@@ -9,7 +9,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "bannersapi"
     },
@@ -22,7 +22,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}/product-properties",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}/product-properties",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "bannersapi"
     },
@@ -35,7 +35,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "bannersapi"
     },
@@ -48,7 +48,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "bannersapi"
     },
@@ -61,7 +61,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
       "UpstreamHttpMethod": [ "PUT" ],
       "SwaggerKey": "bannersapi"
     },
@@ -74,7 +74,7 @@
           "Port": 5271
         }
       ],
-      "UpstreamPathTemplate": "/gateway/filter-apis/filters/{filterID}",
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
       "UpstreamHttpMethod": [ "DELETE" ],
       "SwaggerKey": "bannersapi"
     }
