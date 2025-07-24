@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommonDto;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Utilities;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -38,10 +40,16 @@ namespace UserService.Application.Service
             // Tạo danh sách claims
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, jWTClaim.IDAccount.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, jWTClaim.AccountID.ToString()),
                 new Claim(ClaimTypes.Role, jWTClaim.Role.ToString()),
             };
 
+            if (jWTClaim.Role.Equals("Customer", StringComparison.OrdinalIgnoreCase) && jWTClaim.CustomerID.HasValue)
+            {
+                // Thêm claim CustomerID
+                // Bạn có thể dùng tên claim tùy chỉnh, ví dụ "CustomerID" hoặc "cid"
+                claims.Add(new Claim("CustomerID", jWTClaim.CustomerID.Value.ToString()));
+            }
             // Thêm các audience vào claims
             foreach (var audience in JwtAudiences)
             {
@@ -129,7 +137,16 @@ namespace UserService.Application.Service
             int idAccount = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var Role = user.FindFirst(ClaimTypes.Role)?.Value;
 
-            return new JWTClaim(idAccount, Role);
+            int? customerId = null; // Khởi tạo là null
+            if (Role.Equals("Customer", StringComparison.OrdinalIgnoreCase))
+            {
+                var customerIdClaim = user.FindFirst("CustomerID");
+                if (customerIdClaim != null && int.TryParse(customerIdClaim.Value, out int parsedCustomerId))
+                {
+                    customerId = parsedCustomerId; // Gán giá trị nếu tìm thấy và parse thành công
+                }
+            }
+            return new JWTClaim(idAccount, Role, customerId);
         }
 
         public void ClearTokenCookie(HttpContext context, string cookieName, bool secure = false, SameSiteMode sameSite = SameSiteMode.Lax)

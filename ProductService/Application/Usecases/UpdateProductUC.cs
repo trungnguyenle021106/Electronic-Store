@@ -51,7 +51,6 @@ namespace ProductService.Application.Usecases
                         existingProduct.Status = product.Status;
                         existingProduct.ProductBrandID = product.ProductBrandID;
                         existingProduct.ProductTypeID = product.ProductTypeID;
-
                         IQueryable<ProductPropertyDetail> proPropQuery = this._UnitOfWork
                             .ProductPropertyDetailRepository()
                             .GetEntitiesByForeignKeyId(product.ID, "ProductID");

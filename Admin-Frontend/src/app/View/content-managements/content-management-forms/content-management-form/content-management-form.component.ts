@@ -92,9 +92,9 @@ export class ContentManagementFormComponent {
     const productPropertyIDs: number[] = this.selectedProperties.map(prop => prop.ID);
     this.contentManagementService.createFilter(newFilter, productPropertyIDs).subscribe({
       next: (response) => {
-        this.router.navigate(['filter'])
+        this.router.navigate(['content-management'])
       }, error: (error) => {
-        this.openErrorDialog("300ms", "150ms", "Lỗi thêm sản filter", error.message)
+        this.openErrorDialog("300ms", "150ms", "Lỗi thêm filter", error.message)
       }
     });
 
@@ -102,7 +102,7 @@ export class ContentManagementFormComponent {
 
   UpdateProduct(): void {
     const newFilter: Filter = {
-      ID: this.curFilterID ?? 0,
+      ID: this.curFilterID ?? 0,  
       Position: this.filterForm.value.Position,
     }
 
@@ -110,7 +110,7 @@ export class ContentManagementFormComponent {
     if (newFilter.ID) {
       this.contentManagementService.updateFilter(newFilter.ID, newFilter, productPropertyIDs).subscribe({
         next: (response) => {
-          this.router.navigate(['product'])
+          this.router.navigate(['content-management'])
         }, error: (error) => {
           this.openErrorDialog("300ms", "150ms", "Lỗi cập nhật filter", error.message)
           console.log(error)

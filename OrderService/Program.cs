@@ -1,9 +1,15 @@
-﻿using CommonDto.HandleErrorResult;
+﻿using AuthorizationPolicy.AdminOrSelfUserId;
+using CommonDto.HandleErrorResult;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using OrderService.Infrastructure.DBContext;
+using OrderService.Application.UnitOfWork;
+using OrderService.Application.Usecases;
+using OrderService.Domain.Interface.UnitOfWork;
+using OrderService.Infrastructure.Data.DBContext;
+using OrderService.Infrastructure.Handler;
+using OrderService.Infrastructure.Service;
 using OrderService.Interface_Adapters;
 using OrderService.Interface_Adapters.API;
 using System.Text;
@@ -12,7 +18,9 @@ DotNetEnv.Env.Load();
 var MyConnectionString = Environment.GetEnvironmentVariable("MyConnectionString");
 var JwtKey = Environment.GetEnvironmentVariable("Jwt__Key");
 var JwtIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer");
-var JwtAudience = Environment.GetEnvironmentVariable("Jwt__Audience");
+var JwtAudiences = Environment.GetEnvironmentVariable("Jwt__Audience")?.Split(',');
+var accessTokenExpirationMinutes = Environment.GetEnvironmentVariable("Jwt__AccessTokenExpirationMinutes");
+
 
 var key = Encoding.UTF8.GetBytes(JwtKey);
 
@@ -24,11 +32,46 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<OrderContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
+    options.UseSqlServer(MyConnectionString));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<AuthHeaderHandler>();
+builder.Services.AddHttpClient<ProductService>()
+    .ConfigureHttpClient(httpClient =>
+    {
+        httpClient.BaseAddress = new Uri("http://localhost:5272/");
+    })
+    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
+    .AddHttpMessageHandler<AuthHeaderHandler>()
+    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL)
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        return new HttpClientHandler
+        {
+            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
+            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
+            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+    });
+
+builder.Services.AddScoped<IUnitOfWork, OrderUnitOfWork>();
+builder.Services.AddScoped<CreateOrderUC>();
+builder.Services.AddScoped<GetOrderUC>();
+builder.Services.AddScoped<UpdateOrderUC>();
 
 builder.Services.AddSingleton<HandleResultApi>();
 builder.Services.AddSingleton<HandleServiceError>();
+builder.Services.AddSingleton<HandleResultApi>();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null;
+});
+
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions.PropertyNamingPolicy = null; // Giữ nguyên tên thuộc tính (PascalCase) cho SignalR
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -72,9 +115,22 @@ builder.Services
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = JwtIssuer,
-            ValidAudience = JwtAudience,
+            ValidAudiences = JwtAudiences,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Đọc Access Token từ cookie
+                if (context.Request.Cookies.ContainsKey("AccessToken"))
+                {
+                    context.Token = context.Request.Cookies["AccessToken"];
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -83,7 +139,17 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OnlyAdmin", policy =>
     {
-        policy.RequireRole("True");
+        policy.RequireRole("Admin");
+    });
+
+    options.AddPolicy("OnlyCustomer", policy =>
+    {
+        policy.RequireRole("Customer");
+    });
+
+    options.AddPolicy("AdminOrSelfAccountId", policy =>
+    {
+        policy.Requirements.Add(new AdminOrSelfAccountIDReq());
     });
 });
 
@@ -94,7 +160,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocumentTitle = "ORDER APIS";
+    });
 }
 
 app.MapOrderEndpoints();

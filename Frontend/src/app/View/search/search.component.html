@@ -2,57 +2,52 @@
 
     <div class="search-notice">
         <p>TÌM KIẾM</p>
-        <p>Tìm kiếm theo <span>a</span></p>
+        <p>Tìm kiếm theo từ khóa <span>{{searchValue}}</span></p>
     </div>
 
     <div class="filters">
-        <button>Bộ lọc</button>
-        <select>
-            <option>Tình trạng sản phẩm</option>
+        <select [(ngModel)]="productStatusSort" (change)="onSearch()">
+            <option value="">Tình trạng sản phẩm</option>
+            <option value="Còn hàng">Còn hàng</option>
+            <option value="Hết hàng">Hết hàng</option>
         </select>
-        <select>
-            <option>Giá</option>
+        <select [(ngModel)]="productPriceSortOrder" (change)="onSearch()">
+            <option value="increase">Giá tăng dần</option>
+            <option value="decrease">Giá giảm dần</option>
         </select>
-        <select>
-            <option>Hãng</option>
+        <select [(ngModel)]="productBrandSort" (change)="onSearch()">
+            <option value="">Hãng</option>
+            <option *ngFor="let ele of curProductBrands" [value]="ele.ID">
+                {{ele.Name}}
+            </option>
         </select>
-        <select>
-            <option>CPU</option>
+        <select [(ngModel)]="productTypeSort" (change)="onSearch()">
+            <option value="">Loại</option>
+            <option *ngFor="let ele of curProductTypes" [value]="ele.ID">
+                {{ele.Name}}
+            </option>
         </select>
-        <select>
-            <option>Kích thước màn hình</option>
-        </select>
-        <select>
-            <option>Nhu cầu sử dụng</option>
-        </select>
-        <select>
-            <option>RAM</option>
-        </select>
-        <select>
-            <option>SSD</option>
-        </select>
-        <select>
-            <option>VGA</option>
-        </select>
-        <select>
+        <!-- <select>
             <option>Xếp theo: Nổi bật</option>
-        </select>
+        </select> -->
     </div>
 
-    <div class="products">
-        <div class="product-card">
-            <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcR-ZnyIxMBnv20K63mYldrUwcDC-5Hh_gcmLltiOSXIKa_4BIFUbE4brTNj_Lk_k5f-uML81QGYMWl6u415LymXRBgYq4ppfaq7hBlpmAtWo8xkcqMPd9bmvcGeztxztFnD7xGgVA&usqp=CAc"
-                alt="Chuột 1">
-            <div class="title">Chuột không dây MonsGeek D1 Pink</div>
-            <div class="features">
-                <span>Pin sạc</span>
-                <span>Có dây</span>
-            </div>
+    <div class="products" *ngIf="products.length !=0">
+        <div class="product-card" *ngFor="let product of products" [routerLink]="['/product-detail', product.ID]">
+            <img [src]="product.Image" [alt]="product.Name">
+            <div class="title">{{product.Name}}</div>
+
             <div class="price">
-                <div><span class="new-price">120.000₫</span></div>
+                <div>
+                    <span class="new-price">{{product.Price | currency:'VND':'symbol':'1.0-0'}}</span>
+                </div>
             </div>
+
+            <a href="#" class="checkout-btn">Mua ngay</a>
         </div>
     </div>
 
+    <h1 style="text-align: center;" *ngIf="products.length ==0 && canShowNotFound">Không tìm thấy sản phẩm
+    </h1>
 
 </div>

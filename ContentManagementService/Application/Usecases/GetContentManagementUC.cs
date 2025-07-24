@@ -7,6 +7,7 @@ using ContentManagementService.Infrastructure.Data.DBContext;
 using ContentManagementService.Infrastructure.DTO;
 using ContentManagementService.Infrastructure.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ContentManagementService.Application.Usecases
 {
@@ -69,8 +70,8 @@ namespace ContentManagementService.Application.Usecases
         }
 
         public async Task<ServiceResult<PagedResult<Filter>>> GetPagedFilters(
-     int page,
-     int pageSize,
+     int? page,
+     int? pageSize,
      string? searchText, // Dùng string? cho phép null
      string? filter)    // Dùng string? cho phép null
         {
@@ -100,27 +101,34 @@ namespace ContentManagementService.Application.Usecases
                 // 3. Lấy tổng số lượng bản ghi sau khi áp dụng tất cả các điều kiện lọc và tìm kiếm
                 int totalCount = await query.CountAsync();
 
+                List<Filter> list = new List<Filter>();
                 // 4. Kiểm tra trang hợp lệ
-                if (page < 1)
+                if (page.HasValue && pageSize.HasValue)
                 {
-                    page = 1;
+                    if (page < 1)
+                    {
+                        page = 1;
+                    }
+                    query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
+
+                    // 6. Áp dụng phân trang (Skip và Take)
+                     list = await query
+                        .Skip((int)((page - 1) * pageSize))
+                        .Take((int)pageSize)
+                        .ToListAsync();
                 }
-
-                // 5. Áp dụng sắp xếp mặc định (nếu bạn không có tham số sắp xếp từ frontend)
-                // Luôn sắp xếp trước khi phân trang để đảm bảo kết quả nhất quán
-                query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
-
-                // 6. Áp dụng phân trang (Skip và Take)
-                List<Filter>? list = await query
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-
+                else
+                {
+                    list = await query.ToListAsync();
+                    page = 1;
+                    pageSize = 1; 
+                }
+               
                 return ServiceResult<PagedResult<Filter>>.Success(new PagedResult<Filter>
                 {
                     Items = list,
-                    Page = page,
-                    PageSize = pageSize,
+                    Page = (int)page,
+                    PageSize = (int)pageSize,
                     TotalCount = totalCount // Sử dụng totalCount đã được lọc/tìm kiếm
                 });
             }
@@ -151,19 +159,52 @@ namespace ContentManagementService.Application.Usecases
             }
         }
 
-        public async Task<Filter?> GetFilterByPosition(string position)
+        public async Task<ServiceResult<ProductProperty>> GetProductPropertiesOfFilterByPosition(string position)
         {
             try
             {
-                IQueryable<Filter> query = this.unitOfWork.FilterRepository().GetByFieldQueryable("Position", position);
-                Filter? filter = await query.FirstOrDefaultAsync();
-                if (filter == null) { return null; }
-                return filter;
+                IQueryable<Filter> queryFilter = this.unitOfWork.FilterRepository().GetAll();
+                Filter? filter = await queryFilter.Where(f => f.Position == position).FirstOrDefaultAsync();
+                if (filter == null) { 
+                return ServiceResult<ProductProperty>.Failure($"Filter with position : '{position}' is not exist.",
+                        ServiceErrorType.NotFound);
+                }
+
+                int id = filter.ID;
+
+                IQueryable<FilterDetail> query = this.unitOfWork.FilterDetailRepository().GetAll();
+                query = query.Where(fd => fd.FilterID == id);
+
+                List<FilterDetail>? listFilterDetai = await query.ToListAsync();
+
+                if (listFilterDetai == null)
+                {
+                    return ServiceResult<ProductProperty>.Failure($"Product with ID : '{id}' is not exist.",
+                        ServiceErrorType.NotFound);
+                }
+
+                ServiceResult<ProductProperty> productResult = await this.productService.GetAllProductProperties();
+                if (!productResult.IsSuccess)
+                {
+                    ErrorServiceResult errorResult = this.handleServiceError.
+                       MapServiceError(productResult.ServiceErrorType ?? ServiceErrorType.InternalError, "Get ProductProperty");
+                    return ServiceResult<ProductProperty>.Failure(errorResult.Message, errorResult.ServiceErrorType);
+                }
+
+                List<ProductProperty> productProperties = productResult.ListItem.Join(
+                    listFilterDetai,
+                    pp => pp.ID,
+                    fd => fd.ProductPropertyID,
+                    (pp, fd) => pp
+                ).ToList();
+
+                return ServiceResult<ProductProperty>.Success(productProperties);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy filter tại position : {position} lỗi : {ex}");
-                return null;
+                return ServiceResult<ProductProperty>.Failure("An unexpected internal error occurred while GetProductPropertiesOfFilterByPosition.",
+                      ServiceErrorType.InternalError);
             }
         }
 

@@ -20,6 +20,7 @@ import { SignUpComponent } from './View/form/sign-up/sign-up.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountInformationComponent } from './View/form/account-information/account-information.component';
 import { AccountOrderComponent } from './View/form/account-order/account-order.component';
+import { ProductDetailComponent } from './View/product-detail/product-detail.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { AccountOrderComponent } from './View/form/account-order/account-order.c
     LoginComponent,
     SignUpComponent,
     AccountInformationComponent,
-    AccountOrderComponent
+    AccountOrderComponent,
+    ProductDetailComponent
   ],
   imports: [
     BrowserModule,

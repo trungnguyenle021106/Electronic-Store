@@ -1,6 +1,19 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/customers/{customerID}/customer-information",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/{customerID}/customer-information",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
       "DownstreamPathTemplate": "/customers/me",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -9,7 +22,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/customers/me",
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/me",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -22,7 +35,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/accounts/{accountID}",
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/{accountID}",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -35,7 +48,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/accounts",
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -48,7 +61,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/customers",
+      "UpstreamPathTemplate": "/gateway/user-apis/customers",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -61,7 +74,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/accounts",
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     },
@@ -74,7 +87,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/customers",
+      "UpstreamPathTemplate": "/gateway/user-apis/customers",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     },
@@ -87,7 +100,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/customers/{customerID}",
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/{customerID}",
       "UpstreamHttpMethod": [ "PATCH" ],
       "SwaggerKey": "usersapi"
     },
@@ -100,7 +113,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/accounts/{accountID}",
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/{accountID}",
       "UpstreamHttpMethod": [ "PATCH" ],
       "SwaggerKey": "usersapi"
     },
@@ -113,7 +126,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/auth/login",
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/login",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     },
@@ -126,7 +139,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/auth/logout/specific",
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/logout/specific",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     },
@@ -139,7 +152,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/auth/status",
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/status",
       "UpstreamHttpMethod": [ "GET" ],
       "SwaggerKey": "usersapi"
     },
@@ -152,7 +165,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/auth/tokens/refresh",
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/tokens/refresh",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     },
@@ -165,7 +178,7 @@
           "Port": 5273
         }
       ],
-      "UpstreamPathTemplate": "/gateway/usersapi/auth/sign-up",
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/sign-up",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "usersapi"
     }

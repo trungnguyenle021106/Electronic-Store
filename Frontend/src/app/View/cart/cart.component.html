@@ -1,60 +1,87 @@
 <div class="cart-container">
     <div class="steps">
-        <div class="step active">
+        <div class="step" [ngClass]="{ 'active': step === 'cart' }">
             <div class="step-icon"><i class="fa-solid fa-cart-shopping"></i></div>
             Giỏ hàng
         </div>
-        <div class="step">
+        <div class="step" [ngClass]="{ 'active': step === 'order-info' }">
             <div class="step-icon"><i class="fa-solid fa-id-card"></i></div>
             Thông tin đặt hàng
         </div>
-        <div class="step">
+        <!-- <div class="step">
             <div class="step-icon"><i class="fa-solid fa-credit-card"></i></div>
             Thanh toán
-        </div>
+        </div> -->
         <div class="step">
             <div class="step-icon"><i class="fa-solid fa-circle-check"></i></div>
             Hoàn tất
         </div>
     </div>
+    <div class="cart" *ngIf="step === 'cart'">
+        <ng-container *ngIf="(cartItems$ | async) as items; else emptyCart">
+            <div *ngIf="items.length > 0; else emptyCartInner">
+                <div class="cart-item" *ngFor="let item of items">
+                    <img [src]="item.product.Image || 'assets/placeholder.jpg'" alt="{{ item.product.Name }}" />
+                    <div class="item-info">
+                        <h4>{{ item.product.Name }}</h4>
+                        <div class="remove" (click)="onRemoveItem(item.product.ID)">
+                            <i class="fa-solid fa-trash-can"></i> Xoá
+                        </div>
+                    </div>
+                    <div>
+                        <div class="item-price">{{ formatPrice(item.product.Price * item.quantity) }}</div>
+                        <div class="quantity-controls">
+                            <button
+                                (click)="onUpdateQuantity(item.product.ID, item.quantity, 'remove')">-</button><input
+                                type="text" [value]="item.quantity" readonly /><button
+                                (click)="onUpdateQuantity(item.product.ID, item.quantity, 'add')">+</button>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="cart-item">
-        <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__2_.jpg"
-            alt="Laptop" />
-        <div class="item-info">
-            <h4>Laptop gaming ASUS ROG Zephyrus G16 GU605CM QR078W</h4>
-            <div class="remove"><i class="fa-solid fa-trash-can"></i> Xoá</div>
-        </div>
-        <div>
-            <div class="item-price">62.990.000₫</div>
-            <div class="quantity-controls">
-                <button>-</button>
-                <input type="text" value="1" readonly />
-                <button>+</button>
+                <div class="total">
+                    <div>Tổng tiền:</div>
+                    <div class="amount">{{ formatPrice(cartService.getTotalPrice()) }}</div>
+                </div>
+
+                <a (click)="OnClickNextStep()" class="checkout-btn">ĐẶT HÀNG NGAY</a>
+                <button class="clear-cart-btn" (click)="onClearCart()">Xóa toàn bộ giỏ hàng</button>
             </div>
-        </div>
+            <ng-template #emptyCartInner>
+                <p style="text-align: center; margin-top: 50px;">Giỏ hàng của bạn đang trống.</p>
+                <a routerLink="/" class="continue-shopping-btn">Tiếp tục mua sắm</a>
+            </ng-template>
+        </ng-container>
+
+        <ng-template #emptyCart>
+            <p style="text-align: center; margin-top: 50px;">Giỏ hàng của bạn đang trống.</p>
+            <a routerLink="/" class="continue-shopping-btn">Tiếp tục mua sắm</a>
+        </ng-template>
     </div>
 
-       <div class="cart-item">
-        <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__2_.jpg"
-            alt="Laptop" />
-        <div class="item-info">
-            <h4>Laptop gaming ASUS ROG Zephyrus G16 GU605CM QR078W</h4>
-            <div class="remove"><i class="fa-solid fa-trash-can"></i> Xoá</div>
-        </div>
-        <div>
-            <div class="item-price">62.990.000₫</div>
-            <div class="quantity-controls">
-                <button>-</button>
-                <input type="text" value="1" readonly />
-                <button>+</button>
+
+
+    <div class="order-info" *ngIf="step === 'order-info'">
+        <h2 style="text-align: center; margin-top: 15px;">Thông Tin Đặt Hàng</h2>
+        <form class="order-info-form">
+            <div class="order-info-group">
+                <label for="name" class="order-info-label">Họ và Tên</label>
+                <input type="text" id="name" class="order-info-input" value="Nguyễn Văn A" readonly>
             </div>
-        </div>
+            <div class="order-info-group">
+                <label for="phone" class="order-info-label">Số Điện Thoại</label>
+                <input type="text" id="phone" class="order-info-input" value="0123456789" readonly>
+            </div>
+            <div class="order-info-group">
+                <label for="address" class="order-info-label">Địa Chỉ</label>
+                <input type="text" id="address" class="order-info-input" value="123 Đường ABC, Quận 1, TP.HCM" readonly>
+            </div>
+            <div class="order-info-group">
+                <label for="gender" class="order-info-label">Giới Tính</label>
+                <input type="text" id="gender" class="order-info-input" value="Nam" readonly>
+            </div>
+            <button type="button" class="order-info-btn">Tiếp Tục</button>
+            <button type="button" class="order-info-back-btn" (click)="OnClickBackStep()">Về trang trước</button>
+        </form>
     </div>
-    <div class="total">
-        <div>Tổng tiền:</div>
-        <div class="amount">62.990.000₫</div>
-    </div>
-
-    <a href="#" class="checkout-btn">ĐẶT HÀNG NGAY</a>
 </div>

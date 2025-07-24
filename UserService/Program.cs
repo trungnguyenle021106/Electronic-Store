@@ -57,6 +57,10 @@ builder.Services.AddSingleton(jwtSettingsInstance);
 
 builder.Services.AddSingleton<HandleResultApi>();
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null;
+});
 
 builder.Services.AddCors(options =>
 {
@@ -157,7 +161,7 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("SelfAccountId", policy =>
     {
-        policy.Requirements.Add(new AdminOrSelfAccountIDReq());
+        policy.Requirements.Add(new SelfAccountIDReq());
     });
 });
 

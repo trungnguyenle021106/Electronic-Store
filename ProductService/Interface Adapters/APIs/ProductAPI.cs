@@ -136,8 +136,9 @@ namespace ProductService.Interface_Adapters.APIs
             GetProductByID(app);
             GetPagedProducts(app);
             GetPagedProductProperties(app);
-            GetProductPropertyNames(app);
+            GetAllUniquePropertyNames(app);
             GetAllPropertiesOfProduct(app);
+            CheckExistProduct(app);
         }
 
         public static void GetAllPropertiesOfProduct(this WebApplication app)
@@ -146,7 +147,7 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<ProductProperty> result = await getProductUC.GetAllPropertiesOfProduct(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            });
         }
 
         public static void GetProductByID(this WebApplication app)
@@ -158,28 +159,27 @@ namespace ProductService.Interface_Adapters.APIs
             });
         }
 
-        public static void GetProductPropertyNames(this WebApplication app)
+        public static void GetAllUniquePropertyNames(this WebApplication app)
         {
             app.MapGet("/product-property-names", async (GetProductUC getProductUC, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<string> result = await getProductUC.GetAllUniquePropertyNames();
                 return handleResultApi.MapServiceResultToHttp(result);
 
-            }).RequireAuthorization();
+            });
         }
 
         public static void GetPagedProducts(this WebApplication app)
         {
             app.MapGet("/products", async (GetProductUC getProductUC, HandleResultApi handleResultApi,
-                [FromQuery] int page,
-                [FromQuery] int pageSize,
-                [FromQuery] string? searchText,
-                [FromQuery] string? filterBrand, [FromQuery] string? filterType, [FromQuery] string? filterStatus) =>
+                [AsParameters] ProductQueryParameter productQueryParameter) =>
             {
-                ServiceResult<PagedResult<ProductDTO>> result = await getProductUC.
-                GetPagedProducts(page, pageSize, searchText, filterBrand, filterType, filterStatus);
+                ServiceResult<PagedResult<Product>> result = await getProductUC.
+                GetPagedProducts(productQueryParameter.Page, productQueryParameter.PageSize, productQueryParameter.SearchText,
+                productQueryParameter.ProductBrandName, productQueryParameter.ProductTypeName, productQueryParameter.ProductStatus,
+                productQueryParameter.ProductPropertyIds, productQueryParameter.IsIncrease);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            });
         }
 
 
@@ -198,7 +198,7 @@ namespace ProductService.Interface_Adapters.APIs
                     await getProductUC.GetPagedProductProperties(page, pageSize, searchText, filter);
 
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+            });
         }
 
         public static void GetPagedProductTypes(this WebApplication app)
@@ -206,17 +206,26 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapGet("/product-types", async (
                 GetProductUC getProductUC,
                 HandleResultApi handleResultApi,
-                [FromQuery] int page,
-                [FromQuery] int pageSize,
+                [FromQuery] int? page,
+                [FromQuery] int? pageSize,
                 [FromQuery] string? searchText,
                 [FromQuery] string? filter
             ) =>
             {
-                ServiceResult<PagedResult<ProductType>> result =
-                    await getProductUC.GetPagedProductTypes(page, pageSize, searchText, filter);
+                if (page != null && pageSize != null)
+                {
+                    ServiceResult<PagedResult<ProductType>> result =
+                    await getProductUC.GetPagedProductTypes((int)page, (int)pageSize, searchText, filter);
 
-                return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+                    return handleResultApi.MapServiceResultToHttp(result);
+                }
+                else
+                {
+                    ServiceResult<PagedResult<ProductType>> result = await getProductUC.GetPagedProductTypes();
+                    return handleResultApi.MapServiceResultToHttp(result);
+                }
+
+            }); // Giữ nguyên chính sách ủy quyền
         }
 
         public static void GetPagedProductBrands(this WebApplication app)
@@ -224,20 +233,37 @@ namespace ProductService.Interface_Adapters.APIs
             app.MapGet("/product-brands", async (
                 GetProductUC getProductUC,
                 HandleResultApi handleResultApi,
-                [FromQuery] int page,
-                [FromQuery] int pageSize,
+                [FromQuery] int? page,
+                [FromQuery] int? pageSize,
                 [FromQuery] string? searchText,
                 [FromQuery] string? filter
             ) =>
             {
-                ServiceResult<PagedResult<ProductBrand>> result =
-                    await getProductUC.GetPagedProductBrands(page, pageSize, searchText, filter);
+                if (page != null && pageSize != null)
+                {
+                    ServiceResult<PagedResult<ProductBrand>> result =
+                    await getProductUC.GetPagedProductBrands((int)page, (int)pageSize, searchText, filter);
 
-                return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin"); // Giữ nguyên chính sách ủy quyền
+                    return handleResultApi.MapServiceResultToHttp(result);
+                }
+                else
+                {
+                    ServiceResult<PagedResult<ProductBrand>> result = await getProductUC.GetPagedProductBrands();
+                    return handleResultApi.MapServiceResultToHttp(result);
+                }
+            }); // Giữ nguyên chính sách ủy quyền
         }
 
 
+        public static void CheckExistProduct(this WebApplication app)
+        {
+            app.MapPost("/products/exist", async (GetProductUC getProductUC, HandleResultApi handleResultApi,
+                [FromBody] List<int> productIDS) =>
+            {
+                ServiceResult<Product> result = await getProductUC.CheckExistProducts(productIDS);
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization();
+        }
         #endregion
 
         #region Update Product USECASE

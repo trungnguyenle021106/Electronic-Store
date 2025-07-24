@@ -2,7 +2,6 @@
 using ContentManagementService.Domain.Entities;
 using ContentManagementService.Domain.Interface.IRepositories;
 using ContentManagementService.Domain.Interface.UnitOfWork;
-using ContentManagementService.Domain.Entities;
 using ContentManagementService.Infrastructure.Data.DBContext;
 using ContentManagementService.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;

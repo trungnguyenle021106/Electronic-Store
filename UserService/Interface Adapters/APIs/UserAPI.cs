@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿using CommonDto;
+using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Service;
@@ -131,40 +132,6 @@ namespace UserService.Interface_Adapters.APIs
                       tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
                       tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
                   });
-
-                //if (result.IsSuccess)
-                //{
-                //    tokenService.SetTokenCookie(context, "AccessToken", result.Item,
-                //        DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
-                //    return Results.Ok();
-                //}
-
-                //switch (result.ServiceErrorType)
-                //{
-                //    case ServiceErrorType.Invalid:
-                //        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
-                //        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
-                //        return Results.BadRequest(new { message = result.ErrorMessage });
-
-                //    case ServiceErrorType.ValidationError:
-                //        tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
-                //        tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
-                //        return Results.BadRequest(new { message = result.ErrorMessage });
-
-                //    case ServiceErrorType.InternalError:
-                //        return Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Internal Server Error",
-                //            detail: result.ErrorMessage
-                //        );
-
-                //    default:
-                //        return Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        );
-                //}
             });
         }
         #endregion
@@ -173,12 +140,13 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapGetUserUseCaseAPIs(this WebApplication app)
         {
             //MapGetCustomerByIDForCustomer(app);
-            MapGetCustomerByIDForAdmin(app);
+            MapGetCustomerByID(app);
             MapGetAccountByID(app);
             MapGetAllAccount(app);
             MapGetAllUser(app);
             MapGetCurrentCustomerInformation(app);
             MapGetStatus(app);
+            MapGetCustomerInformationByCustomerID(app);
             test(app);
         }
 
@@ -201,15 +169,7 @@ namespace UserService.Interface_Adapters.APIs
         {
             app.MapGet("/customers/me", async (GetUserUC getUserUC, HttpContext httpContext, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
-                int accountID = tokenService.GetJWTClaim(httpContext)?.IDAccount ?? 0;
-
-                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
-
-                if (!authorizationResult.Succeeded)
-                {
-                    return Results.Forbid();
-                }
+                int accountID = tokenService.GetJWTClaim(httpContext)?.AccountID ?? 0;
 
                 ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByAccountID(accountID).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
@@ -253,28 +213,21 @@ namespace UserService.Interface_Adapters.APIs
         }
 
 
-        public static void MapGetCustomerByIDForAdmin(this WebApplication app)
+        public static void MapGetCustomerByID(this WebApplication app)
         {
             app.MapGet("/admin/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.Item);
-                //}
+            }).RequireAuthorization("OnlyAdmin");
+        }
 
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
-
+        public static void MapGetCustomerInformationByCustomerID(this WebApplication app)
+        {
+            app.MapGet("/customers/{customerID}/customer-information", async (GetUserUC getUserUC, int customerID, HttpContext httpContext, HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByCustomerID(customerID).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -513,43 +466,6 @@ namespace UserService.Interface_Adapters.APIs
                              }
                          }
                          );
-                //if (result.IsSuccess)
-                //{
-                //    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
-                //       result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                //    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
-                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                //    if (result.Item.Account.Role.Equals("Customer"))
-                //    {
-                //        return Results.Ok("http://localhost:4200");
-                //    }
-                //    else
-                //    {
-                //        return Results.Ok("http://localhost:4300");
-                //    }
-                //}
-                //else
-                //{
-                //    return result.ServiceErrorType switch
-                //    {
-                //        ServiceErrorType.AccountLocked => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.InvalidCredentials => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.InternalError => Results.Problem(
-                //             statusCode: StatusCodes.Status500InternalServerError,
-                //             title: "Internal Server Error",
-                //             detail: result.ErrorMessage
-                //         ),
-                //        _ => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        )
-                //    };
-                //}
             });
         }
 
@@ -570,34 +486,6 @@ namespace UserService.Interface_Adapters.APIs
                             result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
                     }, null
                     );
-                //if (result.IsSuccess)
-                //{
-                //    tokenService.SetTokenCookie(httpContext, "RefreshToken", result.Item.RefreshToken.TokenHash,
-                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                //    tokenService.SetTokenCookie(httpContext, "AccessToken", result.Item.AccessToken,
-                //        result.Item.RefreshToken.ExpiresAt, true, false, SameSiteMode.Lax);
-
-                //    return Results.Ok();
-                //}
-                //else
-                //{
-                //    return result.ServiceErrorType switch
-                //    {
-                //        ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.InternalError => Results.Problem(
-                //             statusCode: StatusCodes.Status500InternalServerError,
-                //             title: "Internal Server Error",
-                //             detail: result.ErrorMessage
-                //         ),
-                //        _ => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        )
-                //    };
-                //}
             });
         }
 
@@ -617,30 +505,6 @@ namespace UserService.Interface_Adapters.APIs
                         },
                     null
                     );
-                //if (result.IsSuccess)
-                //{
-                //    tokenService.ClearTokenCookie(httpContext, "AccessToken", false, SameSiteMode.Lax);
-                //    tokenService.ClearTokenCookie(httpContext, "RefreshToken", false, SameSiteMode.Lax);
-                //    return Results.Ok();
-                //}
-                //else
-                //{
-                //    return result.ServiceErrorType switch
-                //    {
-                //        ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //        ServiceErrorType.Unauthorized => Results.Unauthorized(),
-                //        ServiceErrorType.InternalError => Results.Problem(
-                //             statusCode: StatusCodes.Status500InternalServerError,
-                //             title: "Internal Server Error",
-                //             detail: result.ErrorMessage
-                //         ),
-                //        _ => Results.Problem(
-                //            statusCode: StatusCodes.Status500InternalServerError,
-                //            title: "Unknown Error",
-                //            detail: result.ErrorMessage
-                //        )
-                //    };
-                //}
             }).RequireAuthorization();
         }
 

@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+.product-detail  h1 {
+     font-size: 24px;
+     font-weight: bold;
+     margin-bottom: 20px;
+     color: #111;
+ }
+
+ .product-detail  h2 {
+     font-size: 22px;
+     font-weight: bold;
+     margin: 25px 0 15px 0;
+     color: #222;
+ }
+
+ .product-detail p {
+     margin-bottom: 15px;
+     font-size: 16px;
+ }

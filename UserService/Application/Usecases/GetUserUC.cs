@@ -64,6 +64,33 @@ namespace UserService.Application.Usecases
             }
         }
 
+
+        public async Task<ServiceResult<CustomerInformation>> GetCustomerInformationByCustomerID(int customerID)
+        {
+            if(customerID <= 0)
+            {
+                return ServiceResult<CustomerInformation>.Failure("Customer ID is invalid.", ServiceErrorType.ValidationError);
+            }
+
+            try
+            {
+                Customer? customer = await this.unitOfWork.CustomerRepository().GetById(customerID).ConfigureAwait(false);
+                if (customer == null)
+                {
+                    return ServiceResult<CustomerInformation>.Failure("Customer is not found.", ServiceErrorType.NotFound);
+                }
+                string email = (await this.unitOfWork.AccountRepository().GetById(customer.AccountID ?? 0).ConfigureAwait(false)).Email;
+                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(email, customer.Name, customer.Phone, customer.Address, customer.Gender));
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy customer có id : {customerID}, lỗi : {ex.Message}");
+                return ServiceResult<CustomerInformation>.Failure("An unexpected internal error occurred while get customer.",
+                      ServiceErrorType.InternalError);
+            }
+        }
+
         public async Task<ServiceResult<CustomerInformation>> GetCustomerInformationByAccountID(int accountID)
         {
             try

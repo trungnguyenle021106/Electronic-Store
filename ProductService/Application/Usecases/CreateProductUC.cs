@@ -62,6 +62,7 @@ namespace ProductService.Application.Usecases
                             }).ToList();
 
                             await this._UnitOfWork.ProductPropertyDetailRepository().AddRangeAsync(entitiesToAdd);
+                            await _UnitOfWork.Commit();
 
                             string extension = Path.GetExtension(file.FileName);
                             string uniqueId = Guid.NewGuid().ToString();
@@ -82,6 +83,7 @@ namespace ProductService.Application.Usecases
 
                             // Nếu upload ảnh thành công, cập nhật URL ảnh vào sản phẩm và lưu lại
                             product.Image = imageUrl;
+                            await _UnitOfWork.Commit();
                             await _UnitOfWork.CommitTransactionAsync(transaction);
                             return ServiceResult<Product>.Success(product);
                         }

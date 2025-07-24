@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿using CommonDto;
+using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Service;
 using UserService.Domain.DTO;
@@ -134,23 +135,27 @@ namespace UserService.Application.Usecases
 
         public async Task<ServiceResult<string>> RefreshAccessToken(RefreshToken refreshToken)
         {
+            int accountID = refreshToken?.AccountID ?? 0;
+            if (accountID <= 0)
+            {
+                return ServiceResult<string>
+                .Failure("No refresh token provided to add.", ServiceErrorType.ValidationError);
+            }
+
+            if (refreshToken.IsRevoked == true || refreshToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return ServiceResult<string>
+             .Failure("Refresh token is expired or revoked.", ServiceErrorType.Invalid);
+            }
             try
             {
-                int idAccount = refreshToken?.AccountID ?? 0;
-                if (idAccount <= 0)
-                {
-                    return ServiceResult<string>
-                    .Failure("No refresh token provided to add.", ServiceErrorType.ValidationError);
-                }
-
-                if(refreshToken.IsRevoked == true ||  refreshToken.ExpiresAt < DateTime.UtcNow)
-                {
-                    return ServiceResult<string>
-                 .Failure("Refresh token is expired or revoked.", ServiceErrorType.Invalid);
-                }
-
-                Account account = await unitOfWork.AccountRepository().GetById(idAccount).ConfigureAwait(false);
-                string accessToken = this.tokenService.GenerateAccessToken(new JWTClaim(account.ID, account.Role));
+                int? customerID = this.unitOfWork.CustomerRepository()
+                    .GetAll()
+                    .Where(c => c.AccountID == accountID)
+                    .Select(c => c.ID)
+                    .FirstOrDefault();
+                Account account = await unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false);
+                string accessToken = this.tokenService.GenerateAccessToken(new JWTClaim(account.ID, account.Role, customerID));
            
                 return ServiceResult<string>.Success(accessToken);
             }

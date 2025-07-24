@@ -1,4 +1,5 @@
-﻿using CommonDto.ResultDTO;
+﻿using CommonDto;
+using CommonDto.ResultDTO;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using UserService.Application.Service;
@@ -55,9 +56,15 @@ namespace UserService.Application.Usecases
                     return ServiceResult<LoginSignUpDTO>.Failure("Tài khoản của bạn bị khóa.", ServiceErrorType.AccountLocked);
                 }
 
+                int? customerId = this.unitOfWork.CustomerRepository()
+                    .GetAll()
+                    .Where(c => c.AccountID == account.ID)
+                    .Select(c => c.ID)
+                    .FirstOrDefault();
+
                 string accessToken = tokenService.GenerateAccessToken(new JWTClaim
                 (
-                    account.ID, account.Role
+                    account.ID, account.Role, customerId
                 ));
                 string refreshTokenString = tokenService.GenerateRefreshToken();
 
@@ -90,19 +97,19 @@ namespace UserService.Application.Usecases
 
         public async Task<ServiceResult<LoginSignUpDTO>> SignUp(SignUpRequest signUpRequest)
         {
+            if (signUpRequest == null)
+            {
+                return ServiceResult<LoginSignUpDTO>
+                   .Failure("No sign up information provided to add.", ServiceErrorType.ValidationError);
+            }
+
+            if (!(await emailValidator.CheckEmailValid(signUpRequest.Email).ConfigureAwait(false)).Status)
+            {
+                return ServiceResult<LoginSignUpDTO>
+                 .Failure("Email is not valid.", ServiceErrorType.ValidationError);
+            }
             try
             {
-                if (signUpRequest == null)
-                {
-                    return ServiceResult<LoginSignUpDTO>
-                       .Failure("No sign up information provided to add.", ServiceErrorType.ValidationError);
-                }
-
-                if (!(await emailValidator.CheckEmailValid(signUpRequest.Email).ConfigureAwait(false)).Status)
-                {
-                    return ServiceResult<LoginSignUpDTO>
-                     .Failure("Email is not valid.", ServiceErrorType.ValidationError);
-                }
 
                 IQueryable<Account> queryAccount = this.unitOfWork.AccountRepository().GetAll();
                 queryAccount = queryAccount.Where(a => a.Email == signUpRequest.Email);
@@ -113,55 +120,77 @@ namespace UserService.Application.Usecases
                     return ServiceResult<LoginSignUpDTO>.Failure("Account is exist", ServiceErrorType.AlreadyExists);
                 }
 
-                Account newAccount = new Account
+                using (var transaction = await this.unitOfWork.BeginTransactionAsync().ConfigureAwait(false))
                 {
-                    Email = signUpRequest.Email,
-                    Password = hashService.Hash(signUpRequest.Password),
-                    Role = "Customer",
-                    Status = "Active"
-                };
-                await this.unitOfWork.AccountRepository().Add(newAccount).ConfigureAwait(false);
+                    try
+                    {
+                        Account newAccount = new Account
+                        {
+                            Email = signUpRequest.Email,
+                            Password = hashService.Hash(signUpRequest.Password),
+                            Role = "Customer",
+                            Status = "Active"
+                        };
+                        await this.unitOfWork.AccountRepository().Add(newAccount).ConfigureAwait(false);
+                        await this.unitOfWork.Commit().ConfigureAwait(false);
 
-                IQueryable<Customer> queryCustomer = this.unitOfWork.CustomerRepository().GetAll();
-                queryCustomer = queryCustomer.Where(a => a.AccountID == newAccount.ID);
+                        IQueryable<Customer> queryCustomer = this.unitOfWork.CustomerRepository().GetAll();
+                        queryCustomer = queryCustomer.Where(a => a.AccountID == newAccount.ID);
 
-                Customer? customer = await queryCustomer.FirstOrDefaultAsync().ConfigureAwait(false);
-                if (customer != null)
-                {
-                    return ServiceResult<LoginSignUpDTO>.Failure("Customer is exist", ServiceErrorType.AlreadyExists);
+                        Customer? customer = await queryCustomer.FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (customer != null)
+                        {
+                            return ServiceResult<LoginSignUpDTO>.Failure("Customer is exist", ServiceErrorType.AlreadyExists);
+                        }
+
+                        Customer newCustomer = new Customer
+                        {
+                            Phone = signUpRequest.Phone,
+                            Address = signUpRequest.Address,
+                            Name = signUpRequest.Name,
+                            Gender = signUpRequest.Gender,
+                            Account = newAccount,
+                        };
+                        await this.unitOfWork.CustomerRepository().Add(newCustomer).ConfigureAwait(false);
+                        await this.unitOfWork.Commit().ConfigureAwait(false);
+
+                        string refreshTokenString = tokenService.GenerateRefreshToken();
+                        string hashRefreshTokenString = hashService.Hash(refreshTokenString);
+
+                        RefreshToken refreshToken = await this.unitOfWork.RefreshTokenRepository().Add(new RefreshToken
+                        {
+                            TokenHash = hashRefreshTokenString,
+                            ExpiresAt = DateTime.UtcNow.AddDays(7),
+                            CreatedAt = DateTime.UtcNow,
+                            Account = newAccount,
+                            IsRevoked = false
+                        }).ConfigureAwait(false);
+
+                        await this.unitOfWork.Commit().ConfigureAwait(false);
+                        await this.unitOfWork.CommitTransactionAsync(transaction).ConfigureAwait(false);
+
+                        int? customerId = this.unitOfWork.CustomerRepository()
+                          .GetAll()
+                          .Where(c => c.AccountID == newAccount.ID)
+                          .Select(c => c.ID)
+                          .FirstOrDefault();
+                        string accessToken = tokenService.GenerateAccessToken(new JWTClaim(newAccount.ID, newAccount.Role, customerId));
+
+                        return ServiceResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
+                        (
+                           newAccount, accessToken, refreshToken
+                        ));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"An unexpected error occurred during sign up, error : {ex}");
+                        await this.unitOfWork.RollbackAsync(transaction).ConfigureAwait(false);
+                        return ServiceResult<LoginSignUpDTO>.Failure(
+                            "An unexpected internal error occurred during sign up .",
+                            ServiceErrorType.InternalError
+                        );
+                    }
                 }
-
-                Customer newCustomer = new Customer
-                {
-                    Phone = signUpRequest.Phone,
-                    Address = signUpRequest.Address,
-                    Name = signUpRequest.Name,
-                    Gender = signUpRequest.Gender,
-                    Account = newAccount,
-                };
-                await this.unitOfWork.CustomerRepository().Add(newCustomer).ConfigureAwait(false);              
-
-                string refreshTokenString = tokenService.GenerateRefreshToken();
-                string hashRefreshTokenString = hashService.Hash(refreshTokenString);
-
-                RefreshToken refreshToken = await this.unitOfWork.RefreshTokenRepository().Add(new RefreshToken
-                {
-                    TokenHash = hashRefreshTokenString,
-                    ExpiresAt = DateTime.UtcNow.AddDays(7),
-                    CreatedAt = DateTime.UtcNow,
-                    Account = newAccount,
-                    IsRevoked = false
-                }).ConfigureAwait(false);
-
-
-                await this.unitOfWork.Commit().ConfigureAwait(false);
-
-                string accessToken = tokenService.GenerateAccessToken(new JWTClaim(newAccount.ID, newAccount.Role));
-
-                return ServiceResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
-                (
-                   newAccount, accessToken, refreshToken
-                ));
             }
             catch (Exception ex)
             {
@@ -191,7 +220,7 @@ namespace UserService.Application.Usecases
                     return ServiceResult<RefreshToken>.Failure("Access token is not valid", ServiceErrorType.Unauthorized);
                 }
 
-                LogoutDTO logoutDTO = new LogoutDTO(jWTClaim.IDAccount, refreshToken.ID);
+                LogoutDTO logoutDTO = new LogoutDTO(jWTClaim.AccountID, refreshToken.ID);
 
 
 

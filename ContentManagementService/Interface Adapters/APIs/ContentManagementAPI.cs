@@ -31,7 +31,7 @@ namespace ContentManagementService.Interface_Adapters.APIs
             {
                 ServiceResult<Filter> result = await createContentUC.CreateFilterAndFilterDetails(createFilterRequest);
 
-                return handleResultApi.MappingErrorHttp(result);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -44,17 +44,19 @@ namespace ContentManagementService.Interface_Adapters.APIs
             GetFilterById(app);
         }
 
+     
+
         public static void GetPagedFilter(this WebApplication app)
         {
             app.MapGet("/filters", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
-                [FromQuery] int page,
-                [FromQuery] int pageSize,
+                [FromQuery] int? page,
+                [FromQuery] int? pageSize,
                 [FromQuery] string? searchText,
                 [FromQuery] string? filter) =>
             {
                 ServiceResult<PagedResult<Filter>> result = await getContentManagementUC.GetPagedFilters(page,pageSize,searchText,filter);
-                return handleResultApi.MappingErrorHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+                return handleResultApi.MapServiceResultToHttp(result);
+            });
         }
 
         public static void GetAllProductPropertiesOfFilter(this WebApplication app)
@@ -62,10 +64,9 @@ namespace ContentManagementService.Interface_Adapters.APIs
             app.MapGet("/filters/{filterID}/product-properties", async (HttpContext httpContext, GetContentManagementUC getContentManagementUC, HandleResultApi handleResultApi,
                 int filterID) =>
             {
-                Console.WriteLine("get al prop");
                 ServiceResult<ProductProperty> result = await getContentManagementUC.GetAllProductPropertiesOfFilter(filterID);
-                return handleResultApi.MappingErrorHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+                return handleResultApi.MapServiceResultToHttp(result);
+            });
         }
 
         public static void GetFilterById(this WebApplication app)
@@ -74,8 +75,8 @@ namespace ContentManagementService.Interface_Adapters.APIs
                 int id) =>
             {
                 ServiceResult<Filter> result = await getContentManagementUC.GetFilterByID(id);
-                return handleResultApi.MappingErrorHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+                return handleResultApi.MapServiceResultToHttp(result);
+            });
         }
         #endregion
 
@@ -88,11 +89,11 @@ namespace ContentManagementService.Interface_Adapters.APIs
 
         public static void MapUpdateFilter(this WebApplication app)
         {
-            app.MapPut("/filters", async (HttpContext httpContext, UpdateContentManagementUC updateContentManagementUC, HandleResultApi handleResultApi,
+            app.MapPut("/filters/{id}", async (HttpContext httpContext, UpdateContentManagementUC updateContentManagementUC, HandleResultApi handleResultApi,
                 [FromBody] CreateUpdateFilterRequest updateFilterRequest) =>
             {
                 ServiceResult<Filter> result = await updateContentManagementUC.UpdateFilterAndFilterDetails(updateFilterRequest);
-                return handleResultApi.MappingErrorHttp(result);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion
@@ -110,7 +111,7 @@ namespace ContentManagementService.Interface_Adapters.APIs
                 int id) =>
             {
                 ServiceResult<Filter> result = await deleteContentManagement.DeleteFilter(id);
-                return handleResultApi.MappingErrorHttp(result);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion

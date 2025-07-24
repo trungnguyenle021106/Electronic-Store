@@ -220,11 +220,9 @@ export class SelectProductPropertiesComponent {
           {
             next: (response) => {
               if (this.isSelectedPropertyForm) {
-                console.log("das")
                 this.HandleLoadUpdateSelectForm(response);
               } else {
                 this.HandleLoadUpdateUnselectForm(response);
-                 console.log("dsadasas")
               }
             },
             error: (error) => {

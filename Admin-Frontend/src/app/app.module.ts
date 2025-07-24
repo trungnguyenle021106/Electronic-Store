@@ -38,6 +38,8 @@ import { ConfirmDialogComponent } from './View/dialogs/confirm-dialog/confirm-di
 import { ErrorDialogComponent } from './View/dialogs/error-dialog/error-dialog.component';
 import { ContentManagementFormComponent } from './View/content-managements/content-management-forms/content-management-form/content-management-form.component';
 import { ContentManagementComponent } from './View/content-managements/content-management/content-management.component';
+import { OrderComponent } from './View/orders/order/order.component';
+import { OrderDetailComponent } from './View/orders/order-detail/order-detail.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,9 @@ import { ContentManagementComponent } from './View/content-managements/content-m
     SelectProductPropertiesComponent,
     ConfirmDialogComponent,
     ErrorDialogComponent,
-    ContentManagementFormComponent
+    ContentManagementFormComponent,
+    OrderComponent,
+    OrderDetailComponent
   ],
   imports: [
     BrowserModule,

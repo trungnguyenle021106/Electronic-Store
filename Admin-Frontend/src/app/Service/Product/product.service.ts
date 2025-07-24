@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProductDTO } from '../../Model/Product/DTO/Response/ProductDTO';
-import { PagedResult } from '../../Model/Product/DTO/Response/PagedResult';
+import { PagedResult } from '../../Model/PagedResult';
 import { ProductProperty } from '../../Model/Product/ProductProperty';
 import { Product } from '../../Model/Product/Product';
 
@@ -45,7 +45,7 @@ export class ProductService {
     pageSize: number = 10,
     searchText: string = '',
     filter: string = ''
-  ): Observable<PagedResult<ProductDTO>> {
+  ): Observable<PagedResult<Product>> {
     let params = new HttpParams()
       .set('page', currentPage.toString()) // Chuyển số sang chuỗi
       .set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
@@ -60,7 +60,7 @@ export class ProductService {
       params = params.set('filter', filter.trim()); // Sử dụng trim() để loại bỏ khoảng trắng thừa
     }
     let apiUrl: string = `${this.baseApiUrl}/products`;
-    return this.http.get<PagedResult<ProductDTO>>(apiUrl, { params: params, withCredentials: true });
+    return this.http.get<PagedResult<Product>>(apiUrl, { params: params, withCredentials: true });
   }
 
   getAllPropertiesOfProduct(id: number) {
