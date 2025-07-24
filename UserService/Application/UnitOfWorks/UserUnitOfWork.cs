@@ -1,4 +1,5 @@
-﻿using UserService.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using UserService.Domain.Entities;
 using UserService.Domain.Interface.IRepositories;
 using UserService.Domain.Interface.UnitOfWork;
 using UserService.Infrastructure.Data.DBContext;
@@ -23,7 +24,15 @@ namespace UserService.Application.UnitOfWorks
 
         public async Task Commit()
         {
-            await _Context.SaveChangesAsync().ConfigureAwait(false);
+            await _Context.SaveChangesAsync();
+        }
+
+        public async Task RollbackAsync(IDbContextTransaction transaction)
+        {
+            if (transaction != null)
+            {
+                await transaction.RollbackAsync();
+            }
         }
 
         public void Rollback()
@@ -31,6 +40,19 @@ namespace UserService.Application.UnitOfWorks
             if (_Context.Database.CurrentTransaction != null)
             {
                 _Context.Database.CurrentTransaction.Rollback();
+            }
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _Context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync(IDbContextTransaction transaction) // <-- Triển khai
+        {
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
             }
         }
 

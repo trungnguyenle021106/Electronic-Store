@@ -42,6 +42,7 @@
   .step.active {
       color: #e60000;
       font-weight: bold;
+      font-size: 25px;
   }
 
   .step-icon {
@@ -85,31 +86,6 @@
       font-weight: bold;
   }
 
-  .quantity-controls {
-      display: flex;
-      align-items: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-left: 18px;
-  }
-
-  .quantity-controls button {
-      background: #fff;
-      border: none;
-      width: 32px;
-      height: 32px;
-      font-size: 18px;
-      cursor: pointer;
-  }
-
-  .quantity-controls input {
-      width: 40px;
-      text-align: center;
-      border: none;
-      font-size: 16px;
-  }
-
   .remove {
       color: #888;
       font-size: 24px;
@@ -129,15 +105,289 @@
       color: red;
   }
 
-  .checkout-btn {
-      display: block;
-      background: #e60000;
-      color: #fff;
-      text-align: center;
-      padding: 15px;
+  /* --- Bổ sung và tinh chỉnh cho Item trong giỏ hàng --- */
+  .cart-item {
+      /* Các thuộc tính bạn đã có: display: flex, align-items, padding, border-bottom */
+      border: 1px solid #eee;
+      /* Đường viền nhẹ cho từng item */
+      border-radius: 8px;
+      /* Bo góc nhẹ */
+      margin-bottom: 15px;
+      /* Khoảng cách giữa các item */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      /* Đổ bóng nhẹ cho item */
+      transition: all 0.3s ease;
+      /* Hiệu ứng chuyển động khi hover */
+  }
+
+  .cart-item:hover {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      /* Hiệu ứng đổ bóng khi hover */
+  }
+
+  .cart-item img {
+      /* Các thuộc tính bạn đã có: width, height, object-fit, margin-right */
+      border-radius: 4px;
+      /* Bo góc ảnh */
+      border: 1px solid #f5f5f5;
+      /* Viền ảnh nhẹ */
+      object-fit: contain;
+      /* Đảm bảo ảnh hiển thị đầy đủ, không bị cắt */
+  }
+
+  .item-info {
+      /* Các thuộc tính bạn đã có: flex */
+      display: flex;
+      /* Bổ sung để sắp xếp h4 và remove */
+      flex-direction: column;
+      /* Xếp dọc h4 và remove */
+      justify-content: center;
+      /* Căn giữa nội dung theo chiều dọc */
+  }
+
+  .item-info h4 {
+      /* Các thuộc tính bạn đã có: margin, font-size, font-weight */
+      margin-bottom: 10px;
+      /* Khoảng cách giữa tên sản phẩm và nút xóa */
+      color: #333;
+      /* Màu chữ mặc định */
+  }
+
+  .remove {
+      /* Các thuộc tính bạn đã có: color, font-size, cursor, margin-top */
+      display: inline-flex;
+      /* Để icon và chữ nằm trên cùng một dòng và căn chỉnh */
+      align-items: center;
+      /* Căn giữa icon và chữ */
+      font-size: 0.9em;
+      /* Kích thước chữ nhỏ hơn */
+      transition: color 0.2s ease;
+      /* Hiệu ứng chuyển màu khi hover */
+      color: #dc3545;
+      /* Đổi màu nút xóa thành đỏ nổi bật hơn (từ #888) */
+  }
+
+  .remove:hover {
+      color: #c82333;
+      /* Màu đỏ đậm hơn khi hover */
+      text-decoration: underline;
+      /* Gạch chân khi hover */
+  }
+
+  .remove i {
+      margin-right: 5px;
+      /* Khoảng cách giữa icon và chữ "Xoá" */
+  }
+
+  .item-price {
+      /* Các thuộc tính bạn đã có: color, font-size, font-weight */
+      text-align: right;
+      /* Căn giá sang phải */
+      margin-bottom: 10px;
+      /* Khoảng cách với ô số lượng */
+  }
+
+  .quantity-controls {
+      justify-content: center;
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-left: 18px;
+      /* Bổ sung để loại bỏ khoảng trắng giữa các inline-block elements */
+      font-size: 0;
+      /* Đặt font-size của container về 0 */
+  }
+
+  .quantity-controls button {
+      background: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
       font-size: 18px;
+      /* Đặt lại font-size cho button */
+      cursor: pointer;
+      color: black;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s ease;
+  }
+
+  .quantity-controls button:hover {
+      background-color: #cc0000;
+  }
+
+  .quantity-controls input {
+      width: 40px;
+      text-align: center;
+      border: none;
+      font-size: 16px;
+      /* Đặt lại font-size cho input */
+      padding: 5px 0;
+  }
+
+  /* Loại bỏ mũi tên xoay trên Chrome, Safari, Edge */
+  .quantity-controls input::-webkit-outer-spin-button,
+  .quantity-controls input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+
+  /* --- Bổ sung cho phần tổng tiền --- */
+  .total {
+      /* Các thuộc tính bạn đã có: padding, font-size, display, justify-content, font-weight */
+      border-top: 1px solid #eee;
+      /* Đường viền trên để phân biệt */
+      margin-top: 20px;
+      /* Khoảng cách phía trên */
+  }
+
+  .total .amount {
+      /* Các thuộc tính bạn đã có: color */
+      color: red;
+      /* Đảm bảo màu đỏ nổi bật */
+  }
+
+  /* --- Các nút hành động (mới) --- */
+  .checkout-btn,
+  .continue-shopping-btn,
+  .clear-cart-btn {
+      display: block;
+      /* Đảm bảo mỗi nút là một khối riêng */
+      width: 100%;
+      /* Chiếm toàn bộ chiều rộng */
+      padding: 15px 20px;
+      text-align: center;
+      border-radius: 8px;
+      /* Bo góc nút */
+      font-size: 1.1em;
       font-weight: bold;
       text-decoration: none;
-      border-radius: 4px;
-      margin: 0 20px 20px;
+      /* Bỏ gạch chân cho thẻ <a> */
+      margin-top: 20px;
+      /* Khoảng cách giữa các nút */
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      /* Hiệu ứng chuyển động */
+      border: none;
+      /* Bỏ viền mặc định */
   }
+
+  .checkout-btn {
+      background-color: #e60000;
+      /* Màu đỏ cho nút đặt hàng (từ CSS của bạn) */
+      color: white;
+  }
+
+  .checkout-btn:hover {
+      background-color: #cc0000;
+      /* Đỏ đậm hơn khi hover */
+      transform: translateY(-2px);
+      /* Hiệu ứng nhấc lên nhẹ */
+  }
+
+  .clear-cart-btn {
+      background-color: #ffc107;
+      /* Màu vàng cam */
+      color: #333;
+      margin-bottom: 10px;
+      /* Khoảng cách với nút mua sắm */
+  }
+
+  .clear-cart-btn:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px);
+  }
+
+  .continue-shopping-btn {
+      background-color: #6c757d;
+      /* Màu xám */
+      color: white;
+  }
+
+  .continue-shopping-btn:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+  }
+
+  /* --- CSS cho giỏ hàng trống (mới) --- */
+  .cart-container p {
+      font-size: 1.2em;
+      color: #666;
+      text-align: center;
+      margin-top: 50px;
+  }
+
+
+
+
+  .order-info-form {
+      display: flex;
+      flex-direction: column;
+      font-size: 20px;
+  }
+
+  .order-info-group {
+      margin: 0px auto;
+      width: 77%;
+      margin-bottom: 15px;
+  }
+
+  .order-info-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+  }
+
+  .order-info-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f5f5f5;
+      color: #333;
+  }
+
+  .order-info-input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+  }
+
+  .order-info-btn {
+      margin: 0px auto;
+      width: 77%;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: green;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 15px;
+  }
+
+  .order-info-back-btn {
+      margin: 0px auto;
+      width: 77%;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: red;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 15px;
+  }
+
+
+.order-info-btn:hover {
+    background-color: #218838; /* Xanh lá đậm hơn cho nút "Tiếp Tục" */
+}
+
+.order-info-back-btn:hover {
+    background-color: #CC0000; /* Đỏ đậm hơn cho nút "Về trang trước" */
+    /* Bạn có thể thử các màu khác như #B30000 nếu muốn đậm hơn nữa */
+}

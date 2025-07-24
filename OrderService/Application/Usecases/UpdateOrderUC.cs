@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommonDto.ResultDTO;
+using Microsoft.EntityFrameworkCore;
 using OrderService.Application.UnitOfWork;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interface.UnitOfWork;
-using OrderService.Infrastructure.DBContext;
+using OrderService.Infrastructure.Data.DBContext;
 
 namespace OrderService.Application.Usecases
 {
@@ -10,31 +11,34 @@ namespace OrderService.Application.Usecases
     {
         private readonly IUnitOfWork unitOfWork;
 
-        public UpdateOrderUC(OrderContext context)
+        public UpdateOrderUC(IUnitOfWork unitOfWork)
         {
-            this.unitOfWork = new OrderUnitOfWork(context);
+            this.unitOfWork = unitOfWork;
         }
 
-        public async Task<Order?> UpdateStatusOrder(int orderID, string status)
+        public async Task<ServiceResult<Order>> UpdateStatusOrder(int orderID, string status)
         {
             try
             {
-                IQueryable<Order> query = this.unitOfWork.OrderRepository().GetByIdQueryable(orderID);
-
-                Order? order = await query.FirstOrDefaultAsync();
-                if (order == null) { return null; }
-
+                Order? order = await this.unitOfWork.OrderRepository().GetById(orderID);
+                if (order == null)
+                {
+                    return ServiceResult<Order>.Failure(
+                        "Order not found.",
+                        ServiceErrorType.NotFound);
+                }
                 order.Status = status;
-                this.unitOfWork.OrderRepository().Update(order);
                 await this.unitOfWork.Commit();
-
-                return order;
+                return ServiceResult<Order>.Success(order);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi cập nhật Order: {ex.Message}");
-                return null;
+                Console.WriteLine($"Error updating order status: {ex.Message}");
+                return ServiceResult<Order>.Failure(
+                    "An error occurred while updating the order status.",
+                    ServiceErrorType.InternalError);
             }
         }
+         
     }
 }

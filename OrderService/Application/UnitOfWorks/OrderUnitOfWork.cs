@@ -1,9 +1,10 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Storage;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Interface.IRepositories;
 using OrderService.Domain.Interface.UnitOfWork;
-using OrderService.Infrastructure.DBContext;
-using OrderService.Infrastructure.Repository;
+using OrderService.Infrastructure.Data.DBContext;
+using OrderService.Infrastructure.Data.Repositories;
 
 namespace OrderService.Application.UnitOfWork
 {
@@ -11,7 +12,7 @@ namespace OrderService.Application.UnitOfWork
     {
         private readonly OrderContext _Context;
         private readonly IRepository<Order> _OrderRepository;
-        private readonly    IRepository<OrderDetail> _OrderDetailRepository;
+        private readonly IRepository<OrderDetail> _OrderDetailRepository;
         public OrderUnitOfWork(OrderContext context)
         {
             this._OrderRepository = new Repository<Order>(context);
@@ -34,6 +35,14 @@ namespace OrderService.Application.UnitOfWork
             return this._OrderRepository;
         }
 
+        public async Task RollbackAsync(IDbContextTransaction transaction)
+        {
+
+            if (transaction != null)
+            {
+                await transaction.RollbackAsync();
+            }
+        }
         public void Rollback()
         {
             if (_Context.Database.CurrentTransaction != null)
@@ -41,5 +50,19 @@ namespace OrderService.Application.UnitOfWork
                 _Context.Database.CurrentTransaction.Rollback();
             }
         }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _Context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync(IDbContextTransaction transaction) // <-- Triển khai
+        {
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
+        }
+
     }
 }

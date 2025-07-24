@@ -20,7 +20,7 @@ export class NavigationComponent {
         // Xử lý khi đăng xuất thành công
         console.log('Đăng xuất thành công!', response);
         this.authService.setLoggedIn(false);
-        this.router.navigate(['/login']);
+        this.router.navigateByUrl('/login', { replaceUrl: true });
       },
       error: (error: HttpErrorResponse) => { // Ép kiểu 'error' thành HttpErrorResponse
         console.error('Lỗi khi đăng xuất:', error); // Log toàn bộ đối tượng lỗi để debug

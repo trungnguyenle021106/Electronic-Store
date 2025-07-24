@@ -66,6 +66,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = null;
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS

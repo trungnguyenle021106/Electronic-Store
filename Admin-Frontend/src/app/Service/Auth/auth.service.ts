@@ -8,7 +8,7 @@ import { LoginRequest } from '../../Model/Product/DTO/Request/LoginRequest';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseApiUrl = 'http://localhost:5293';
+  private baseApiUrl = 'http://localhost:5293/gateway/user-apis';
 
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   public isLoggedIn = this._isLoggedIn.asObservable();
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   checkStatus(): Observable<string | null> {
-    return this.http.get<string>(`${this.baseApiUrl}/gateway/usersapi/auth/status`, { withCredentials: true }).pipe(
+    return this.http.get<string>(`${this.baseApiUrl}/auth/status`, { withCredentials: true }).pipe(
       tap((roleResponse: string) => {
         // Nếu request thành công, nghĩa là người dùng đã đăng nhập và backend trả về vai trò
         this._isLoggedIn.next(true);
@@ -49,17 +49,17 @@ export class AuthService {
 
 
   login(loginRequest: LoginRequest): Observable<string> {
-    let apiUrl: string = `${this.baseApiUrl}/gateway/usersapi/auth/login`;
+    let apiUrl: string = `${this.baseApiUrl}/auth/login`;
     return this.http.post<string>(apiUrl, loginRequest, { withCredentials: true });
   }
 
   logout(): Observable<void> {
-    let apiUrl: string = `${this.baseApiUrl}/gateway/usersapi/auth/logout/specific`;
+    let apiUrl: string = `${this.baseApiUrl}/auth/logout/specific`;
     return this.http.post<void>(apiUrl, null, { withCredentials: true });
   }
 
   refreshToken(): Observable<boolean> {
-    const apiUrl: string = `${this.baseApiUrl}/gateway/usersapi/auth/tokens/refresh`;
+    const apiUrl: string = `${this.baseApiUrl}/auth/tokens/refresh`;
 
     if (this.isRefreshing) {
       return this.refreshTokenSubject.asObservable().pipe(

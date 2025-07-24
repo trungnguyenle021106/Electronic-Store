@@ -2,11 +2,11 @@
     <div class="sidebar">
         <div class="profile">
             <i class="fas fa-user-circle"></i>
-            <h3>LÊ N</h3>
+            <h3>{{customerInformation?.Name}}</h3>
         </div>
         <ul>
-            <li routerLink="/account/information" class="active"><i class="fas fa-user"></i> Thông tin tài khoản</li>
-            <li routerLink="/account/order"><i class="fas fa-box"></i> Quản lý đơn hàng</li>
+            <li routerLink="/account/information" [ngClass]="{'active': isUrlActive('information')}" ><i class="fas fa-user"></i> Thông tin tài khoản</li>
+            <li routerLink="/account/order" [ngClass]="{'active': isUrlActive('order')}" ><i class="fas fa-box"></i> Quản lý đơn hàng</li>
             <li (click)="OnClickLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</li>
         </ul>
     </div>

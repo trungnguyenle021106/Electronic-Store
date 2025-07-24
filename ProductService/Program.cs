@@ -34,7 +34,7 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
 {
     options.PayloadSerializerOptions.PropertyNamingPolicy = null; // Giữ nguyên tên thuộc tính (PascalCase) cho SignalR
 });
-;
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

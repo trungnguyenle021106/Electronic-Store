@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProductType } from '../../Model/Product/ProductType';
-import { PagedResult } from '../../Model/Product/DTO/Response/PagedResult';
+import { PagedResult } from '../../Model/PagedResult';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProductTypeService {
- private baseApiUrl = 'http://localhost:5293/gateway/product-apis';
+  private baseApiUrl = 'http://localhost:5293/gateway/product-apis';
 
   constructor(private http: HttpClient) { }
 
@@ -20,17 +20,18 @@ export class ProductTypeService {
 
 
   getPagedProductTypes(
-    currentPage: number = 1,
-    pageSize: number = 10,
+    currentPage?: number | null,
+    pageSize?: number | null,
     searchText: string = '',
     filter: string = ''
   ): Observable<PagedResult<ProductType>> {
-
-    // Khởi tạo HttpParams
     let params = new HttpParams()
-      .set('page', currentPage.toString()) // Chuyển số sang chuỗi
-      .set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
-
+    // Khởi tạo HttpParams
+    if (currentPage && pageSize) {
+      params
+        .set('page', currentPage.toString()) // Chuyển số sang chuỗi
+        .set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
+    }
     // Thêm searchText vào params nếu nó có giá trị (không rỗng, không khoảng trắng)
     if (searchText && searchText.trim().length > 0) {
       params = params.set('searchText', searchText.trim()); // Sử dụng trim() để loại bỏ khoảng trắng thừa

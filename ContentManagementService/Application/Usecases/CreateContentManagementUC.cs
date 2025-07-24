@@ -95,7 +95,8 @@ namespace ContentManagementService.Application.Usecases
                             ProductPropertyID = ppId
                         }).ToList();
 
-                        await this.unitOfWork.FilterDetailRepository().AddRangeAsync(filterDetailsToAdd);                   
+                        await this.unitOfWork.FilterDetailRepository().AddRangeAsync(filterDetailsToAdd);
+                        await this.unitOfWork.Commit();
                         await this.unitOfWork.CommitTransactionAsync(transaction);
 
                         Filter newFilter = await this.unitOfWork.FilterRepository().GetById(createFilterReques.Filter.ID);

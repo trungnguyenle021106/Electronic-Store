@@ -35,6 +35,20 @@
           "Port": 5272
         }
       ]
+    },
+
+
+    {
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orderHub/{catchAll}",
+      "DownstreamPathTemplate": "/orderHub/{catchAll}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5064
+        }
+      ]
     }
   ]
 }

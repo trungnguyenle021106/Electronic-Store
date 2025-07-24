@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using OrderService.Domain.Entities;
 using System.Reflection.Metadata;
 
-namespace OrderService.Infrastructure.DBContext
+namespace OrderService.Infrastructure.Data.DBContext
 {
     public class OrderContext : DbContext
     {
@@ -16,15 +16,6 @@ namespace OrderService.Infrastructure.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<OrderDetail>(entity =>
-            //{
-            //    entity.HasKey(od => new { od.OrderID, od.ProductID });
-
-            //    entity.HasOne(od => od.Order)
-            //        .WithMany(o => o.OrderDetails)
-            //        .HasForeignKey(od => od.OrderID); 
-            //});
-
                 modelBuilder.Entity<Order>()
                 .HasMany<OrderDetail>()
                 .WithOne();

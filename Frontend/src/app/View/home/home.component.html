@@ -1,28 +1,51 @@
-<div class="container">
+<div class="container" (mouseleave)="toggleSubMenu(false, '')">
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="menu-item" (mouseenter)="toggleSubMenu(true, '')" (mouseleave)="toggleSubMenu(false, '')">
+        <div class="menu-item" (mouseenter)="toggleSubMenu(true, 'Laptop'); loadProductPropertyNamesOfFilter('Laptop')"
+            [routerLink]="['/product']" [queryParams]="{ ProductTypeName: 'Laptop' , FilterID :GetFilterID('Laptop') }">
             <span><i>💻</i> Laptop</span> ➤
         </div>
-        <div class="menu-item"><span><i class="fa-solid fa-desktop"></i> Màn hình</span> ➤</div>
-        <div class="menu-item"><span><i>🎧</i> Tai Nghe</span> ➤</div>
-        <div class="menu-item"><span><i>⌨️</i> Bàn phím</span> ➤</div>
-        <div class="menu-item"><span><i>🖱️</i> Chuột</span> ➤</div>
+        <div class="menu-item"
+            (mouseenter)="toggleSubMenu(true, 'Mành hình'); loadProductPropertyNamesOfFilter('Màn hình')"
+            [routerLink]="['/product']"
+            [queryParams]="{ ProductTypeName: 'Màn hình',FilterID :GetFilterID('Màn hình')}">
+            <span><i class="fa-solid fa-desktop"></i> Màn hình</span> ➤
+        </div>
+        <div class="menu-item"
+            (mouseenter)="toggleSubMenu(true, 'Tai nghe'); loadProductPropertyNamesOfFilter('Tai nghe')"
+            [routerLink]="['/product']"
+            [queryParams]="{ ProductTypeName: 'Tai nghe',FilterID :GetFilterID('Tai nghe') }">
+            <span><i>🎧</i> Tai
+                Nghe</span> ➤
+        </div>
+        <div class="menu-item"
+            (mouseenter)="toggleSubMenu(true, 'Bàn phím'); loadProductPropertyNamesOfFilter('Bàn phím')"
+            [routerLink]="['/product']"
+            [queryParams]="{ ProductTypeName: 'Bàn phím' , FilterID :GetFilterID('Bàn phím')}">
+            <span><i>⌨️</i> Bàn
+                phím</span> ➤
+        </div>
+        <div class="menu-item" (mouseenter)="toggleSubMenu(true, 'Chuột'); loadProductPropertyNamesOfFilter('Chuột')"
+            [routerLink]="['/product']"
+            [queryParams]="{ ProductTypeName: 'Chuột' , FilterID :GetFilterID('Chuột')}">
+            <span><i>🖱️</i> Chuột</span> ➤
+        </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="sub-menu">
-            <div class="sub-menu-column">
-                <h3>Thương hiệu</h3>
-                <ul>
-                    <li>ASUS</li>
-                    <li>ACER</li>
-                    <li>MSI</li>
-                    <li>LENOVO</li>
-                    <li>DELL</li>
-                    <li>HP - Pavilion</li>
-                    <li>LG - Gram</li>
+        <div class="sub-menu" *ngIf="showSubMenu">
+            <div class="sub-menu-column" *ngFor="let propName of productPropertyNamesOfFilter">
+                <h3>{{propName}}</h3>
+                <ul *ngFor="let propDes of loadPropDes(propName)">
+                    <li [routerLink]="['/product']" [queryParams]="
+                    { 
+                        ProductTypeName: ProductTypeName,          
+                        FilterID : GetFilterID( ProductTypeName),     
+                        ProductPropertyID: GetProductPropertyID(propName, propDes),
+                    }">
+                        {{propDes}}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -69,7 +92,7 @@
             <div class="price">
                 <div><span class="new-price">120.000₫</span></div>
             </div>
-            <a href="#" class="checkout-btn">Thêm vào giỏ hàng</a>
+            <a href="#" class="checkout-btn">Mua ngay</a>
         </div>
     </div>
 </div>

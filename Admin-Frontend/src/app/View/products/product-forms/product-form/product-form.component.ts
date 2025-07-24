@@ -225,7 +225,7 @@ export class ProductFormComponent {
         this.productForm.patchValue(response);
         if (response.Image) {
            const timestamp = Date.now()
-          this.selectedImage = response.Image + `?v=${timestamp}`;
+          this.selectedImage = response.Image  ;
           this.urlImageUpdate = response.Image;
           const lastSlashIndex = response.Image.lastIndexOf('/');
           const imageName = response.Image.substring(lastSlashIndex + 1);

@@ -117,7 +117,6 @@ export class ProductBrandComponent {
   onPageChange(event: PageEvent): void {
 
     this.currentPage = event.pageIndex;
-    console.log(this.currentPage)
     this.pageSize = event.pageSize;
     this.loadProductBrands();
   }

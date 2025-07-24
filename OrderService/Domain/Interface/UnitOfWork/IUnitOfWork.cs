@@ -1,4 +1,5 @@
-﻿using OrderService.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using OrderService.Domain.Entities;
 using OrderService.Domain.Interface.IRepositories;
 
 namespace OrderService.Domain.Interface.UnitOfWork
@@ -7,6 +8,9 @@ namespace OrderService.Domain.Interface.UnitOfWork
     {
         IRepository<Order> OrderRepository();
         IRepository<OrderDetail> OrderDetailRepository();
+        Task RollbackAsync(IDbContextTransaction transaction);
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitTransactionAsync(IDbContextTransaction transaction);
         Task Commit();
         void Rollback();
     }

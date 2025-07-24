@@ -53,11 +53,11 @@ namespace ContentManagementService.Application.Usecases
                 Where(item => item.Position == updateFilterRequest.Filter.Position).
                 FirstOrDefaultAsync();
 
-                if (existFilter != null)
+                if (existFilter == null)
                 {
                     return ServiceResult<Filter>.Failure(
-                          "This position is already exist.",
-                          ServiceErrorType.AlreadyExists);
+                        "Filter with the specified position does not exist.",
+                        ServiceErrorType.NotFound);
                 }
 
                 ServiceResult<ProductProperty> productResult = await this.productService.GetAllProductProperties();
@@ -90,16 +90,18 @@ namespace ContentManagementService.Application.Usecases
                     try
                     {
                         existFilter.Position = updateFilterRequest.Filter.Position;
-
+                        await this.unitOfWork.Commit();
 
                         if (filterDetailsToAdd.Any())
                         {
                             await this.unitOfWork.FilterDetailRepository().AddRangeAsync(filterDetailsToAdd);
+                            await this.unitOfWork.Commit();
                         }
 
                         if (filterDetailsToRemove.Any())
                         {
                             await this.unitOfWork.FilterDetailRepository().RemoveRange(filterDetailsToRemove);
+                            await this.unitOfWork.Commit();
                         }
 
                         await this.unitOfWork.CommitTransactionAsync(transaction);

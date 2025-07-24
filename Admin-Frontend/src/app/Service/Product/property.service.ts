@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ProductProperty } from '../../Model/Product/ProductProperty';
-import { PagedResult } from '../../Model/Product/DTO/Response/PagedResult';
+import { PagedResult } from '../../Model/PagedResult';
 
 
 @Injectable({

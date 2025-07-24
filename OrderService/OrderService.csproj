@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthorizationPolicy\AuthorizationPolicy.csproj" />
     <ProjectReference Include="..\CommonDto\CommonDto.csproj" />
   </ItemGroup>
 

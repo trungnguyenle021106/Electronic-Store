@@ -8,13 +8,15 @@ import { CartComponent } from './View/cart/cart.component';
 import { AccountComponent } from './View/account/account.component';
 import { OrderdetailComponent } from './View/orderdetail/orderdetail.component';
 import { authGuard } from './guards/auth.guard';
+import { ProductDetailComponent } from './View/product-detail/product-detail.component';
 
 const routes: Routes =
   [
     { path: '', component: HomeComponent },
+    { path: 'product', component: ProductComponent },
     { path: 'category', component: CategoryComponent },
     { path: 'search', component: SearchComponent },
-    { path: 'product', component: ProductComponent, title: 'product' },
+    { path: 'product-detail/:id', component: ProductDetailComponent, title: 'product-detail' },
     { path: 'cart', component: CartComponent, title: 'cart' },
     {
       path: 'account',

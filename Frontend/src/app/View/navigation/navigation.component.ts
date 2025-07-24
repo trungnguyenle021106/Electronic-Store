@@ -3,6 +3,8 @@ import { AuthService } from '../../Service/Auth/auth.service';
 import { filter, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { UserService } from '../../Service/User/user.service';
 import { Router } from '@angular/router';
+import { Filter } from '../../Model/Filter/Filter';
+import { ContentManagementService } from '../../Service/ContentManagement/content-management.service';
 
 @Component({
   selector: 'app-navigation',
@@ -19,14 +21,19 @@ export class NavigationComponent {
   isLoggedIn: Observable<boolean>;
 
   customerName: string = "";
+  searchValue: string = "";
 
+  filters: Filter[] = [];
   private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService, private userService: UserService, private router : Router) {
+  constructor(private authService: AuthService, private userService: UserService, private router: Router,
+    private contentManagementService: ContentManagementService
+  ) {
     this.isLoggedIn = this.authService.isLoggedIn;
   }
 
   ngOnInit() {
+    this.loadFilters();
     this.isLoggedIn
       .pipe(
         takeUntil(this.destroy$), // Đảm bảo hủy subscription khi component bị hủy
@@ -39,7 +46,7 @@ export class NavigationComponent {
       )
       .subscribe({
         next: (info) => {
-          this.customerName = info.name;
+          this.customerName = info.Name;
         },
         error: (err) => {
           console.error('Failed to fetch customer profile:', err);
@@ -51,12 +58,24 @@ export class NavigationComponent {
   OnClickLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
-      this.authService.setLoggedIn(false);
+        this.authService.setLoggedIn(false);
+         this.router.navigateByUrl('/', { replaceUrl: true });
       },
       error: (err) => {
         console.error('Failed to fetch customer profile:', err);
       }
     });
+  }
+
+  onSearch(): void {
+    // Kiểm tra xem searchTerm có giá trị không rỗng
+    if (this.searchValue.trim()) {
+
+      this.router.navigate(['/search'], { queryParams: { searchValue: this.searchValue.trim() } });
+    } else {
+      // Tùy chọn: Xử lý khi input rỗng (ví dụ: hiển thị thông báo)
+      console.log('Vui lòng nhập từ khóa tìm kiếm.');
+    }
   }
 
   ClickCategory(isClicked: boolean): void {
@@ -87,6 +106,24 @@ export class NavigationComponent {
     }
   }
 
+  GetFilterID(position: string): number | undefined { // Cập nhật kiểu trả về
+    const foundFilter = this.filters.find(f => f.Position === position);
+    if (foundFilter) {
+      return foundFilter.ID; // Giả sử mỗi filter có thuộc tính ID
+    }
+    return undefined;
+  }
+
+  private loadFilters() {
+    this.contentManagementService.getPagedFilters().subscribe({
+      next: (response) => {
+        this.filters = response.Items
+      }, error: (error) => {
+
+      }
+    })
+  }
+  
   ngOnDestroy() {
     this.destroy$.next(); // Phát ra tín hiệu
     this.destroy$.complete(); // Hoàn thành Subject để giải phóng tài nguyên

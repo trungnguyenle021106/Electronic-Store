@@ -6,7 +6,7 @@ namespace OrderService.Interface_Adapters
 
     public class HandleResultApi
     {
-        public IResult MappingErrorHttp<T>(ServiceResult<T> serviceResult)
+        public IResult MapServiceResultToHttp<T>(ServiceResult<T> serviceResult)
         {
             if (serviceResult.IsSuccess)
             {

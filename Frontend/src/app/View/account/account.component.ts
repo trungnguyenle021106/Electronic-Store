@@ -3,6 +3,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../Service/User/user.service';
 import { AuthService } from '../../Service/Auth/auth.service';
+import { CustomerInformation } from '../../Model/User/CustomerInformation';
 
 @Component({
   selector: 'app-account',
@@ -15,14 +16,16 @@ export class AccountComponent {
   isClickedInformation: boolean = false;
   isDisplayOrderDetail: boolean = false;
   isDisplayOverlay: boolean = false;
-  orderID : number | null = null;
+  orderID: number | null = null;
 
+  customerInformation: CustomerInformation | null = null;
   private destroy$ = new Subject<void>();
 
-  constructor(private router: Router, private userService: UserService, private authService : AuthService) { }
+  constructor(private router: Router, private userService: UserService, private authService: AuthService) { }
 
   ngOnInit(): void {
     // Lắng nghe sự kiện thay đổi route
+    this.loadUserInformation();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd), // Chỉ quan tâm đến NavigationEnd để lấy URL cuối cùng
       takeUntil(this.destroy$) // Hủy đăng ký khi component bị hủy
@@ -35,6 +38,17 @@ export class AccountComponent {
   }
 
 
+  private loadUserInformation() {
+    this.userService.getMyProfile().subscribe({
+      next: (Response) => {
+        this.customerInformation = Response;
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    })
+  }
+
   private updateNavigationFlags(): void {
     const currentUrl = this.router.url; // Lấy URL hiện tại
 
@@ -42,12 +56,24 @@ export class AccountComponent {
     this.isClickedOrder = currentUrl.includes('/account/order');
     this.isClickedInformation = currentUrl.includes('/account/information');
   }
-  
-    OnClickLogout(): void {
+
+  isUrlActive(url: string): boolean {
+    const currentUrl = this.router.url; // Lấy URL hiện tại
+    if (currentUrl.includes('/account/order') && url === "order") {
+      return true;
+    }
+    else if (currentUrl.includes('/account/information') && url === "information") {
+      return true;
+    }
+
+    return false;
+  }
+
+  OnClickLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
-      this.authService.setLoggedIn(false);
-       this.router.navigate(['/']);
+        this.authService.setLoggedIn(false);
+        this.router.navigateByUrl('/', { replaceUrl: true });
       },
       error: (err) => {
         console.error('Failed to fetch customer profile:', err);

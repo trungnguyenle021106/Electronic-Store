@@ -12,11 +12,11 @@ import { UserService } from '../../../Service/User/user.service';
 export class AccountInformationComponent {
   accountInfoForm!: FormGroup;
   customerInfo: CustomerInformation = {
-    email: '',
-    name: '',
-    phone: '',
-    address: '',
-    gender: ''
+    Email: '',
+    Name: '',
+    Phone: '',
+    Address: '',
+    Gender: ''
   };
 
   constructor(private fb: FormBuilder, private userSerice: UserService) {
@@ -24,11 +24,11 @@ export class AccountInformationComponent {
 
   ngOnInit(): void {
     this.accountInfoForm = this.fb.group({
-      name: ['', Validators.required], // Họ Tên - bắt buộc
-      gender: ['male', Validators.required], // Giới tính - bắt buộc
-      phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]], // Số điện thoại - bắt buộc, đúng định dạng 10 số
-      email: [], // Email - chỉ đọc
-      address: ['', Validators.required,], // Địa chỉ - bắt buộc
+      Name: ['', Validators.required], // Họ Tên - bắt buộc
+      Gender: ['male', Validators.required], // Giới tính - bắt buộc
+      Phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]], // Số điện thoại - bắt buộc, đúng định dạng 10 số
+      Email: [], // Email - chỉ đọc
+      Address: ['', Validators.required,], // Địa chỉ - bắt buộc
     });
 
     this.userSerice.getMyProfile().subscribe({
@@ -36,11 +36,11 @@ export class AccountInformationComponent {
         this.customerInfo = response;
 
         this.accountInfoForm.patchValue({
-          email: this.customerInfo.email,
-          name: this.customerInfo.name,
-          address: this.customerInfo.address,
-          gender: this.customerInfo.gender,
-          phone: this.customerInfo.phone
+          Email: this.customerInfo.Email,
+          Name: this.customerInfo.Name,
+          Address: this.customerInfo.Address,
+          Gender: this.customerInfo.Gender,
+          Phone: this.customerInfo.Phone
         });
 
       },
@@ -50,7 +50,7 @@ export class AccountInformationComponent {
       }
     });
   }
-
+  
 
   hasError(controlName: string, errorCode: string): boolean {
     const control = this.accountInfoForm.get(controlName);
@@ -59,7 +59,7 @@ export class AccountInformationComponent {
 
   onSubmit(): void {
     if (this.accountInfoForm.valid) {
-      console.log('Form submitted:', this.accountInfoForm.getRawValue());
+      
     } else {
       console.log('Form is invalid');
       this.accountInfoForm.markAllAsTouched(); // Đánh dấu tất cả các control là "touched" để hiện lỗi

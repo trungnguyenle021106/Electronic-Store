@@ -1,10 +1,12 @@
 ﻿using Azure;
 using CommonDto.ResultDTO;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.DTO;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace ProductService.Application.Usecases
@@ -147,8 +149,8 @@ namespace ProductService.Application.Usecases
             }
         }
 
-        public async Task<ServiceResult<PagedResult<ProductDTO>>> GetPagedProducts(int Page, int PageSize, string? searchText,
-            string? filterBrand, string? filterType, string? filterStatus)
+        public async Task<ServiceResult<PagedResult<Product>>> GetPagedProducts(int Page, int PageSize, string? searchText,
+           string? filterBrand, string? filterType, string? filterStatus, string? productPropertyIds, bool? isIncrease)
         {
             try
             {
@@ -219,39 +221,48 @@ namespace ProductService.Application.Usecases
                        Where(item => item.Status != null && item.Status.ToLower().Contains(filterStatus));
                 }
 
+                if (!string.IsNullOrWhiteSpace(productPropertyIds))
+                {
+
+                    List<int> desiredIds = productPropertyIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                                       .Select(int.Parse)
+                                                       .ToList();
+
+                    query = query.Where(
+                        p => desiredIds.All(
+                            desiredId => p.ProductProperties.Any(
+                                ppp => ppp.ID == desiredId
+                                )
+                            )
+                        );
+                }
+
+                if (isIncrease != null && isIncrease.HasValue && isIncrease == true)
+                {
+                    query = query.OrderBy(p => p.Price);
+                }
+                else if (isIncrease != null && isIncrease.HasValue && isIncrease == false)
+                {
+                    query = query.OrderByDescending(p => p.Price);
+                }
+
                 int TotalCount = await query.CountAsync();
 
+                List<Product> list = new List<Product>(); ;
+
+                // 4. Kiểm tra trang hợp lệ
                 if (Page < 1)
                 {
                     Page = 1;
                 }
 
-                List<ProductDTO>? list = await query
-                    .Join(this.unitOfWork.ProductTypeRepository().GetAll(),
-                        product => product.ProductTypeID,
-                        productType => productType.ID,
-                        (product, productType) => new { Product = product, ProductType = productType }
-                    )
-                    .Join(this.unitOfWork.ProductBrandRepository().GetAll(),
-                        item => item.Product.ProductBrandID,
-                        productBrand => productBrand.ID,
-                        (item, productBrand) => new ProductDTO
-                        {
-                            ID = item.Product.ID,
-                            Name = item.Product.Name,
-                            Quantity = item.Product.Quantity,
-                            Image = item.Product.Image,
-                            Price = item.Product.Price,
-                            Status = item.Product.Status,
-                            ProductTypeName = item.ProductType.Name,
-                            ProductBrandName = productBrand.Name
-                        }
-                    )
-                    .Skip((Page - 1) * PageSize)
-                    .Take(PageSize)
-                    .ToListAsync();
+                query = query.OrderBy(pp => pp.ID);
+                list = await query
+               .Skip((int)((Page - 1) * PageSize))
+               .Take((int)PageSize)
+               .ToListAsync();
 
-                return ServiceResult<PagedResult<ProductDTO>>.Success(new PagedResult<ProductDTO>
+                return ServiceResult<PagedResult<Product>>.Success(new PagedResult<Product>
                 {
                     Items = list,
                     Page = Page,
@@ -262,10 +273,11 @@ namespace ProductService.Application.Usecases
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy sản phẩm, lỗi : {ex.Message}");
-                return ServiceResult<PagedResult<ProductDTO>>.Failure("An unexpected internal error occurred while GetPagedProducts.",
+                return ServiceResult<PagedResult<Product>>.Failure("An unexpected internal error occurred while GetPagedProducts.",
                       ServiceErrorType.InternalError);
             }
         }
+
 
         public async Task<ServiceResult<string>> GetAllUniquePropertyNames()
         {
@@ -451,6 +463,33 @@ namespace ProductService.Application.Usecases
             }
         }
 
+        public async Task<ServiceResult<PagedResult<ProductType>>> GetPagedProductTypes()
+        {
+            try
+            {
+                IQueryable<ProductType> query = this.unitOfWork.ProductTypeRepository().GetAll();
+
+                query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
+
+                // 6. Áp dụng phân trang (Skip và Take)
+                List<ProductType>? list = await query.ToListAsync();
+
+                return ServiceResult<PagedResult<ProductType>>.Success(new PagedResult<ProductType>
+                {
+                    Items = list,
+                    Page = 1, // Nếu không có phân trang, đặt trang về 1
+                    PageSize = list.Count, // Nếu không có phân trang, đặt pageSize bằng tổng số bản ghi
+                    TotalCount = list.Count // Tổng số bản ghi
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy brand sản phẩm, lỗi : {ex.Message}");
+                return ServiceResult<PagedResult<ProductType>>.Failure("An unexpected internal error occurred while GetPagedProductType.",
+                                    ServiceErrorType.InternalError);
+            }
+        }
+
         public async Task<ServiceResult<PagedResult<ProductBrand>>> GetPagedProductBrands(int page, int pageSize, string? searchText, string? filter)
         {
             try
@@ -509,6 +548,62 @@ namespace ProductService.Application.Usecases
                 Console.WriteLine($"Lỗi lấy brand sản phẩm, lỗi : {ex.Message}");
                 return ServiceResult<PagedResult<ProductBrand>>.Failure("An unexpected internal error occurred while GetPagedProductBrand.",
                                     ServiceErrorType.InternalError);
+            }
+        }
+
+        public async Task<ServiceResult<PagedResult<ProductBrand>>> GetPagedProductBrands()
+        {
+            try
+            {
+                IQueryable<ProductBrand> query = this.unitOfWork.ProductBrandRepository().GetAll();
+
+
+                query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
+
+                // 6. Áp dụng phân trang (Skip và Take)
+                List<ProductBrand>? list = await query
+
+                    .ToListAsync();
+
+                return ServiceResult<PagedResult<ProductBrand>>.Success(new PagedResult<ProductBrand>
+                {
+                    Items = list,
+                    Page = 1, // Nếu không có phân trang, đặt trang về 1
+                    PageSize = list.Count, // Nếu không có phân trang, đặt pageSize bằng tổng số bản ghi
+                    TotalCount = list.Count // Tổng số bản ghi
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy brand sản phẩm, lỗi : {ex.Message}");
+                return ServiceResult<PagedResult<ProductBrand>>.Failure("An unexpected internal error occurred while GetPagedProductBrand.",
+                                    ServiceErrorType.InternalError);
+            }
+        }
+
+
+        public async Task<ServiceResult<Product>> CheckExistProducts(List<int> productIDs)
+        {
+            if (productIDs == null || !productIDs.Any())
+            {
+                return ServiceResult<Product>.Failure("Product IDs cannot be null or empty.", ServiceErrorType.ValidationError);
+            }
+            try
+            {
+                IQueryable<Product> query = this.unitOfWork.ProductRepository().GetAll();
+                query = query.Where(product => productIDs.Contains(product.ID));
+                List<Product> products = await query.ToListAsync();
+                if (products.Count == 0)
+                {
+                    return ServiceResult<Product>.Failure("No products found with the provided IDs.", ServiceErrorType.NotFound);
+                }
+                return ServiceResult<Product>.Success(products);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking product existence: {ex.Message}");
+                return ServiceResult<Product>.Failure("An unexpected internal error occurred while checking product existence.",
+                      ServiceErrorType.InternalError);
             }
         }
 

@@ -3,7 +3,7 @@ import { Filter } from '../../Model/Filter/Filter';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { PagedResult } from '../../Model/Product/DTO/Response/PagedResult';
+import { PagedResult } from '../../Model/PagedResult';
 import { CreateUpdateFilterRequest } from '../../Model/Filter/DTO/CreateUpdateFilterRequest';
 import { ProductProperty } from '../../Model/Product/ProductProperty';
 
@@ -67,7 +67,7 @@ export class ContentManagementService {
       Filter: filter,
       productPropertyIDs: productPropertyIDs
     }
-    return this.http.patch<Filter>(apiUrl, updateFilterRequest, { withCredentials: true });
+    return this.http.put<Filter>(apiUrl, updateFilterRequest, { withCredentials: true });
   }
 
   getFilterByID(id: number) {
