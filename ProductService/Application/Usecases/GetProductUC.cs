@@ -19,6 +19,40 @@ namespace ProductService.Application.Usecases
             this.unitOfWork = unitOfWork;
         }
 
+        public async Task<ServiceResult<Product>> Get10LatestProduct(string productTypeName)
+        {
+            if (productTypeName == null)
+            {
+                return ServiceResult<Product>.Failure("Product type is invalid.", ServiceErrorType.ValidationError);
+            }
+
+            try
+            {
+                IQueryable<Product> query = this.unitOfWork.ProductRepository().GetAll();
+                query = query
+                 .Join(
+                     this.unitOfWork.ProductTypeRepository().GetAll(),
+                     product => product.ProductTypeID,
+                     productType => productType.ID,
+                     (product, productType) => new { Product = product, ProductType = productType }
+                 )
+                 .Where(item => item.ProductType.Name == productTypeName) // Lọc theo loại sản phẩm
+                 .Select(item => item.Product) // Quay về chỉ lấy đối tượng Product
+                 .OrderByDescending(p => p.ID) // 💡 Sắp xếp theo ID giảm dần (ID lớn nhất là cuối cùng)
+                 .Take(10); // Lấy 10 sản phẩm có ID lớn nhất
+
+                // Cuối cùng: Chọn ra thuộc tính ID của 10 sản phẩm này
+                List<Product> latestProduct = await query.ToListAsync();
+
+                return ServiceResult<Product>.Success(latestProduct);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<Product>.Failure($"An unexpected internal error occurred while Get10LatestProduct, lỗi : {ex.Message}",
+                      ServiceErrorType.InternalError);
+            }
+        }
+
         public async Task<ServiceResult<ProductProperty>> GetAllPropertiesOfProduct(int id)
         {
 
@@ -245,8 +279,13 @@ namespace ProductService.Application.Usecases
                 {
                     query = query.OrderByDescending(p => p.Price);
                 }
+                else
+                {
 
-                int TotalCount = await query.CountAsync();
+                    query = query.OrderBy(pp => pp.ID);
+                }
+
+                    int TotalCount = await query.CountAsync();
 
                 List<Product> list = new List<Product>(); ;
 
@@ -256,7 +295,6 @@ namespace ProductService.Application.Usecases
                     Page = 1;
                 }
 
-                query = query.OrderBy(pp => pp.ID);
                 list = await query
                .Skip((int)((Page - 1) * PageSize))
                .Take((int)PageSize)

@@ -161,29 +161,11 @@ export class SearchComponent {
   }
 
   private GetPriceSortStatus(): boolean {
-    if (this.productStatusSort === "increase") {
+    if (this.productPriceSortOrder === "increase") {
       return true;
     }
     return false;
   }
-
-  // private HandleCurProductType(products: Product[]) {
-  //   products.forEach(element => {
-  //     const productType: ProductType | undefined = this.productTypes.find(pt => pt.ID === element.ProductTypeID);
-  //     if (productType && !this.curProductTypes.some(curPt => curPt.ID === productType.ID)) {
-  //       this.curProductTypes.push(productType);
-  //     }
-  //   });
-  // }
-
-  // private HandleCurProductBrand(products: Product[]) {
-  //   this.products.forEach(element => {
-  //     const productBrand: ProductBrand | undefined = this.productBrands.find(pt => pt.ID === element.ProductBrandID);
-  //     if (productBrand && !this.curProductBrands.some(curPt => curPt.ID === productBrand.ID)) {
-  //       this.curProductBrands.push(productBrand);
-  //     }
-  //   });
-  // }
 
   onSearch() {
     this.canShowNotFound = false;

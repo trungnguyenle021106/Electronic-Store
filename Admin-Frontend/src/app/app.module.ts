@@ -40,6 +40,8 @@ import { ContentManagementFormComponent } from './View/content-managements/conte
 import { ContentManagementComponent } from './View/content-managements/content-management/content-management.component';
 import { OrderComponent } from './View/orders/order/order.component';
 import { OrderDetailComponent } from './View/orders/order-detail/order-detail.component';
+import { UserComponent } from './View/users/user/user.component';
+import { CustomerComponent } from './View/users/customer/customer.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import { OrderDetailComponent } from './View/orders/order-detail/order-detail.co
     ErrorDialogComponent,
     ContentManagementFormComponent,
     OrderComponent,
-    OrderDetailComponent
+    OrderDetailComponent,
+    UserComponent,
+    CustomerComponent
   ],
   imports: [
     BrowserModule,

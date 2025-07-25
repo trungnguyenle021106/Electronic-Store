@@ -57,6 +57,7 @@ namespace OrderService.Interface_Adapters.API
             GetPagedOrders(app);
             GetProductOfOrder(app);
             GetOrderItemOfOrder(app);
+            MapGetOrdersCurrentCustomer(app);
         }
 
         public static void GetOrderItemOfOrder(this WebApplication app)
@@ -107,9 +108,21 @@ namespace OrderService.Interface_Adapters.API
 
         public static void MapGetOrdersByCustomerID(this WebApplication app)
         {
-            app.MapGet("/customers/{customerID}/orders", async (GetOrderUC getOrderUC, int customerID, HandleResultApi handleResultApi) =>
+            app.MapGet("/customers/{customerID}/orders", async (GetOrderUC getOrderUC, int customerID, HandleResultApi handleResultApi,
+                [FromQuery] string? status) =>
             {
-                ServiceResult<Order> result = await getOrderUC.GetOrdersByCustomerID(customerID);
+                ServiceResult<Order> result = await getOrderUC.GetOrdersByCustomerID(customerID, status);
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        public static void MapGetOrdersCurrentCustomer(this WebApplication app)
+        {
+            app.MapGet("/orders/me", async (GetOrderUC getOrderUC, HandleResultApi handleResultApi, HttpContext httpContext,
+                [FromQuery] string? status) =>
+            {
+                int customerID = TokenService.GetJWTClaim(httpContext)?.CustomerID ?? 0;
+                ServiceResult<Order> result = await getOrderUC.GetOrdersByCustomerID(customerID, status);
                 return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyCustomer");
         }

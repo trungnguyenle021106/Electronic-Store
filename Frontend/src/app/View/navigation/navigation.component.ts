@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../Service/Auth/auth.service';
-import { filter, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { filter, Observable, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { UserService } from '../../Service/User/user.service';
 import { Router } from '@angular/router';
 import { Filter } from '../../Model/Filter/Filter';
 import { ContentManagementService } from '../../Service/ContentManagement/content-management.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CartService } from '../../Service/Cart/cart.service';
 
 @Component({
   selector: 'app-navigation',
@@ -19,26 +21,37 @@ export class NavigationComponent {
   isDisplayOverlay: boolean = false;
 
   isLoggedIn: Observable<boolean>;
+  private _isLoggedInStatus: boolean = false;
 
+  totalCartItems: number = 0;
   customerName: string = "";
   searchValue: string = "";
 
   filters: Filter[] = [];
   private destroy$ = new Subject<void>();
-
+  private cartSubscription: Subscription = new Subscription();
   constructor(private authService: AuthService, private userService: UserService, private router: Router,
-    private contentManagementService: ContentManagementService
+    private contentManagementService: ContentManagementService, private snackBar: MatSnackBar, private cartService: CartService
   ) {
     this.isLoggedIn = this.authService.isLoggedIn;
   }
 
   ngOnInit() {
+
+   this.cartSubscription = this.cartService.cart$.subscribe(cartItems => {
+      // 💡 Thay đổi logic tính toán ở đây:
+      // totalUniqueProductTypes sẽ bằng số lượng phần tử trong mảng cartItems
+      // vì mỗi phần tử trong cartItems đã đại diện cho một loại sản phẩm duy nhất.
+      this.totalCartItems = cartItems.length; 
+    });
+
     this.loadFilters();
     this.isLoggedIn
       .pipe(
         takeUntil(this.destroy$), // Đảm bảo hủy subscription khi component bị hủy
         filter(isLoggedIn => isLoggedIn), // Chỉ tiếp tục nếu isLoggedIn là true
-        switchMap(() => {
+        switchMap((response) => {
+          this._isLoggedInStatus = response;
           // Nếu isLoggedIn là true, gọi phương thức getMyProfile() từ AuthService
           console.log('User is logged in. Fetching customer profile from AuthService...');
           return this.userService.getMyProfile(); // <-- Gọi phương thức của AuthService
@@ -59,13 +72,30 @@ export class NavigationComponent {
     this.authService.logout().subscribe({
       next: () => {
         this.authService.setLoggedIn(false);
-         this.router.navigateByUrl('/', { replaceUrl: true });
+        this.router.navigateByUrl('/', { replaceUrl: true });
       },
       error: (err) => {
         console.error('Failed to fetch customer profile:', err);
       }
     });
   }
+
+  OnclickSearchOrder()
+  {
+     if (this._isLoggedInStatus) {
+      this.router.navigate(['/account/order'])
+    }
+    else {
+      this.snackBar.open('Hãy đăng nhập để sử dụng', 'Đóng', {
+        duration: 3000,
+        horizontalPosition: 'end',  // Bên phải
+        verticalPosition: 'top',    // Phía trên
+        panelClass: ['success-snackbar']
+      });
+    }
+  }
+
+
 
   onSearch(): void {
     // Kiểm tra xem searchTerm có giá trị không rỗng
@@ -78,9 +108,15 @@ export class NavigationComponent {
     }
   }
 
+  CloseCategory()
+  {
+    this.DisplayOverlay(false);
+    this.isClickedCategory = false
+  }
+
   ClickCategory(isClicked: boolean): void {
-    this.DisplayOverlay(true);
-    this.isClickedCategory = isClicked;
+     this.DisplayOverlay(true);
+      this.isClickedCategory = isClicked;
   }
 
   ClickRegister(isClicked: boolean): void {
@@ -123,8 +159,11 @@ export class NavigationComponent {
       }
     })
   }
-  
+
   ngOnDestroy() {
+      if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
     this.destroy$.next(); // Phát ra tín hiệu
     this.destroy$.complete(); // Hoàn thành Subject để giải phóng tài nguyên
   }

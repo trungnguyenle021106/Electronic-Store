@@ -2,6 +2,7 @@
 {
     public record CustomerInformation
     (
+        int ID,
         string Email,
         string Name,
         string Phone,

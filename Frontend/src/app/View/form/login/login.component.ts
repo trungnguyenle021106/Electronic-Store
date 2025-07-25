@@ -26,13 +26,13 @@ export class LoginComponent {
       const formData = this.loginForm.value;
 
       this.serverError = null; // Reset lỗi server trước khi gửi
-
       this.authService.login(formData).subscribe({
         next: (response) => {
           window.location.href = response;
         },
         error: (error) => {
-          this.serverError = error.error.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
+          this.serverError = error.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
+          console.log(  this.serverError )
         },
       })
     }

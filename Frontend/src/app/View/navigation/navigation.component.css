@@ -322,3 +322,39 @@ input {
 .dropdown-menu span{
  font-size: 24px;
 }
+
+
+.navbar-icon-wrapper {
+  position: relative; /* Quan trọng: làm gốc cho vị trí của badge */
+  display: flex; /* Hoặc inline-flex tùy thuộc vào bố cục xung quanh */
+  flex-direction: column; /* Xếp icon và chữ dọc nếu cần */
+  align-items: center; /* Căn giữa nếu dùng flex column */
+  cursor: pointer;
+  /* Thêm padding hoặc margin nếu cần để badge không bị tràn ra ngoài */
+  padding: 5px 10px; /* Ví dụ */
+}
+
+.navbar-icon i {
+  /* Đảm bảo icon có kích thước phù hợp */
+  font-size: 24px; /* Ví dụ */
+}
+
+.cart-badge {
+  position: absolute;
+  top: 0px; /* Điều chỉnh vị trí theo chiều dọc */
+  right: 0px; /* Điều chỉnh vị trí theo chiều ngang */
+  background-color: #ff2c2c; /* Màu đỏ nổi bật */
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%; /* Làm cho badge tròn */
+  width: 20px; /* Chiều rộng của badge */
+  height: 20px; /* Chiều cao của badge */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Nếu số lớn hơn 9 (10, 100), bạn có thể tăng width/height hoặc điều chỉnh font-size */
+  padding: 2px; /* Thêm padding nếu số lượng lớn */
+  transform: translate(25%, -25%); /* Dịch chuyển để badge nằm ra ngoài góc icon */
+  z-index: 10; /* Đảm bảo badge nằm trên các phần tử khác */
+}

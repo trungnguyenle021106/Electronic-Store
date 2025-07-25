@@ -58,7 +58,7 @@ export class PropertyComponent {
       .subscribe(() => {
         this.onSearchChange();
       });
-    this.connectSignalR();
+    // this.connectSignalR();
   }
 
   ngAfterViewInit(): void {
@@ -164,6 +164,8 @@ export class PropertyComponent {
         next: (response) => {
           this.DisplayConfirmForm(false);
           this.DisplayOverlay(false);
+
+          this.loadProductProperties();
         },
         error: (error) => {
           alert(error.message);

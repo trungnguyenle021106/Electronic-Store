@@ -1,7 +1,20 @@
 {
   "Routes": [
+    //Product
     {
-      //Product
+      "DownstreamPathTemplate": "/products/latest",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/latest",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
       "DownstreamPathTemplate": "/products",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

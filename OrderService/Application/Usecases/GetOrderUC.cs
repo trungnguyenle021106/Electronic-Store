@@ -261,18 +261,24 @@ namespace OrderService.Application.Usecases
             }
         }
 
-        public async Task<ServiceResult<Order>> GetOrdersByCustomerID(int customerID)
+        public async Task<ServiceResult<Order>> GetOrdersByCustomerID(int customerID, string? status)
         {
+            if (customerID <= 0)
+            {
+                return ServiceResult<Order>.Failure(
+                    "Invalid customer ID.",
+                    ServiceErrorType.ValidationError);
+            }
+
             try
             {
                 List<Order> orders = await this._UnitOfWork.OrderRepository().GetAll()
-                    .Where(o => o.CustomerID == customerID).ToListAsync();
-                if (orders == null || !orders.Any())
+                    .Where(o => o.CustomerID == customerID).ToListAsync();            
+
+                if(status != null)
                 {
-                    return ServiceResult<Order>.Failure(
-                        "No orders found for the specified customer ID.",
-                        ServiceErrorType.NotFound);
-                }
+                    orders = orders.Where(o => o.Status != null && o.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+                }       
                 return ServiceResult<Order>.Success(orders);
             }
             catch (Exception ex)

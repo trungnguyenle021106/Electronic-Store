@@ -35,14 +35,50 @@ export class ProductComponent {
   }
 
   ngOnInit() {
-
     this.route.queryParamMap.subscribe(params => {
-      this.productTypeName = params.get('ProductTypeName') ?? '';
-      this.productPropertyID = Number(params.get('ProductPropertyID'));
-      this.filterID = Number(params.get('FilterID'));
+      const newProductTypeName = params.get('ProductTypeName') ?? '';
+      const newProductPropertyID = Number(params.get('ProductPropertyID'));
+      const newFilterID = Number(params.get('FilterID'));
 
-      this.loadProductPropertyOfFilterr()
-    })
+      // Kiểm tra xem các param có thực sự thay đổi không để quyết định tải lại properties
+      const filterParamsChanged =
+        this.filterID !== newFilterID ||
+        this.productPropertyID !== newProductPropertyID ||
+        this.productTypeName !== newProductTypeName; // Thêm cả productTypeName vào điều kiện này nếu nó ảnh hưởng đến filter properties
+
+      // Cập nhật các biến trạng thái
+      this.productTypeName = newProductTypeName;
+      this.productPropertyID = newProductPropertyID;
+      this.filterID = newFilterID;
+
+      // LUÔN reset pagination và sản phẩm khi query params thay đổi
+      this.resetPaginationAndProducts();
+
+      // Chỉ tải lại product properties và reset các biến liên quan nếu các tham số lọc thay đổi
+      if (filterParamsChanged) {
+        this.resetFilterPropertiesState(); // <<< ĐÂY LÀ ĐIỂM THAY ĐỔI QUAN TRỌNG
+        this.loadProductPropertyOfFilterr();
+      } else {
+        // Nếu các tham số lọc không đổi, nhưng có thể các tham số khác (như trang, sắp xếp) thay đổi
+        // thì vẫn cần tải lại sản phẩm (dựa trên trạng thái hiện tại của filter properties)
+        this.loadProducts();
+      }
+    });
+  }
+  
+ private resetFilterPropertiesState() {
+    this.productPropertyOfFilter = []; // Xóa mảng properties hiện có
+    this.uniqueProductPropertyName.clear(); // Xóa tất cả các tên thuộc tính duy nhất
+    this.selectedFilters = {}; // Reset tất cả các lựa chọn bộ lọc
+    this.productBrandName = ""; // Reset brand name
+    this.productPropertyIDS = ""; // Reset chuỗi IDs
+  }
+
+  private resetPaginationAndProducts() {
+    this.page = 1;
+    this.totalPage = 1;
+    this.products = [];
+    this.canShowNotFound = false; // Reset trạng thái tìm thấy
   }
 
   private loadProducts() {
@@ -115,7 +151,7 @@ export class ProductComponent {
   }
 
   private GetPriceSortStatus(): boolean {
-    if (this.productStatusSort === "increase") {
+    if (this.productPriceSortOrder === "increase") {
       return true;
     }
     return false;
