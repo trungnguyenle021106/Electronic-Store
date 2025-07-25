@@ -30,8 +30,9 @@ namespace UserService.Application.Usecases
                     return ServiceResult<Customer>.Failure("No Customer provided to update.", ServiceErrorType.ValidationError);
                 }
 
+                Console.WriteLine($"Cập nhật thông tin Customer có ID: {customerID}");
                 Customer? customer = await this.unitOfWork.CustomerRepository().GetById(customerID).ConfigureAwait(false);
-
+                Console.WriteLine(customer.ID);
                 if (customer == null)
                 {
                     return ServiceResult<Customer>.Failure("Customer not found.", ServiceErrorType.NotFound);

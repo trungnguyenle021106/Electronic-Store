@@ -46,32 +46,6 @@ namespace UserService.Interface_Adapters.APIs
 
                 ServiceResult<Account> result = await createUserUC.CreateAccount(newAccount).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Created($"/accounts/{result.Item.ID}", result.Item);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Server Configuration Error",
-                //        detail: result.ErrorMessage
-                //    ),
-                //    ServiceErrorType.InternalError => Results.Problem(
-                //         statusCode: StatusCodes.Status500InternalServerError,
-                //         title: "Internal Server Error",
-                //         detail: result.ErrorMessage
-                //     ),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -82,31 +56,6 @@ namespace UserService.Interface_Adapters.APIs
             {
                 ServiceResult<Customer> result = await createUserUC.CreateCustomer(newCustomer).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Created($"/customers/{result.Item.ID}", result.Item);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.AlreadyExists => Results.Conflict(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Server Configuration Error",
-                //        detail: result.ErrorMessage
-                //    ),
-                //    ServiceErrorType.InternalError => Results.Problem(
-                //         statusCode: StatusCodes.Status500InternalServerError,
-                //         title: "Internal Server Error",
-                //         detail: result.ErrorMessage
-                //     ),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -142,14 +91,26 @@ namespace UserService.Interface_Adapters.APIs
             //MapGetCustomerByIDForCustomer(app);
             MapGetCustomerByID(app);
             MapGetAccountByID(app);
-            MapGetAllAccount(app);
-            MapGetAllUser(app);
+            //MapGetAllAccount(app);
+            //MapGetAllUser(app);
             MapGetCurrentCustomerInformation(app);
             MapGetStatus(app);
             MapGetCustomerInformationByCustomerID(app);
-            test(app);
+            MapGetCustomerInformationByAccountID(app);
+            GetPagedAccount(app);
+            //test(app);
         }
 
+        public static void GetPagedAccount(this WebApplication app)
+        {
+            app.MapGet("/accounts", async (GetUserUC getUserUC, int page, int pageSize, string? searchText, HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<PagedResult<Account>> result = await getUserUC.GetPagedAccount(page, pageSize, searchText).ConfigureAwait(false);
+               return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
+        [Obsolete("This method is for testing purposes only and should not be used in production.")]
         public static void test(this WebApplication app)
         {
             app.MapGet("/test", async (HttpContext httpContext, TokenService tokenService) =>
@@ -176,7 +137,8 @@ namespace UserService.Interface_Adapters.APIs
             
             }).RequireAuthorization("OnlyCustomer");
         }
-        [Obsolete]
+
+        [Obsolete("This method is for testing purposes only and should not be used in production.")]
         public static void MapGetCustomerByIDForCustomer(this WebApplication app)
         {
             app.MapGet("/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext) =>
@@ -215,7 +177,7 @@ namespace UserService.Interface_Adapters.APIs
 
         public static void MapGetCustomerByID(this WebApplication app)
         {
-            app.MapGet("/admin/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext, HandleResultApi handleResultApi) =>
+            app.MapGet("/customers/{customerID}", async (GetUserUC getUserUC, int customerID, HttpContext httpContext, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<Customer> result = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
@@ -231,55 +193,40 @@ namespace UserService.Interface_Adapters.APIs
             }).RequireAuthorization("OnlyAdmin");
         }
 
+        public static void MapGetCustomerInformationByAccountID(this WebApplication app)
+        {
+            app.MapGet("/accounts/{accountID}/customer-information", async (GetUserUC getUserUC, int accountID, HttpContext httpContext, HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByAccountID(accountID).ConfigureAwait(false);
+                return handleResultApi.MapServiceResultToHttp(result);
+            }).RequireAuthorization("OnlyAdmin");
+        }
+
         public static void MapGetAccountByID(this WebApplication app)
         {
             app.MapGet("/accounts/{accountID}", async (GetUserUC getUserUC, HandleResultApi handleResultApi, HttpContext httpContext, int accountID) =>
             {
                 ServiceResult<Account> result = await getUserUC.GetAccountByID(accountID).ConfigureAwait(false);
-                return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.Item);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
+                return handleResultApi.MapServiceResultToHttp(result);         
             }).RequireAuthorization("OnlyAdmin");
         }
 
+        [Obsolete("This method is for testing purposes only and should not be used in production.")]
         public static void MapGetAllAccount(this WebApplication app)
         {
             app.MapGet("/accounts", async (GetUserUC getUserUC, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<Account> result = await getUserUC.GetAllAccount().ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.ListItem);
-                //}
-                //return Results.BadRequest(new { message = result.ErrorMessage });
             }).RequireAuthorization("OnlyAdmin");
         }
-
+        [Obsolete("This method is for testing purposes only and should not be used in production.")]
         public static void MapGetAllUser(this WebApplication app)
         {
             app.MapGet("/customers", async (GetUserUC getUserUC, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<Customer> result = await getUserUC.GetAllCustomer().ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.ListItem);
-                //}
-                //return Results.BadRequest(new { message = result.ErrorMessage });
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -305,56 +252,18 @@ namespace UserService.Interface_Adapters.APIs
         public static void MapUpdateCustomerInformation(this WebApplication app)
         {
             app.MapPut("/customers/{customerID}", async (UpdateUserUC updateUserUC, GetUserUC getUserUC,
-                HttpContext httpContext, int customerID, [FromBody] Customer newCustomer) =>
+                HttpContext httpContext, int customerID, [FromBody] Customer newCustomer, TokenService tokenService, HandleResultApi handleResultApi) =>
             {
 
-                ServiceResult<Customer> resultQuery = await getUserUC.GetCustomerByID(customerID).ConfigureAwait(false);
-                if (!resultQuery.IsSuccess)
-                {
-                    return resultQuery.ServiceErrorType switch
-                    {
-                        ServiceErrorType.NotFound => Results.NotFound(new { message = resultQuery.ErrorMessage }),
-                        ServiceErrorType.ValidationError => Results.BadRequest(new { message = resultQuery.ErrorMessage }),
-                        _ => Results.Problem(
-                            statusCode: StatusCodes.Status500InternalServerError,
-                            title: "Unknown Error",
-                            detail: resultQuery.ErrorMessage
-                        )
-                    };
-                }
-
-                int accountID = resultQuery.Item?.AccountID ?? 0;
-
-                var authorizationService = httpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                var authorizationResult = await authorizationService.AuthorizeAsync(httpContext.User, accountID, "AdminOrSelfAccountId").ConfigureAwait(false);
-
-                if (!authorizationResult.Succeeded)
+                int customerIDInJWT = tokenService.GetJWTClaim(httpContext)?.CustomerID ?? 0;
+                if (!customerID.Equals(customerIDInJWT))
                 {
                     return Results.Forbid();
                 }
 
                 ServiceResult<Customer> resultUpdate = await updateUserUC.UpdateCustomerInformation(customerID, newCustomer).ConfigureAwait(false);
-                if (resultUpdate.IsSuccess)
-                {
-                    return Results.Ok(resultUpdate.Item);
-                }
-
-                return resultUpdate.ServiceErrorType switch
-                {
-                    ServiceErrorType.ValidationError => Results.BadRequest(new { message = resultUpdate.ErrorMessage }),
-                    ServiceErrorType.NotFound => Results.NotFound(new { message = resultUpdate.ErrorMessage }),
-                    ServiceErrorType.InternalError => Results.Problem(
-                         statusCode: StatusCodes.Status500InternalServerError,
-                         title: "Internal Server Error",
-                         detail: resultUpdate.ErrorMessage
-                     ),
-                    _ => Results.Problem(
-                        statusCode: StatusCodes.Status500InternalServerError,
-                        title: "Unknown Error",
-                        detail: resultUpdate.ErrorMessage
-                    )
-                };
-            }).RequireAuthorization();
+                return handleResultApi.MapServiceResultToHttp(resultUpdate);
+            }).RequireAuthorization("OnlyCustomer");
         }
 
         public static void MapUpdateAccountPassword(this WebApplication app)

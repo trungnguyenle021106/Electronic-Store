@@ -1,0 +1,32 @@
+
+<mat-dialog-content class="mat-typography">
+    <div class="customer-info" *ngIf="customerInformation">
+        <h3>Thông Tin Khách Hàng</h3>
+        <mat-list>
+            <mat-list-item>
+                <span matListItemTitle>Email:</span>
+                <span matListItemLine>{{ customerInformation.Email }}</span>
+            </mat-list-item>
+            <mat-list-item>
+                <span matListItemTitle>Họ và Tên:</span>
+                <span matListItemLine>{{ customerInformation.Name }}</span>
+            </mat-list-item>
+            <mat-list-item>
+                <span matListItemTitle>Số Điện Thoại:</span>
+                <span matListItemLine>{{ customerInformation.Phone }}</span>
+            </mat-list-item>
+            <mat-list-item>
+                <span matListItemTitle>Địa Chỉ:</span>
+                <span matListItemLine>{{ customerInformation.Address }}</span>
+            </mat-list-item>
+            <mat-list-item>
+                <span matListItemTitle>Giới Tính:</span>
+                <span matListItemLine>{{ customerInformation.Gender === 'male' ? 'Nam' : 'Nữ' }}</span>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" (click)="onClose()">Đóng</button>
+</mat-dialog-actions>

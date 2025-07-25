@@ -14,6 +14,62 @@ namespace UserService.Application.Usecases
             this.unitOfWork = unitOfWork;
         }
 
+
+        public async Task<ServiceResult<PagedResult<Account>>> GetPagedAccount(int page, int pageSize, string? searchText)
+        {
+            try
+            {
+                IQueryable<Account> query = this.unitOfWork.AccountRepository().GetAll();
+
+                // 1. Áp dụng tìm kiếm (Search) vào tất cả các cột có thể
+                if (!string.IsNullOrWhiteSpace(searchText))
+                {
+                    string searchLower = searchText.Trim().ToLower();
+
+                    query = query.Where(acc =>
+                        (acc.Status != null && acc.Status.ToLower().Contains(searchLower)) ||
+                        (acc.Email.ToLower().Contains(searchLower)) ||
+                        (acc.Role.ToLower().Contains(searchLower))
+                    );
+                }
+
+           
+
+                int totalCount = await query.CountAsync();
+
+                List<Account> list = new List<Account>();
+                // 4. Kiểm tra trang hợp lệ
+
+                if (page < 1)
+                {
+                    page = 1;
+                }
+                query = query.OrderBy(pp => pp.ID); // Sắp xếp mặc định theo ID
+
+                // 6. Áp dụng phân trang (Skip và Take)
+                list = await query
+                   .Skip(((page - 1) * pageSize))
+                   .Take( pageSize)
+                   .ToListAsync().ConfigureAwait(false);
+
+                return ServiceResult<PagedResult<Account>>.Success(new PagedResult<Account>
+                {
+                    Items = list,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount // Sử dụng totalCount đã được lọc/tìm kiếm
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi lấy danh sách Order, lỗi : {ex.Message}");
+                return ServiceResult<PagedResult<Account>>.Failure(
+                    "An error occurred while retrieving the orders.",
+                    ServiceErrorType.InternalError);
+            }
+        }
+
+
         public async Task<ServiceResult<Account>> GetAccountByID(int accountID)
         {
             try
@@ -67,7 +123,7 @@ namespace UserService.Application.Usecases
 
         public async Task<ServiceResult<CustomerInformation>> GetCustomerInformationByCustomerID(int customerID)
         {
-            if(customerID <= 0)
+            if (customerID <= 0)
             {
                 return ServiceResult<CustomerInformation>.Failure("Customer ID is invalid.", ServiceErrorType.ValidationError);
             }
@@ -80,10 +136,10 @@ namespace UserService.Application.Usecases
                     return ServiceResult<CustomerInformation>.Failure("Customer is not found.", ServiceErrorType.NotFound);
                 }
                 string email = (await this.unitOfWork.AccountRepository().GetById(customer.AccountID ?? 0).ConfigureAwait(false)).Email;
-                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(email, customer.Name, customer.Phone, customer.Address, customer.Gender));
+                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(customer.ID, email, customer.Name, customer.Phone, customer.Address, customer.Gender));
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi lấy customer có id : {customerID}, lỗi : {ex.Message}");
                 return ServiceResult<CustomerInformation>.Failure("An unexpected internal error occurred while get customer.",
@@ -93,12 +149,12 @@ namespace UserService.Application.Usecases
 
         public async Task<ServiceResult<CustomerInformation>> GetCustomerInformationByAccountID(int accountID)
         {
-            try
+            if (accountID <= 0)
             {
-                if (accountID <= 0)
-                {
-                    return ServiceResult<CustomerInformation>.Failure("Account is invalid.", ServiceErrorType.ValidationError);
-                }
+                return ServiceResult<CustomerInformation>.Failure("Account is invalid.", ServiceErrorType.ValidationError);
+            }
+            try
+            {          
                 IQueryable<Account> accountQuery = this.unitOfWork.AccountRepository().GetAll();
                 Customer? customer = await accountQuery.
                 Join(
@@ -117,7 +173,7 @@ namespace UserService.Application.Usecases
                     return ServiceResult<CustomerInformation>.Failure("Customer is not found.", ServiceErrorType.NotFound);
                 }
 
-                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(email, customer.Name, customer.Phone, customer.Address, customer.Gender));
+                return ServiceResult<CustomerInformation>.Success(new CustomerInformation(customer.ID, email, customer.Name, customer.Phone, customer.Address, customer.Gender));
             }
             catch (Exception ex)
             {

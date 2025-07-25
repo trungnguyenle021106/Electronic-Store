@@ -3,5 +3,5 @@ export interface OrderDetail {
     ProductID: number;
     OrderDate: string;
     Quantity: number;
-    TotalPrice: string;
+    TotalPrice: number;
 }

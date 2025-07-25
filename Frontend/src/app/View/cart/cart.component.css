@@ -383,11 +383,203 @@
   }
 
 
-.order-info-btn:hover {
-    background-color: #218838; /* Xanh lá đậm hơn cho nút "Tiếp Tục" */
+  .order-info-btn:hover {
+      background-color: #218838;
+      /* Xanh lá đậm hơn cho nút "Tiếp Tục" */
+  }
+
+  .order-info-back-btn:hover {
+      background-color: #CC0000;
+      /* Đỏ đậm hơn cho nút "Về trang trước" */
+      /* Bạn có thể thử các màu khác như #B30000 nếu muốn đậm hơn nữa */
+  }
+
+  .loading-overlay {
+      position: fixed;
+      /* Hoặc absolute tùy theo vị trí bạn muốn overlay */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      /* Nền mờ */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      /* Đảm bảo nó nằm trên các phần tử khác */
+  }
+
+  .loading-overlay p {
+      margin-top: 10px;
+      font-size: 1.1em;
+      color: #333;
+  }
+
+
+  .order-completion-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #f8f9fa; /* Nền nhẹ nhàng */
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
 }
 
-.order-info-back-btn:hover {
-    background-color: #CC0000; /* Đỏ đậm hơn cho nút "Về trang trước" */
-    /* Bạn có thể thử các màu khác như #B30000 nếu muốn đậm hơn nữa */
+/* Phần tiêu đề và tin nhắn xác nhận */
+.completion-header-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.completion-header-section .success-icon {
+    font-size: 80px; /* Icon lớn hơn */
+    color: #28a745; /* Màu xanh lá cây của Material Design */
+    margin-bottom: 15px;
+    animation: bounceIn 0.8s ease-out; /* Hiệu ứng nhẹ khi xuất hiện */
+}
+
+.completion-header-section h2 {
+    color: #28a745; /* Màu xanh lá cây */
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.completion-header-section p {
+    color: #555;
+    font-size: 1.1em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Card tóm tắt đơn hàng */
+.order-summary-card,
+.shipping-payment-summary-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.order-summary-card h3,
+.shipping-payment-summary-card h3 {
+    color: #343a40;
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #e9ecef;
+}
+
+.order-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 2 cột trên desktop */
+    gap: 15px 30px; /* Khoảng cách giữa các item */
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column; /* Xếp label và value theo cột */
+    margin-bottom: 10px; /* Khoảng cách giữa các hàng */
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #6c757d; /* Màu xám cho label */
+    font-size: 0.95em;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    color: #343a40;
+    font-size: 1.1em;
+}
+
+.order-id {
+    font-weight: bold;
+    color: #007bff; /* Màu xanh dương nổi bật cho mã đơn hàng */
+}
+
+.status-text {
+    font-weight: bold;
+    color: #ffc107; /* Màu vàng cho trạng thái */
+}
+
+.total-amount-row {
+    grid-column: 1 / -1; /* Chiếm toàn bộ chiều rộng hàng cuối */
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+    margin-top: 15px;
+    flex-direction: row; /* Trở lại xếp ngang */
+    justify-content: space-between; /* Căn giữa label và value */
+    align-items: center;
+}
+
+.total-amount-row .detail-label {
+    font-size: 1.3em;
+    color: #343a40;
+}
+
+.total-amount-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #dc3545; /* Màu đỏ nổi bật cho tổng tiền */
+}
+
+/* Thông tin giao hàng & thanh toán */
+.shipping-payment-summary-card .summary-section h4 {
+    color: #495057;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #ced4da;
+    padding-bottom: 5px;
+}
+
+.shipping-payment-summary-card .summary-section p {
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+/* Phần nút hành động */
+.action-buttons-footer {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Khoảng cách giữa các nút */
+    margin-top: 40px;
+    flex-wrap: wrap; /* Cho phép các nút xuống hàng trên màn hình nhỏ */
+}
+
+.btn-detail-order,
+.btn-continue-shopping {
+    background-color: #007bff; /* Màu xanh dương cho nút chính */
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex; /* Dùng flexbox để căn icon và text */
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và text */
+    text-decoration: none; /* Dành cho routerLink */
+}
+
+.btn-detail-order {
+    background-color: #6c757d; /* Màu xám cho nút xem chi tiết */
+}
+.btn-detail-order:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-continue-shopping:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }

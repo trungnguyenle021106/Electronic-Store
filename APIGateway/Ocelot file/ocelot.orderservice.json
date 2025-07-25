@@ -1,6 +1,19 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/orders/me",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5064
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/me",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
       "DownstreamPathTemplate": "/orders/{orderID}/order-items",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

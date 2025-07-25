@@ -27,14 +27,15 @@ export class PropertyFormComponent {
         '',
         [
           Validators.required,
-          Validators.pattern(/^[a-zA-Z\s]+$/) // Chỉ cho phép chữ cái và khoảng trắng
+              // 💡 Cách ngắn gọn hơn cho phép chữ cái (tiếng Việt có dấu) và khoảng trắng
+          Validators.pattern(/^[\p{L}\s]+$/u)// Chỉ cho phép chữ cái và khoảng trắng
         ]
       ],
       description: [
         '',
         [
           Validators.required,
-          Validators.pattern(/^[\p{L}\s]+$/u) // Chỉ cho phép chữ cái, số và khoảng trắng
+           Validators.pattern(/^[\p{L}\p{N}\p{P}\p{S}\s]+$/u) // Chỉ cho phép chữ cái, số và khoảng trắng
         ]
       ]
     });

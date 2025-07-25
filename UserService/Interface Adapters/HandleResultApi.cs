@@ -49,7 +49,13 @@ namespace UserService.Interface_Adapters
                     }
                 ),
                 ServiceErrorType.Unauthorized => Results.Unauthorized(), // 401 Unauthorized
-                ServiceErrorType.InvalidCredentials => Results.Unauthorized(), // 401 Unauthorized (credentials specifically)
+                ServiceErrorType.InvalidCredentials => Results.BadRequest(
+                    new ProblemDetails
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Title = "InvalidCredentials",
+                        Detail = serviceResult.ErrorMessage
+                    }), // 401 Unauthorized (credentials specifically)
                 ServiceErrorType.RepositoryTypeMismatch => Results.Problem(
                     statusCode: StatusCodes.Status500InternalServerError,
                     title: "Server Configuration Error",
@@ -68,8 +74,7 @@ namespace UserService.Interface_Adapters
                         Detail = serviceResult.ErrorMessage ?? "The provided data is invalid."
                     }
                 ),
-                ServiceErrorType.AccountLocked => Results.Forbid(), // 403 Forbidden (người dùng bị cấm truy cập tài nguyên)  
-                _ => Results.Problem(
+                ServiceErrorType.AccountLocked  => Results.Problem(
                     statusCode: StatusCodes.Status500InternalServerError,
                     title: "An Unexpected Error Occurred",
                     detail: serviceResult.ErrorMessage ?? "An unknown error occurred. Please try again later."

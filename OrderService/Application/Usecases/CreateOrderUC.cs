@@ -76,7 +76,7 @@ namespace OrderService.Application.Usecases
                     try
                     {
                         DateTime OrderDate = DateTime.Now;
-                        float Total = listExistOrderDetail.Sum(item => item.TotalPrice * item.Quantity);
+                        float Total = listExistOrderDetail.Sum(item => item.TotalPrice);
                         string Status = "Đang chờ xử lý";
 
                         Order order = await this._UnitOfWork.OrderRepository().Add(new Order

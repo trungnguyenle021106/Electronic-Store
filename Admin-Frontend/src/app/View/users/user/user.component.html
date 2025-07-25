@@ -1,0 +1,70 @@
+<div class="main-content">
+    <div class="main-header">
+        <div class="tabs">
+            <h1>NGƯỜI DÙNG</h1>
+        </div>
+        <div class="actions">
+            <input type="text" placeholder="Tìm kiếm..." [(ngModel)]="searchValue" (input)="onSearchInput($event)">
+            <!-- <select>
+                <option>Dropdown 1</option>
+                <option>Dropdown 2</option>
+            </select> -->
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource">
+
+                <ng-container matColumnDef="ID">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let element"> {{element.ID}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Email">
+                    <th mat-header-cell *matHeaderCellDef> Email </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Email}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Role">
+                    <th mat-header-cell *matHeaderCellDef> Role </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Role}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Status">
+                    <th mat-header-cell *matHeaderCellDef> Trạng thái tài khoản </th>
+                    <td mat-cell *matCellDef="let element">
+
+                        <mat-form-field appearance="outline" floatLabel="always">
+                            <mat-label>Cập nhật trạng thái</mat-label>
+                            <mat-select [(ngModel)]="element.Status"
+                                (selectionChange)="onStatusChange(element.ID, $event.value)">
+                                <mat-option value="Active">Active</mat-option>
+                                <mat-option value="Locked">Locked</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="Actions">
+                    <th mat-header-cell *matHeaderCellDef> HÀNH ĐỘNG </th>
+
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-raised-button color="primary" (click)="OnclickDetail(element)"
+                            [disabled]="element.Role === 'Admin'"> Xem chi tiết
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" pageSize="pageSize" [pageIndex]="currentPage"
+                showFirstLastButtons aria-label="Chọn trang">
+            </mat-paginator>
+        </div>
+    </div>
+</div>

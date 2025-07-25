@@ -4,6 +4,7 @@ import { ProductService } from '../../Service/Product/product.service';
 import { Product } from '../../Model/Product/Product';
 import { ProductProperty } from '../../Model/Product/ProductProperty';
 import { CartService } from '../../Service/Cart/cart.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-detail',
@@ -17,7 +18,8 @@ export class ProductDetailComponent {
   product: Product | null = null;
   productProperties: ProductProperty[] = [];
 
-  constructor(private route: ActivatedRoute, private productService: ProductService, private cartService: CartService) {
+  constructor(private route: ActivatedRoute, private productService: ProductService, private cartService: CartService,
+     private snackBar: MatSnackBar) {
 
   }
 
@@ -57,6 +59,12 @@ export class ProductDetailComponent {
   OnclickBuy() {
     if (this.product) {
       this.cartService.addToCart(this.product, 1);
+        this.snackBar.open('Thêm vào giỏ hàng thành công!', 'Đóng', {
+          duration: 3000,
+          horizontalPosition: 'end',  // Bên phải
+          verticalPosition: 'top',    // Phía trên
+          panelClass: ['success-snackbar']
+        });
     }
   }
 }

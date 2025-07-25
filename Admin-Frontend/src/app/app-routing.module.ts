@@ -12,6 +12,7 @@ import { ProductFormComponent } from './View/products/product-forms/product-form
 import { ContentManagementComponent } from './View/content-managements/content-management/content-management.component';
 import { ContentManagementFormComponent } from './View/content-managements/content-management-forms/content-management-form/content-management-form.component';
 import { OrderComponent } from './View/orders/order/order.component';
+import { UserComponent } from './View/users/user/user.component';
 
 
 const routes: Routes = [
@@ -61,9 +62,14 @@ const routes: Routes = [
     component: ContentManagementFormComponent,
     canActivate: [authGuard]
   },
-    {
+  {
     path: 'order',
     component: OrderComponent,
+    canActivate: [authGuard]
+  },
+   {
+    path: 'user',
+    component: UserComponent,
     canActivate: [authGuard]
   },
   // Route wildcard cho các đường dẫn không khớp, chuyển hướng về một trang nào đó

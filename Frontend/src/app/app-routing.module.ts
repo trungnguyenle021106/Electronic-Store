@@ -17,7 +17,7 @@ const routes: Routes =
     { path: 'category', component: CategoryComponent },
     { path: 'search', component: SearchComponent },
     { path: 'product-detail/:id', component: ProductDetailComponent, title: 'product-detail' },
-    { path: 'cart', component: CartComponent, title: 'cart' },
+    { path: 'cart', component: CartComponent, title: 'cart'},
     {
       path: 'account',
       component: AccountComponent,
@@ -41,7 +41,7 @@ const routes: Routes =
         },
       ]
     },
-    { path: 'orderdetail/:id', component: OrderdetailComponent, title: 'orderdetail' },
+    { path: 'orderdetail/:id', component: OrderdetailComponent, title: 'orderdetail' , canActivate: [authGuard],},
   ];
 
 @NgModule({

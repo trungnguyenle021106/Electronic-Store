@@ -129,6 +129,7 @@ namespace ProductService.Interface_Adapters.APIs
         #endregion
 
         #region Get Product USECASE
+
         public static void MapGetProductUseCaseAPIs(this WebApplication app)
         {
             GetPagedProductTypes(app);
@@ -139,6 +140,15 @@ namespace ProductService.Interface_Adapters.APIs
             GetAllUniquePropertyNames(app);
             GetAllPropertiesOfProduct(app);
             CheckExistProduct(app);
+        }
+
+        public static void Get10LatestProducts(this WebApplication app)
+        {
+            app.MapGet("/products/latest", async (GetProductUC getProductUC, HandleResultApi handleResultApi, [FromQuery] string productTypeName) =>
+            {
+                ServiceResult<Product> result = await getProductUC.Get10LatestProduct(productTypeName);
+                return handleResultApi.MapServiceResultToHttp(result);
+            });
         }
 
         public static void GetAllPropertiesOfProduct(this WebApplication app)
