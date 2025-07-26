@@ -2,13 +2,14 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="menu-item" (mouseenter)="toggleSubMenu(true, 'Laptop'); loadProductPropertyNamesOfFilter('Laptop')"
-            [routerLink]="['/product']" [queryParams]="{ ProductTypeName: 'Laptop' , FilterID :GetFilterID('Laptop') }">
+            [routerLink]="['/product']" 
+            [queryParams]="{ ProductTypeName: 'Laptop' , FilterID :GetFilterID('Laptop') }">
             <span><i>💻</i> Laptop</span> ➤
         </div>
         <div class="menu-item"
             (mouseenter)="toggleSubMenu(true, 'Mành hình'); loadProductPropertyNamesOfFilter('Màn hình')"
             [routerLink]="['/product']"
-            [queryParams]="{ ProductTypeName: 'Màn hình',FilterID :GetFilterID('Màn hình')}">
+            [queryParams]="{ ProductTypeName: 'Màn hình', FilterID :GetFilterID('Màn hình')}">
             <span><i class="fa-solid fa-desktop"></i> Màn hình</span> ➤
         </div>
         <div class="menu-item"
@@ -27,7 +28,7 @@
         </div>
         <div class="menu-item" (mouseenter)="toggleSubMenu(true, 'Chuột'); loadProductPropertyNamesOfFilter('Chuột')"
             [routerLink]="['/product']"
-            [queryParams]="{ ProductTypeName: 'Chuột' , FilterID :GetFilterID('Chuột')}">
+             [queryParams]="{ ProductTypeName: 'Chuột' , FilterID :GetFilterID('Chuột')}">
             <span><i>🖱️</i> Chuột</span> ➤
         </div>
     </div>
@@ -41,7 +42,7 @@
                     <li [routerLink]="['/product']" [queryParams]="
                     { 
                         ProductTypeName: ProductTypeName,          
-                        FilterID : GetFilterID( ProductTypeName),     
+                        FilterID : GetFilterID(ProductTypeName),     
                         ProductPropertyID: GetProductPropertyID(propName, propDes),
                     }">
                         {{propDes}}
@@ -65,34 +66,150 @@
 </div>
 
 
-
 <div class="container-list-product">
     <div class="header-list-product">
         <h2>Chuột nổi bật</h2>
         <div class="nav-list-product">
-            <a href="#">Logitech</a>
-            <a href="#">Razer</a>
-            <a href="#">Asus</a>
-            <a href="#">Corsair</a>
-            <a href="#">Dare-U</a>
-            <a href="#">Rapoo</a>
-            <a href="#">Xem tất cả</a>
+            <a *ngFor="let pp of GetProductPropertiesFilterData('HomeMouse')" [routerLink]="['/product']" [queryParams]="{ 
+                     ProductTypeName: 'Chuột',         
+                     FilterID : GetFilterID('Chuột'),     
+                     ProductPropertyID: pp.ID
+                   }">
+                {{pp.Description}}
+            </a>
+            <a [routerLink]="['/product']"
+                [queryParams]="{ ProductTypeName: 'Chuột' , FilterID :GetFilterID('Chuột') }">Xem tất cả</a>
         </div>
     </div>
-
     <div class="products">
-        <div class="product-card">
-            <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcR-ZnyIxMBnv20K63mYldrUwcDC-5Hh_gcmLltiOSXIKa_4BIFUbE4brTNj_Lk_k5f-uML81QGYMWl6u415LymXRBgYq4ppfaq7hBlpmAtWo8xkcqMPd9bmvcGeztxztFnD7xGgVA&usqp=CAc"
-                alt="Chuột 1">
-            <div class="title">Chuột không dây MonsGeek D1 Pink</div>
-            <!-- <div class="features">
-                <span><span style="margin-right: 5px;">🔋</span>Pin sạc</span>
-                <span>Có dây</span>
-            </div> -->
+        <div [routerLink]="['/product-detail', product.ID]" class="product-card" *ngFor="let product of latestMice">
+            <img [src]="product.Image || 'đường/dẫn/đến/ảnh_chuột_mặc_định.png'" alt="{{ product.Name }}">
+            <div class="title">{{ product.Name }}</div>
             <div class="price">
-                <div><span class="new-price">120.000₫</span></div>
+                <div><span class="new-price">{{ product.Price | currency:'VND':'symbol':'1.0-0' }}</span></div>
             </div>
-            <a href="#" class="checkout-btn">Mua ngay</a>
+            <a [routerLink]="['/product-detail', product.ID]" class="checkout-btn">Mua ngay</a>
         </div>
+        <p *ngIf="latestMice.length === 0" class="no-products-message">Không tìm thấy chuột nổi bật nào.</p>
+    </div>
+</div>
+
+
+<div class="container-list-product">
+    <div class="header-list-product">
+        <h2>Laptop nổi bật</h2>
+        <div class="nav-list-product">
+            <a *ngFor="let pp of GetProductPropertiesFilterData('HomeLaptop')" [routerLink]="['/product']"
+                [queryParams]="
+                    { 
+                        ProductTypeName: 'Laptop',          
+                        FilterID : GetFilterID('Laptop'),     
+                        ProductPropertyID: pp.ID
+                    }">
+                {{pp.Description}} </a>
+
+            <a [routerLink]="['/product']"
+                [queryParams]="{ ProductTypeName: 'Laptop' , FilterID :GetFilterID('Laptop') }">Xem tất cả</a>
+        </div>
+    </div>
+    <div class="products">
+        <div [routerLink]="['/product-detail', product.ID]" class="product-card" *ngFor="let product of latestLaptops">
+            <img [src]="product.Image || 'đường/dẫn/đến/ảnh_laptop_mặc_định.png'" alt="{{ product.Name }}">
+            <div class="title">{{ product.Name }}</div>
+            <div class="price">
+                <div><span class="new-price">{{ product.Price | currency:'VND':'symbol':'1.0-0' }}</span></div>
+            </div>
+            <a [routerLink]="['/product-detail', product.ID]" class="checkout-btn">Mua ngay</a>
+        </div>
+        <p *ngIf="latestLaptops.length === 0" class="no-products-message">Không tìm thấy laptop nổi bật nào.</p>
+    </div>
+</div>
+
+<div class="container-list-product">
+    <div class="header-list-product">
+        <h2>Màn hình nổi bật</h2>
+        <div class="nav-list-product">
+            <a *ngFor="let pp of GetProductPropertiesFilterData('HomeScreen')" [routerLink]="  ['/product']"
+                [queryParams]="
+                    { 
+                        ProductTypeName: 'Màn hình',          
+                        FilterID : GetFilterID('Màn hình'),     
+                        ProductPropertyID: pp.ID
+                    }">
+                {{pp.Description}}</a>
+            <a [routerLink]="['/product']"
+                [queryParams]="{ ProductTypeName: 'Màn hình' , FilterID :GetFilterID('Màn hình') }">Xem tất cả</a>
+        </div>
+    </div>
+    <div class="products">
+        <div [routerLink]="['/product-detail', product.ID]" class="product-card" *ngFor="let product of latestMonitors">
+            <img [src]="product.Image || 'đường/dẫn/đến/ảnh_manhinh_mặc_định.png'" alt="{{ product.Name }}">
+            <div class="title">{{ product.Name }}</div>
+            <div class="price">
+                <div><span class="new-price">{{ product.Price | currency:'VND':'symbol':'1.0-0' }}</span></div>
+            </div>
+            <a [routerLink]="['/product-detail', product.ID]" class="checkout-btn">Mua ngay</a>
+        </div>
+        <p *ngIf="latestMonitors.length === 0" class="no-products-message">Không tìm thấy màn hình nổi bật nào.</p>
+    </div>
+</div>
+
+<div class="container-list-product">
+    <div class="header-list-product">
+        <h2>Tai nghe nổi bật</h2>
+        <div class="nav-list-product">
+            <a *ngFor="let pp of GetProductPropertiesFilterData('HomeEar')" [routerLink]="  ['/product']" [queryParams]="
+                    { 
+                        ProductTypeName: 'Tai nghe',          
+                        FilterID : GetFilterID('Tai nghe'),     
+                        ProductPropertyID: pp.ID
+                    }">
+                {{pp.Description}}</a>
+            <a [routerLink]="['/product']"
+                [queryParams]="{ ProductTypeName: 'Tai nghe' , FilterID :GetFilterID('Tai nghe') }">Xem tất cả</a>
+        </div>
+    </div>
+    <div class="products">
+        <div [routerLink]="['/product-detail', product.ID]" class="product-card"
+            *ngFor="let product of latestHeadphones"> <img
+                [src]="product.Image || 'đường/dẫn/đến/ảnh_tainghe_mặc_định.png'" alt="{{ product.Name }}">
+            <div class="title">{{ product.Name }}</div>
+            <div class="price">
+                <div><span class="new-price">{{ product.Price | currency:'VND':'symbol':'1.0-0' }}</span></div>
+            </div>
+            <a [routerLink]="['/product-detail', product.ID]" class="checkout-btn">Mua ngay</a>
+        </div>
+        <p *ngIf="latestHeadphones.length === 0" class="no-products-message">Không tìm thấy tai nghe nổi bật nào.</p>
+    </div>
+</div>
+
+<div class="container-list-product">
+    <div class="header-list-product">
+        <h2>Bàn phím nổi bật</h2>
+        <div class="nav-list-product">
+            <a *ngFor="let pp of GetProductPropertiesFilterData('HomeKeyBoard')" [routerLink]="  ['/product']"
+                [queryParams]="
+                    { 
+                        ProductTypeName: 'Bàn phím',          
+                        FilterID : GetFilterID('Bàn phím'),     
+                        ProductPropertyID: pp.ID
+                    }">
+                {{pp.Description}} </a>
+
+            <a [routerLink]="['/product']"
+                [queryParams]="{ ProductTypeName: 'Bàn phím' , FilterID :GetFilterID('Bàn phím') }">Xem tất cả</a>
+        </div>
+    </div>
+    <div class="products">
+        <div [routerLink]="['/product-detail', product.ID]" class="product-card"
+            *ngFor="let product of latestKeyboards"> <img
+                [src]="product.Image || 'đường/dẫn/đến/ảnh_banphim_mặc_định.png'" alt="{{ product.Name }}">
+            <div class="title">{{ product.Name }}</div>
+            <div class="price">
+                <div><span class="new-price">{{ product.Price | currency:'VND':'symbol':'1.0-0' }}</span></div>
+            </div>
+            <a [routerLink]="['/product-detail', product.ID]" class="checkout-btn">Mua ngay</a>
+        </div>
+        <p *ngIf="latestKeyboards.length === 0" class="no-products-message">Không tìm thấy bàn phím nổi bật nào.</p>
     </div>
 </div>

@@ -17,13 +17,13 @@
         </select>
         <select [(ngModel)]="productBrandSort" (change)="onSearch()">
             <option value="">Hãng</option>
-            <option *ngFor="let ele of curProductBrands" [value]="ele.ID">
+            <option *ngFor="let ele of productBrands" [value]="ele.Name">
                 {{ele.Name}}
             </option>
         </select>
         <select [(ngModel)]="productTypeSort" (change)="onSearch()">
             <option value="">Loại</option>
-            <option *ngFor="let ele of curProductTypes" [value]="ele.ID">
+            <option *ngFor="let ele of productTypes" [value]="ele.Name">
                 {{ele.Name}}
             </option>
         </select>

@@ -12,6 +12,14 @@ export class ProductService {
   private baseApiUrl = 'http://localhost:5293/gateway/product-apis';
   constructor(private http: HttpClient) { }
 
+  getLatestProducts(productTypeName : string)
+  {
+     let params = new HttpParams()
+      .set('productTypeName', productTypeName)
+
+    let apiUrl: string = `${this.baseApiUrl}/products/latest`;
+    return this.http.get<Product[]>(apiUrl, { params: params, withCredentials: true });
+  }
 
   getPagedProducts(
     currentPage: number = 1,

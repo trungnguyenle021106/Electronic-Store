@@ -53,7 +53,7 @@
 
  /* Table Container with Scroll */
 .table-container {
-    max-height: 80vh;
+    max-height: 90vh;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -116,6 +116,7 @@ td.mat-mdc-cell img {
 
 td.mat-mdc-cell button.mat-mdc-raised-button { /* Thêm mat-mdc-raised-button */
     margin-right: 8px;
+    margin-bottom: 10px;
     padding: 6px 12px;
     font-size: 0.85em;
 }

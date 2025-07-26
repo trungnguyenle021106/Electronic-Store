@@ -11,23 +11,25 @@ import { ProductProperty } from '../../Model/Product/ProductProperty';
   providedIn: 'root'
 })
 export class ContentManagementService {
-  private baseApiUrl = 'http://localhost:5293/gateway/content-management-apis'; 
+  private baseApiUrl = 'http://localhost:5293/gateway/content-management-apis';
 
   constructor(private http: HttpClient) { }
 
   // Phương thức để gửi POST request
 
   getPagedFilters(
-    currentPage: number = 1,
-    pageSize: number = 10,
+    currentPage?: number | null,
+    pageSize?: number | null,
     searchText: string = '',
     filter: string = ''
   ): Observable<PagedResult<Filter>> {
 
-    // Khởi tạo HttpParams
     let params = new HttpParams()
-      .set('page', currentPage.toString()) // Chuyển số sang chuỗi
-      .set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
+    // Khởi tạo HttpParams
+    if (currentPage && pageSize) {
+      params = params.set('page', currentPage.toString()) // Chuyển số sang chuỗi
+      params = params.set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
+    }
 
     // Thêm searchText vào params nếu nó có giá trị (không rỗng, không khoảng trắng)
     if (searchText && searchText.trim().length > 0) {
