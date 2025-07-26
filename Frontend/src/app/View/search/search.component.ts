@@ -128,6 +128,9 @@ export class SearchComponent {
   }
 
   private loadProducts(isInitialLoad: boolean = false): void { // Thêm tham số tùy chọn
+
+    console.log(this.productBrandSort)
+    console.log(this.productTypeSort)
     // Nếu đây không phải lần tải ban đầu và đã hết trang, thì không làm gì
     if (!isInitialLoad && this.page > this.totalPage) {
       console.log("No more pages to load.");

@@ -3,7 +3,6 @@ using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ProductService.Application.Usecases;
-using ProductService.Domain.DTO;
 using ProductService.Domain.DTO.Request;
 using ProductService.Domain.Entities;
 using ProductService.Infrastructure.Socket;
@@ -140,6 +139,7 @@ namespace ProductService.Interface_Adapters.APIs
             GetAllUniquePropertyNames(app);
             GetAllPropertiesOfProduct(app);
             CheckExistProduct(app);
+            Get10LatestProducts(app);
         }
 
         public static void Get10LatestProducts(this WebApplication app)
