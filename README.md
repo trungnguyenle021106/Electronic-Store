@@ -1,4 +1,4 @@
-#Electronic-Store
+# Electronic-Store
 This is a comprehensive e-commerce platform designed for selling electronic products such as laptops, keyboards, headphones, mice, and more. The system focuses on a direct payment process (no online payment gateway) and offers robust management modules for products, orders, and user accounts. It also allows for flexible content management through configurable Filter entities, enabling easy expansion to various product types.
 
 #Features
