@@ -56,8 +56,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
   + Cập nhật chi tiết máy chủ SMTP của bạn (host, port, username, password) trong appsettings.json.
 3. Build : Chạy lệnh docker compose up --build hoặc docker compose up --build -d tại thư mục gốc dự án
 
-Kiểm tra các container đang chạy: docker ps
-## MỘT SỐ HÌNH ẢNH CỦA TRANG 
+## Một số hình ảnh web
 + TRANG ADMIN
 <img width="1904" height="858" alt="image" src="https://github.com/user-attachments/assets/639380e1-34f5-40c0-8cae-2af191b42dfd" />
 <img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/6c5bba94-483e-4356-9fd0-d878f330f38f" />
