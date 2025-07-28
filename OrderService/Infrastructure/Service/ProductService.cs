@@ -63,5 +63,60 @@ namespace OrderService.Infrastructure.Service
                 return ServiceResult<Product>.Failure("Failed to call Product Service.", ServiceErrorType.InternalError);
             }
         }
+
+
+
+        public async Task<ServiceResult<Product>> UpdateProductQuantity(List<OrderProduct> orderProducts)
+        {
+            if (orderProducts == null || !orderProducts.Any())
+            {
+                _logger.LogWarning("OrderProduct cannot be null or empty.");
+                return ServiceResult<Product>.Failure("OrderProduct cannot be null or empty.", ServiceErrorType.ValidationError);
+            }
+            try
+            {
+                using var response = await _httpClient.PatchAsJsonAsync("/products/update-quantity", orderProducts);
+                if (response.IsSuccessStatusCode)
+                {
+
+                    if (response.Content == null || response.Content.Headers.ContentLength == 0)
+                    {
+                        _logger.LogWarning("Received successful response from Product Service (HTTP 2xx), but the content was empty.");
+                        return ServiceResult<Product>.Success(new List<Product>());
+                    }
+
+                    try
+                    {
+                        var results = await response.Content.ReadFromJsonAsync<List<Product>>();
+                        if (results == null)
+                        {
+                            _logger.LogWarning("Received successful response from Product Service, but content was empty or null.");
+                            return ServiceResult<Product>.Success(new List<Product>());
+                        }
+
+                        return ServiceResult<Product>.Success(results);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to deserialize Product Service response.");
+                        return ServiceResult<Product>.Failure("Failed to process service response.", ServiceErrorType.InternalError);
+                    }
+                }
+                else
+                {
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    string errorMessage = $"Error calling Product Service: HTTP {response.StatusCode} - {errorContent}";
+                    _logger.LogError(errorMessage);
+
+                    ServiceErrorType ServiceErrorType = this.handleServiceError.MapStatusCodeToServiceErrorType(response.StatusCode, errorContent);
+                    return ServiceResult<Product>.Failure(errorMessage, ServiceErrorType);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to call Product Service.");
+                return ServiceResult<Product>.Failure("Failed to call Product Service.", ServiceErrorType.InternalError);
+            }
+        }
     }
 }

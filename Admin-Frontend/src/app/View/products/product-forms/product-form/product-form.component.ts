@@ -42,6 +42,7 @@ export class ProductFormComponent {
   actionName: string = "";
   describeAction: string = "";
 
+  isLoading: boolean = false;
 
   productTypes: ProductType[] = [];
   productBrands: ProductBrand[] = [];
@@ -102,8 +103,10 @@ export class ProductFormComponent {
   handleConfirmAction() {
 
     if (this.typeProductForm == "Create") {
+      this.isLoading = true;
       this.CreateProduct();
     } else if (this.typeProductForm == "Update") {
+      this.isLoading = true;
       this.UpdateProduct();
     }
   }
@@ -124,8 +127,10 @@ export class ProductFormComponent {
     if (this.selectedFile) {
       this.ProductService.createProduct(newProduct, productPropertyIDs, this.selectedFile).subscribe({
         next: (response) => {
+          this.isLoading = false;
           this.router.navigate(['product'])
         }, error: (error) => {
+          this.isLoading = false;
           this.openErrorDialog("300ms", "150ms", "Lỗi thêm sản phẩm", error.message)
         }
       });
@@ -149,8 +154,10 @@ export class ProductFormComponent {
     if (this.selectedFile || this.urlImageUpdate) {
       this.ProductService.updateProduct(newProduct.ID, newProduct, productPropertyIDs, this.selectedFile ?? null).subscribe({
         next: (response) => {
+          this.isLoading = false;
           this.router.navigate(['product'])
         }, error: (error) => {
+          this.isLoading = false;
           this.openErrorDialog("300ms", "150ms", "Lỗi cập nhật sản phẩm", error.message)
           console.log(error)
         }
@@ -224,8 +231,8 @@ export class ProductFormComponent {
       next: (response) => {
         this.productForm.patchValue(response);
         if (response.Image) {
-           const timestamp = Date.now()
-          this.selectedImage = response.Image  ;
+          const timestamp = Date.now()
+          this.selectedImage = response.Image;
           this.urlImageUpdate = response.Image;
           const lastSlashIndex = response.Image.lastIndexOf('/');
           const imageName = response.Image.substring(lastSlashIndex + 1);
@@ -293,7 +300,7 @@ export class ProductFormComponent {
   OnItemUnSelected(productProperty: ProductProperty) {
     const item: ProductProperty = { ID: productProperty.ID, Name: productProperty.Name, Description: productProperty.Description };
     this.senderUnSelectedItem = item;
-     this.selectedProperties = this.selectedProperties.filter(item => item.ID !== productProperty.ID);
+    this.selectedProperties = this.selectedProperties.filter(item => item.ID !== productProperty.ID);
   }
 
 

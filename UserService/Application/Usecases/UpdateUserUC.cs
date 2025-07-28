@@ -54,20 +54,51 @@ namespace UserService.Application.Usecases
             }
         }
 
-        public async Task<ServiceResult<Account>> UpdateAccountPassword(int accountID, string oldPassword, string newPassword)
+        public async Task<ServiceResult<Account>> UpdatePassword(string email, string newPassword)
         {
+            if (email == null)
+            {
+                return ServiceResult<Account>.Failure("email is invalid", ServiceErrorType.ValidationError);
+            }
+
+            if (newPassword == null)
+            {
+                return ServiceResult<Account>.Failure("password is invalid", ServiceErrorType.ValidationError);
+            }
+
             try
             {
-                if (accountID <= 0)
+                Account? account = this.unitOfWork.AccountRepository().GetAll().Where(a => a.Email == email).FirstOrDefault();
+                if (account == null)
                 {
-                    return ServiceResult<Account>.Failure("Account ID is invalid.", ServiceErrorType.ValidationError);
+                    return ServiceResult<Account>.Failure("Account not found.", ServiceErrorType.NotFound);
                 }
+                account.Password = newPassword;
 
-                if (newPassword == null || oldPassword == null)
-                {
-                    return ServiceResult<Account>.Failure("No password provided to update.", ServiceErrorType.ValidationError);
-                }
+                await unitOfWork.Commit().ConfigureAwait(false);
 
+                return ServiceResult<Account>.Success(account);
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine("Lỗi cập nhật mật khẩu Account: " + ex.ToString());
+                return ServiceResult<Account>.Failure("An internal error occurred during Account update password.", ServiceErrorType.InternalError);
+            }
+        }
+
+        public async Task<ServiceResult<Account>> UpdateAccountPassword(int accountID, string oldPassword, string newPassword)
+        {
+            if (accountID <= 0)
+            {
+                return ServiceResult<Account>.Failure("Account ID is invalid.", ServiceErrorType.ValidationError);
+            }
+
+            if (newPassword == null || oldPassword == null)
+            {
+                return ServiceResult<Account>.Failure("No password provided to update.", ServiceErrorType.ValidationError);
+            }
+            try
+            {
                 Account? account = await this.unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false);
                 if (account == null)
                 {
@@ -79,7 +110,7 @@ namespace UserService.Application.Usecases
                     return ServiceResult<Account>.Failure("Old password is not true.", ServiceErrorType.ValidationError);
                 }
 
-                account.Password = newPassword;
+                account.Password =  hashService.Hash(newPassword);
 
                 await unitOfWork.Commit().ConfigureAwait(false);
 
@@ -124,7 +155,7 @@ namespace UserService.Application.Usecases
                 return ServiceResult<Account>.Failure("An internal error occurred during Account update.", ServiceErrorType.InternalError);
             }
         }
-     
+
 
         public async Task<ServiceResult<RefreshToken>> RevokeRefreshToken(int refreshTokenID)
         {

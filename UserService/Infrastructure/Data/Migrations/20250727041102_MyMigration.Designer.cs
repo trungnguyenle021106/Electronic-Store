@@ -12,7 +12,7 @@ using UserService.Infrastructure.Data.DBContext;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20250621132011_MyMigration")]
+    [Migration("20250727041102_MyMigration")]
     partial class MyMigration
     {
         /// <inheritdoc />

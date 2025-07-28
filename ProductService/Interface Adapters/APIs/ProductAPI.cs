@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using ProductService.Application.Usecases;
 using ProductService.Domain.DTO.Request;
 using ProductService.Domain.Entities;
+using ProductService.Infrastructure.DTO;
 using ProductService.Infrastructure.Socket;
 
 namespace ProductService.Interface_Adapters.APIs
@@ -281,6 +282,17 @@ namespace ProductService.Interface_Adapters.APIs
         {
             UpdateProduct(app);
             UpdateProductProperty(app);
+            UpdateProductsQuantity(app);
+        }
+
+        public static void UpdateProductsQuantity(this WebApplication app)
+        {
+            app.MapPatch("/products/update-quantity", async(UpdateProductUC updateProductUC, [FromBody] List<OrderProduct> orderProducts,
+                HandleResultApi handleResultApi) =>
+            {
+                ServiceResult<Product> result = await updateProductUC.UpdateProductsQuantity(orderProducts);
+                return handleResultApi.MapServiceResultToHttp(result);  
+            }).RequireAuthorization("OnlyAdmin");
         }
 
         public static void UpdateProduct(this WebApplication app)
@@ -451,21 +463,6 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<ProductPropertyDetail> result = await deleteProductUC.DeleteProductPropertyDetails(productPropertyDetails);
                 return handleResultApi.MapServiceResultToHttp(result);
-                //if (result.IsSuccess)
-                //{
-                //    return Results.Ok(result.ListItem);
-                //}
-
-                //return result.ServiceErrorType switch
-                //{
-                //    ServiceErrorType.NotFound => Results.NotFound(new { message = result.ErrorMessage }),
-                //    ServiceErrorType.ValidationError => Results.BadRequest(new { message = result.ErrorMessage }),
-                //    _ => Results.Problem(
-                //        statusCode: StatusCodes.Status500InternalServerError,
-                //        title: "Unknown Error",
-                //        detail: result.ErrorMessage
-                //    )
-                //};
             }).RequireAuthorization("OnlyAdmin");
         }
         #endregion

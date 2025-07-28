@@ -59,15 +59,14 @@ builder.Services.AddSingleton<HandleResultApi>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
+    options.AddPolicy(name: "AllowSpecificOrigin",
                       policyBuilder =>
                       {
-                          // Sử dụng các tham số riêng biệt cho WithOrigins
-                          // hoặc một mảng các chuỗi nếu bạn có nhiều origins
-                          policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
+                          policyBuilder.SetIsOriginAllowed(origin => true)
+                          //policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") 
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
-                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+                                 .AllowCredentials(); 
 
                       });
 });
@@ -186,6 +185,24 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ProductService.Infrastructure.Data.DBContext.ProductContext>();
+        // Đây là dòng quan trọng để áp dụng tất cả các migrations đang chờ xử lý
+        // và tạo database nếu nó chưa tồn tại.
+        context.Database.Migrate();
+        Console.WriteLine("[DEBUG] Database migrations applied successfully for ProductService DB.");
+    }
+    catch (Exception ex)
+    {
+        // Ghi log lỗi nếu có vấn đề trong quá trình migrations
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "[DEBUG] An error occurred while applying migrations to ProductService DB.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

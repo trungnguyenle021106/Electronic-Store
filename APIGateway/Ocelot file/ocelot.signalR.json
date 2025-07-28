@@ -7,8 +7,8 @@
       "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service",
+          "Port": 8080
         }
       ]
     },
@@ -19,8 +19,8 @@
       "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service",
+          "Port": 8080
         }
       ]
     },
@@ -31,8 +31,8 @@
       "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service",
+          "Port": 8080
         }
       ]
     },
@@ -45,8 +45,8 @@
       "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5064
+          "Host": "order-service",
+          "Port": 8080
         }
       ]
     }

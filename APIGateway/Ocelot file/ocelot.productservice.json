@@ -6,8 +6,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/latest",
@@ -19,8 +19,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products",
@@ -32,8 +32,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}/product-properties",
@@ -45,8 +45,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products",
@@ -58,8 +58,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
@@ -71,11 +71,24 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/update-quantity",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/update-quantity",
       "UpstreamHttpMethod": [ "PATCH" ],
       "SwaggerKey": "productsapi"
     },
@@ -84,8 +97,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
@@ -99,8 +112,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}/product-properties",
@@ -112,8 +125,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
@@ -125,8 +138,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-property-names",
@@ -138,8 +151,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
@@ -151,8 +164,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
@@ -164,8 +177,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
@@ -180,8 +193,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
@@ -193,8 +206,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
@@ -206,8 +219,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
@@ -219,8 +232,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
@@ -234,8 +247,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-types",
@@ -247,8 +260,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-types",
@@ -260,8 +273,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
@@ -273,8 +286,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
@@ -289,8 +302,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5272
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/product-apis/product-property-details",

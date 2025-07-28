@@ -58,6 +58,11 @@ input {
   text-decoration: none;
 }
 
+.forget-password{
+  color: red;
+  text-decoration: none;
+}
+
 
 /* CSS cho input khi có lỗi */
 .input-error {

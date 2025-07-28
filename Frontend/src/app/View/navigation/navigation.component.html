@@ -38,12 +38,13 @@
   <div class="navbar-icons">
     <div (click)="OnclickSearchOrder()" class="navbar-icon"><i class="fas fa-clipboard-list"></i> <span>Tra cứu<br>đơn
         hàng</span></div>
-   <div class="navbar-icon-wrapper" routerLink="/cart"> <div class="navbar-icon">
-    <i class="fas fa-shopping-cart"></i>
-    <span>Giỏ<br>hàng</span>
-  </div>
-  <div class="cart-badge" *ngIf="totalCartItems > 0">{{ totalCartItems }}</div>
-</div>
+    <div class="navbar-icon-wrapper" routerLink="/cart">
+      <div class="navbar-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Giỏ<br>hàng</span>
+      </div>
+      <div class="cart-badge" *ngIf="totalCartItems > 0">{{ totalCartItems }}</div>
+    </div>
     <div class="navbar-login" *ngIf="(isLoggedIn | async) === false">
       <i class="fas fa-user"></i> <span>Đăng nhập</span>
 
@@ -79,5 +80,7 @@
 </div>
 
 <div class="modal" *ngIf="isClickedLogin">
-  <app-login *ngIf="isDisplayOverlay" (statusLoginEmitter)="DisplayOverlay($event)"></app-login>
+  <app-login *ngIf="isDisplayOverlay" 
+  (statusLoginEmitter)="DisplayOverlay($event)"
+  (statusSignUpEmitter)="ClickRegister($event)"></app-login>
 </div>

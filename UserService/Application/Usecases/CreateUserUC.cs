@@ -135,34 +135,51 @@ namespace UserService.Application.Usecases
 
         public async Task<ServiceResult<string>> RefreshAccessToken(RefreshToken refreshToken)
         {
+            // Bước 1: Kiểm tra tính hợp lệ của RefreshToken đầu vào
             int accountID = refreshToken?.AccountID ?? 0;
             if (accountID <= 0)
             {
-                return ServiceResult<string>
-                .Failure("No refresh token provided to add.", ServiceErrorType.ValidationError);
+                // Debug point 1: Đặt breakpoint ở đây. Nếu vào đây, nghĩa là RefreshToken đầu vào bị null hoặc không có AccountID hợp lệ.
+                // --> Gợi ý: Có thể do cookie RefreshToken không được gửi từ client hoặc không được đọc đúng cách.
+                return ServiceResult<string>.Failure("No refresh token provided to add.", ServiceErrorType.ValidationError);
             }
 
             if (refreshToken.IsRevoked == true || refreshToken.ExpiresAt < DateTime.UtcNow)
             {
-                return ServiceResult<string>
-             .Failure("Refresh token is expired or revoked.", ServiceErrorType.Invalid);
+                // Debug point 2: Đặt breakpoint ở đây. Nếu vào đây, nghĩa là RefreshToken đã hết hạn hoặc bị thu hồi.
+                // --> Gợi ý: Kiểm tra xem RefreshToken trong DB có IsRevoked là true không, hoặc ExpiresAt có nhỏ hơn thời gian hiện tại không.
+                return ServiceResult<string>.Failure("Refresh token is expired or revoked.", ServiceErrorType.Invalid);
             }
+
             try
             {
+                // Bước 2: Lấy thông tin tài khoản và khách hàng
                 int? customerID = this.unitOfWork.CustomerRepository()
                     .GetAll()
                     .Where(c => c.AccountID == accountID)
                     .Select(c => c.ID)
                     .FirstOrDefault();
+
                 Account account = await unitOfWork.AccountRepository().GetById(accountID).ConfigureAwait(false);
+
+                // Debug point 3: Kiểm tra 'account' và 'customerID' ở đây.
+                // Nếu 'account' là null, hoặc 'customerID' là null khi đáng lẽ phải có, điều đó có thể là nguyên nhân.
+                // Mặc dù GetById sẽ ném lỗi nếu không tìm thấy, nhưng hãy kiểm tra.
+
+                // Bước 3: Tạo Access Token mới
                 string accessToken = this.tokenService.GenerateAccessToken(new JWTClaim(account.ID, account.Role, customerID));
-           
-                return ServiceResult<string>.Success(accessToken);
+
+                // Debug point 4: Đặt breakpoint ở đây. KIỂM TRA GIÁ TRỊ CỦA `accessToken`.
+                // -> Đây là điểm then chốt! Nếu `accessToken` ở đây là null hoặc rỗng, thì ServiceResult<string>.Success(accessToken) sẽ trả về một kết quả rỗng.
+                // -> Từ đó, khi hàm SetTokenCookie được gọi với result.Item, nó sẽ nhận giá trị rỗng và ném lỗi `ArgumentException`.
+
+                return ServiceResult<string>.Success(accessToken); // Chỉ trả về AccessToken!
             }
             catch (Exception ex)
             {
+                // Debug point 5: Đặt breakpoint ở đây. Nếu vào đây, nghĩa là có lỗi trong quá trình tạo token hoặc truy vấn DB.
+                // -> Xem `ex` để biết chi tiết lỗi.
                 Console.Error.WriteLine($"Error creating JWT: {ex}");
-
                 return ServiceResult<string>.Failure(
                     "An unexpected internal error occurred during JWT creation.",
                     ServiceErrorType.InternalError

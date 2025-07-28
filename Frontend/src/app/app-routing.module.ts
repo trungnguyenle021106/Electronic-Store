@@ -9,6 +9,8 @@ import { AccountComponent } from './View/account/account.component';
 import { OrderdetailComponent } from './View/orderdetail/orderdetail.component';
 import { authGuard } from './guards/auth.guard';
 import { ProductDetailComponent } from './View/product-detail/product-detail.component';
+import { ForgetPasswordComponent } from './View/form/forget-password/forget-password.component';
+import { noAuthGuard } from './guards/no-auth.guard';
 
 const routes: Routes =
   [
@@ -18,6 +20,7 @@ const routes: Routes =
     { path: 'search', component: SearchComponent },
     { path: 'product-detail/:id', component: ProductDetailComponent, title: 'product-detail' },
     { path: 'cart', component: CartComponent, title: 'cart'},
+    { path: 'forget-password', component: ForgetPasswordComponent, title: 'forget-password', canActivate : [noAuthGuard]},
     {
       path: 'account',
       component: AccountComponent,

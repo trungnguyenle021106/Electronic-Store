@@ -29,49 +29,11 @@ builder.Configuration
     .AddOcelot("Ocelot file", builder.Environment)
     .AddEnvironmentVariables();
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<AuthHeaderHandler>();
-
-builder.Services.AddScoped<GWCreateUC>();
 
 builder.Services.AddSingleton<HandleResultApi>();
 builder.Services.AddSingleton<HandleServiceError>();
 
-builder.Services.AddHttpClient<ProductService>()
-    .ConfigureHttpClient(httpClient =>
-    {
-        httpClient.BaseAddress = new Uri("http://localhost:5272/");
-    })
-    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
-    .AddHttpMessageHandler<AuthHeaderHandler>()
-    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL)
-    .ConfigurePrimaryHttpMessageHandler(() =>
-    {
-        return new HttpClientHandler
-        {
-            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
-            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
-            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-    });
 
-builder.Services.AddHttpClient<ContentManagementService>()
-    .ConfigureHttpClient(httpClient =>
-    {
-        httpClient.BaseAddress = new Uri("http://localhost:5271/");
-    })
-    // Thêm AuthHeaderHandler vào pipeline của HttpClient này
-    .AddHttpMessageHandler<AuthHeaderHandler>()
-    // Cấu hình PrimaryHttpMessageHandler (ví dụ: để bỏ qua xác thực SSL có thể bỏ qua phần này nếu http)
-    .ConfigurePrimaryHttpMessageHandler(() =>
-    {
-        return new HttpClientHandler
-        {
-            // Tùy chọn: Bỏ qua xác thực SSL nếu đang phát triển cục bộ với chứng chỉ tự ký
-            // CỰC KỲ KHÔNG NÊN DÙNG TRONG MÔI TRƯỜNG PRODUCTION VÌ RỦI RO BẢO MẬT!
-            // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -111,12 +73,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
                       policyBuilder =>
                       {
-                          // Sử dụng các tham số riêng biệt cho WithOrigins
-                          // hoặc một mảng các chuỗi nếu bạn có nhiều origins
-                          policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
+
+                          policyBuilder.SetIsOriginAllowed(origin => true)
+                          //policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") 
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
-                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+                                 .AllowCredentials(); 
 
                       });
 });
@@ -141,22 +103,16 @@ builder.Services
         {
             OnMessageReceived = context =>
             {
-                // Đọc Access Token từ cookie
                 if (context.Request.Cookies.ContainsKey("AccessToken"))
                 {
                     context.Token = context.Request.Cookies["AccessToken"];
                 }
 
-                //var accessToken = context.Request.Query["access_token"];
-                //var path = context.HttpContext.Request.Path;
-                //if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/productPropertyHub"))
-                //{
-                //    context.Token = accessToken;
-                //}
                 return Task.CompletedTask;
             }
         };
     });
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OnlyAdmin", policy =>

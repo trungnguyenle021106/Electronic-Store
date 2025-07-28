@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Interface.UnitOfWork;
 using ProductService.Infrastructure.Data.Repositories;
+using ProductService.Infrastructure.DTO;
 using System.Linq;
 
 namespace ProductService.Application.Usecases
@@ -19,6 +20,63 @@ namespace ProductService.Application.Usecases
             this.manageProductImagesUC = manageProductImagesUC;
         }
 
+        public async Task<ServiceResult<Product>> UpdateProductsQuantity(List<OrderProduct> productsToUpdate)
+        {
+            if (productsToUpdate == null || !productsToUpdate.Any())
+            {
+                return ServiceResult<Product>.Failure("No product data provided for update or list is empty.", ServiceErrorType.ValidationError);
+            }
+
+            var deficientProducts = new List<Product>();
+
+            try
+            {
+                var productIdsToUpdate = productsToUpdate.Select(p => p.ProductID).ToList();
+
+
+                List<Product> existingProductsInDb = await _UnitOfWork.ProductRepository().GetAll()
+                                                                      .Where(p => productIdsToUpdate.Contains(p.ID))
+                                                                      .ToListAsync();
+
+                foreach (OrderProduct orderProduct in productsToUpdate)
+                {
+                    Product? existingProduct = existingProductsInDb.FirstOrDefault(p => p.ID == orderProduct.ProductID);
+
+                    if (existingProduct != null)
+                    {
+                        int originalQuantity = existingProduct.Quantity;
+                        int adjustmentQuantity = orderProduct.Quantity;
+                        int newCalculatedQuantity = originalQuantity + adjustmentQuantity;
+
+
+                        if (newCalculatedQuantity < 0)
+                        {
+                            deficientProducts.Add(new Product
+                            {
+                                ID = existingProduct.ID,
+                                Name = existingProduct.Name,
+                                Quantity = newCalculatedQuantity
+                            });
+
+                            existingProduct.Quantity = newCalculatedQuantity;
+                            existingProduct.Status = "Hết hàng";
+                        }
+                        else
+                        {
+                            existingProduct.Quantity = newCalculatedQuantity;
+                            existingProduct.Status = "Còn hàng";
+                        }
+                    }
+                }
+
+                await _UnitOfWork.Commit();
+                return ServiceResult<Product>.Success(deficientProducts);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<Product>.Failure($"An error occurred while updating product quantity: {ex.Message}", ServiceErrorType.InternalError);
+            }
+        }
 
         public async Task<ServiceResult<Product>> UpdateProduct(Product product, List<int> productPropertyIDs, IFormFile file)
         {

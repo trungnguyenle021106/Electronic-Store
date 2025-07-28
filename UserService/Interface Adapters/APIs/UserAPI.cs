@@ -8,6 +8,8 @@ using UserService.Domain.DTO;
 using UserService.Domain.Entities;
 using UserService.Domain.Request;
 using UserService.Domain.Response;
+using UserService.Infrastructure.Cache_Service;
+using UserService.Infrastructure.SendEmail;
 using UserService.Infrastructure.Verify_Email;
 
 namespace UserService.Interface_Adapters.APIs
@@ -28,18 +30,21 @@ namespace UserService.Interface_Adapters.APIs
             //MapCreateAccount(app);
             //MapCreateCustomer(app);
             MapRefreshAccessToken(app);
+            ForgetPasswoord(app);
+            ResendCode(app);
+            ChechVerifyCode(app);
         }
 
         public static void MapCreateAccount(this WebApplication app)
         {
             app.MapPost("/accounts", async (CreateUserUC createUserUC
-                , [FromBody] Account newAccount, HttpContext httpContext, AuthService authService, EmailValidator emailValidatorService,
+                , [FromBody] Account newAccount, HttpContext httpContext, AuthService authService, EmailValidatorService emailValidatorService,
                 HandleResultApi handleResultApi) =>
             {
                 if (!authService.IsLogOut(httpContext)) return Results.BadRequest("Hãy đăng xuất tài khoản");
 
                 EmailValidatorDTO emailValidator = await emailValidatorService.CheckEmailValid(newAccount.Email).ConfigureAwait(false);
-                if (!emailValidator.Status)
+                if (!emailValidator.IsValid)
                 {
                     return Results.BadRequest(emailValidator.Message);
                 }
@@ -67,13 +72,10 @@ namespace UserService.Interface_Adapters.APIs
 
                 ServiceResult<string> result = await createUserUC.RefreshAccessToken(refreshToken).ConfigureAwait(false);
 
-                string accessToken = result.Item;
-                result = ServiceResult<string>.NoContent();
-
-                return handleResultApi.MapServiceResultToHttp(result,
+                return handleResultApi.MapServiceResultToHttpNoContent(result,
                   () =>
                   {
-                      tokenService.SetTokenCookie(context, "AccessToken", accessToken,
+                      tokenService.SetTokenCookie(context, "AccessToken", result.Item,
                          DateTimeOffset.Now.AddMinutes(tokenService._jwtSetting.ExpirationMinutes), true, false, SameSiteMode.Lax);
                   },
                   () =>
@@ -81,6 +83,87 @@ namespace UserService.Interface_Adapters.APIs
                       tokenService.ClearTokenCookie(context, "AccessToken", secure: false, sameSite: SameSiteMode.Lax);
                       tokenService.ClearTokenCookie(context, "RefreshToken", secure: false, sameSite: SameSiteMode.Lax);
                   });
+            });
+        }
+
+        public static void ForgetPasswoord(this WebApplication app)
+        {
+            app.MapPost("/accounts/forget-password", async (CacheVerifyCodeService cacheVerifyCodeService, SendEmailService sendEmailService,
+                HandleResultApi handleResultApi, [FromBody] string email, EmailValidatorService emailValidatorService) =>
+            {
+                var result = await emailValidatorService.CheckEmailValid(email).ConfigureAwait(false);
+                if (!result.IsValid)
+                {
+                    return Results.BadRequest(result.Message);
+                }
+
+                try
+                {
+                    string verifyCode = cacheVerifyCodeService.GenerateVerifyCode(email);
+                    await sendEmailService.SendVerifyCodeEmailAsync(email, verifyCode).ConfigureAwait(false);
+
+                    return Results.Ok();
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                         detail: "Có lỗi xảy ra trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.",
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error"
+                    );
+                }
+            });
+        }
+
+        public static void ChechVerifyCode(this WebApplication app)
+        {
+            app.MapPost("/accounts/forget-password/check-verify-code", async (CacheVerifyCodeService cacheVerifyCodeService, SendEmailService sendEmailService,
+               HandleResultApi handleResultApi, [FromBody] VerifyRequest req, UpdateUserUC updateUserUC) =>
+            {
+                try
+                {
+                    if (cacheVerifyCodeService.VerifyCode(req.Code, req.Email))
+                    {
+                        ServiceResult<Account> result = await updateUserUC.UpdatePassword(req.Email, req.Password).ConfigureAwait(false);
+                        return handleResultApi.MapServiceResultToHttpNoContent(result, null, null);
+                    }
+                    else
+                    {
+                        // VerifyCode trả về false khi mã không đúng hoặc hết hạn
+                        return Results.BadRequest("Mã xác thực không hợp lệ hoặc đã hết hạn.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                         detail: "Có lỗi xảy ra trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.",
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error"
+                    );
+                }
+            });
+        }
+
+        public static void ResendCode(this WebApplication app)
+        {
+            app.MapPost("/accounts/forget-password/resend-code", async (CacheVerifyCodeService cacheVerifyCodeService, SendEmailService sendEmailService,
+                HandleResultApi handleResultApi, [FromBody] string email) =>
+            {
+                try
+                {
+                    string verifyCode = cacheVerifyCodeService.GenerateVerifyCode(email);
+                    await sendEmailService.SendVerifyCodeEmailAsync(email, verifyCode).ConfigureAwait(false);
+
+                    return Results.Ok();
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                         detail: "Có lỗi xảy ra trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.",
+                         statusCode: StatusCodes.Status500InternalServerError,
+                         title: "Internal Server Error"
+                    );
+                }
             });
         }
         #endregion
@@ -106,7 +189,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts", async (GetUserUC getUserUC, int page, int pageSize, string? searchText, HandleResultApi handleResultApi) =>
             {
                 ServiceResult<PagedResult<Account>> result = await getUserUC.GetPagedAccount(page, pageSize, searchText).ConfigureAwait(false);
-               return handleResultApi.MapServiceResultToHttp(result);
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
 
@@ -134,7 +217,7 @@ namespace UserService.Interface_Adapters.APIs
 
                 ServiceResult<CustomerInformation> result = await getUserUC.GetCustomerInformationByAccountID(accountID).ConfigureAwait(false);
                 return handleResultApi.MapServiceResultToHttp(result);
-            
+
             }).RequireAuthorization("OnlyCustomer");
         }
 
@@ -207,7 +290,7 @@ namespace UserService.Interface_Adapters.APIs
             app.MapGet("/accounts/{accountID}", async (GetUserUC getUserUC, HandleResultApi handleResultApi, HttpContext httpContext, int accountID) =>
             {
                 ServiceResult<Account> result = await getUserUC.GetAccountByID(accountID).ConfigureAwait(false);
-                return handleResultApi.MapServiceResultToHttp(result);         
+                return handleResultApi.MapServiceResultToHttp(result);
             }).RequireAuthorization("OnlyAdmin");
         }
 

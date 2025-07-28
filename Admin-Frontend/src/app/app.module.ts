@@ -42,6 +42,7 @@ import { OrderComponent } from './View/orders/order/order.component';
 import { OrderDetailComponent } from './View/orders/order-detail/order-detail.component';
 import { UserComponent } from './View/users/user/user.component';
 import { CustomerComponent } from './View/users/customer/customer.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { CustomerComponent } from './View/users/customer/customer.component';
     MatSortModule,           // Sắp xếp MatSort
     MatButtonModule,          // Các nút bấm
     MatDialogModule, MatFormFieldModule,MatCheckboxModule, MatIconModule, MatSelectModule, MatListModule,
+         MatProgressSpinnerModule, 
   ],
   providers: [
     provideHttpClient(),

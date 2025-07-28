@@ -10,6 +10,7 @@ import { AuthService } from '../../../Service/Auth/auth.service';
 })
 export class LoginComponent {
   @Output() statusLoginEmitter = new EventEmitter<boolean>();
+  @Output() statusSignUpEmitter = new EventEmitter<boolean>();
   loginForm: FormGroup;
   serverError: string | null = null;
 
@@ -31,11 +32,23 @@ export class LoginComponent {
           window.location.href = response;
         },
         error: (error) => {
-          this.serverError = error.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
-          console.log(  this.serverError )
+          if (error.status == 500) {
+            this.serverError = "Lỗi hệ thống đăng nhập lại sau"
+          } else {
+            this.serverError = error.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
+          }
+          console.log(this.serverError)
         },
       })
     }
+  }
+
+  GoToSignUp() {
+    this.statusSignUpEmitter.emit(true);
+  }
+
+  ForgetPassword() {
+
   }
 
   CloseLoginForm(): void {

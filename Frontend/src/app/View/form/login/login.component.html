@@ -28,8 +28,13 @@
 
     <p class="login-register-text">
         Bạn chưa có tài khoản?
-        <a href="#" class="login-register-link">Đăng ký ngay!</a>
+        <a (click)="GoToSignUp()" class="login-register-link">Đăng ký ngay!</a>
     </p>
+
+    <p class="login-register-text">
+        <a (click)="CloseLoginForm()" [routerLink]="['/forget-password']" class="forget-password">Quên mật khẩu?</a>
+    </p>
+
 
     <!-- Error from server -->
     <div *ngIf="serverError" class="server-error-message">

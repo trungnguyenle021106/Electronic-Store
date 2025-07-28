@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ProductService } from '../../Service/Product/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '../../Model/Product/Product';
@@ -26,7 +26,7 @@ export class SearchComponent {
   productPropertyIDS: string = "";
 
   canShowNotFound: boolean = false;
-
+  isLoading: boolean = false;
   curProductTypes: ProductType[] = [];
   curProductBrands: ProductBrand[] = [];
 
@@ -80,6 +80,24 @@ export class SearchComponent {
     }
   }
 
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(): void {
+    // console.log("Window Scroll Event Fired!"); // Để debug
+
+    // document.documentElement.scrollHeight: Tổng chiều cao nội dung của toàn bộ trang
+    // window.scrollY (hoặc window.pageYOffset): Vị trí cuộn hiện tại từ đỉnh
+    // window.innerHeight: Chiều cao hiển thị của cửa sổ trình duyệt (viewport)
+
+    // Điều kiện để xác định cuộn đến cuối trang:
+    // Khi tổng chiều cao nội dung trừ đi vị trí cuộn hiện tại
+    // NHỎ HƠN HOẶC BẰNG chiều cao của viewport cộng với một ngưỡng (ví dụ 100px)
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
+      if (!this.isLoading && this.page <= this.totalPage) {
+        // console.log("Reached end of page, loading more products..."); // Để debug
+        this.loadProducts();
+      }
+    }
+  }
 
   private loadProductType(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -129,11 +147,12 @@ export class SearchComponent {
 
   private loadProducts(isInitialLoad: boolean = false): void { // Thêm tham số tùy chọn
 
-    console.log(this.productBrandSort)
-    console.log(this.productTypeSort)
     // Nếu đây không phải lần tải ban đầu và đã hết trang, thì không làm gì
     if (!isInitialLoad && this.page > this.totalPage) {
-      console.log("No more pages to load.");
+      return;
+    }
+
+    if (this.isLoading || (this.totalPage > 0 && this.page > this.totalPage)) {
       return;
     }
 
@@ -142,10 +161,14 @@ export class SearchComponent {
       console.warn("Cannot load products without a search value.");
       return;
     }
+
+    this.isLoading = true;
+    
     this.productService.getPagedProducts(this.page, this.pageSize, this.searchValue, this.productTypeSort,
       this.productBrandSort, this.productStatusSort, this.productPropertyIDS, this.GetPriceSortStatus()).subscribe(
         {
           next: (response) => {
+            this.isLoading = false;
             // Sử dụng toán tử spread để tạo mảng mới, hoặc push nếu bạn muốn chỉnh sửa trực tiếp
             // this.products = [...this.products, ...response.Items]; // Tạo mảng mới
             this.products.push(...response.Items); // Thêm vào mảng hiện có
@@ -156,6 +179,7 @@ export class SearchComponent {
             // this.HandleCurProductBrand(response.Items);
           },
           error: (error) => {
+            this.isLoading = false;
             console.error("Error loading products:", error);
             // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
           }

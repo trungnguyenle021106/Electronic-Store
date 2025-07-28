@@ -33,7 +33,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ForgetPasswordComponent } from './View/form/forget-password/forget-password.component'; 
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ProductDetailComponent,
     ConfirmDialogComponent,
     ErrorDialogComponent,
+    ForgetPasswordComponent,
     
   ],
   imports: [

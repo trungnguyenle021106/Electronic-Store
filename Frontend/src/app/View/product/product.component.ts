@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductProperty } from '../../Model/Product/ProductProperty';
 import { ProductService } from '../../Service/Product/product.service';
@@ -24,6 +24,7 @@ export class ProductComponent {
   productPriceSortOrder: string = "increase";
   productStatusSort: string = "";
 
+  isLoading: boolean = false;
   canShowNotFound: boolean = false;
 
   selectedFilters: { [key: string]: number | null } = {};
@@ -65,8 +66,8 @@ export class ProductComponent {
       }
     });
   }
-  
- private resetFilterPropertiesState() {
+
+  private resetFilterPropertiesState() {
     this.productPropertyOfFilter = []; // Xóa mảng properties hiện có
     this.uniqueProductPropertyName.clear(); // Xóa tất cả các tên thuộc tính duy nhất
     this.selectedFilters = {}; // Reset tất cả các lựa chọn bộ lọc
@@ -81,25 +82,70 @@ export class ProductComponent {
     this.canShowNotFound = false; // Reset trạng thái tìm thấy
   }
 
-  private loadProducts() {
-    if (this.totalPage >= this.page) {
-      this.productService.getPagedProducts(this.page, this.pageSize, null, this.productTypeName,
-        this.productBrandName, this.productStatusSort, this.productPropertyIDS, this.GetPriceSortStatus()).subscribe(
-          {
-            next: (response) => {
-              this.products.push(...response.Items);
-              this.page++;
-              this.totalPage = response.TotalPages;
-              this.canShowNotFound = true;
-              console.log(response)
-            },
-            error: (error) => {
-              console.log(error)
-            }
-          }
-        );
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(): void {
+    // console.log("Window Scroll Event Fired!"); // Để debug
+
+    // document.documentElement.scrollHeight: Tổng chiều cao nội dung của toàn bộ trang
+    // window.scrollY (hoặc window.pageYOffset): Vị trí cuộn hiện tại từ đỉnh
+    // window.innerHeight: Chiều cao hiển thị của cửa sổ trình duyệt (viewport)
+
+    // Điều kiện để xác định cuộn đến cuối trang:
+    // Khi tổng chiều cao nội dung trừ đi vị trí cuộn hiện tại
+    // NHỎ HƠN HOẶC BẰNG chiều cao của viewport cộng với một ngưỡng (ví dụ 100px)
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
+      if (!this.isLoading && this.page <= this.totalPage) {
+        // console.log("Reached end of page, loading more products..."); // Để debug
+        this.loadProducts();
+      }
     }
   }
+  // --- Hàm tải sản phẩm ---
+  private loadProducts(): void {
+    // Tránh tải nếu đang trong quá trình tải hoặc đã tải hết trang
+    if (this.isLoading || (this.totalPage > 0 && this.page > this.totalPage)) {
+      return;
+    }
+
+    this.isLoading = true; // Đặt trạng thái đang tải
+
+    this.productService.getPagedProducts(
+      this.page,
+      this.pageSize,
+      null, // Tham số queryName của bạn
+      this.productTypeName,
+      this.productBrandName,
+      this.productStatusSort,
+      this.productPropertyIDS,
+      this.GetPriceSortStatus() // Hàm này cần được định nghĩa trong component của bạn
+    ).subscribe(
+      {
+        next: (response: any) => { // Cần xác định kiểu dữ liệu của response
+          if (response && response.Items) {
+            this.products.push(...response.Items); // Thêm sản phẩm mới vào danh sách hiện có
+            this.page++; // Tăng số trang lên để tải trang tiếp theo
+            this.totalPage = response.TotalPages; // Cập nhật tổng số trang
+
+            // Đặt lại isLoading sau khi tải xong dữ liệu
+            this.isLoading = false;
+            this.canShowNotFound = true; // Có thể bật cờ này nếu có dữ liệu
+
+            console.log('Đã tải sản phẩm:', response);
+          } else {
+            // Xử lý trường hợp response không hợp lệ (ví dụ: không có Items)
+            console.warn('Response không có thuộc tính Items hoặc không hợp lệ', response);
+            this.isLoading = false;
+          }
+        },
+        error: (error: any) => {
+          console.error('Lỗi khi tải sản phẩm:', error);
+          this.isLoading = false; // Đặt lại isLoading khi có lỗi
+          // Có thể hiển thị thông báo lỗi cho người dùng ở đây
+        }
+      }
+    );
+  }
+
 
   private loadProductPropertyOfFilterr() {
     this.contentManagementService.getAllPropertiesOfFilter(this.filterID).subscribe({

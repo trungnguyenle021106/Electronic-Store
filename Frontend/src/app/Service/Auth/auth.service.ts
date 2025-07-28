@@ -5,6 +5,7 @@ import { BehaviorSubject, catchError, filter, Observable, of, shareReplay, take,
 import { Router } from '@angular/router';
 import { LoginRequest } from '../../Model/Requests/LoginRequest';
 import { SignUpRequest } from '../../Model/Requests/SignUpRequest';
+import { VerifyRequest } from '../../Model/Requests/VerifyRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -118,5 +119,24 @@ export class AuthService {
   signUp(signUpRequest: SignUpRequest): Observable<void> {
     let apiUrl: string = `${this.baseApiUrl}/auth/sign-up`;
     return this.http.post<void>(apiUrl, signUpRequest, { withCredentials: true });
+  }
+
+
+   requestForgotPasswordCode(email: string): Observable<any> {
+    return this.http.post(`${this.baseApiUrl}/accounts/forget-password`, JSON.stringify(email), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // 2. Kiểm tra mã xác thực
+  checkVerificationCode(request: VerifyRequest): Observable<any> {
+    return this.http.post(`${this.baseApiUrl}/accounts/forget-password/check-verify-code`, request);
+  }
+
+  // 3. Gửi lại mã xác thực quên mật khẩu
+  resendForgotPasswordCode(email: string): Observable<any> {
+    return this.http.post(`${this.baseApiUrl}/accounts/forget-password/resend-code`, JSON.stringify(email), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

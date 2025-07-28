@@ -16,10 +16,10 @@ namespace UserService.Application.Usecases
         private readonly IUnitOfWork unitOfWork;
         private readonly TokenService tokenService;
         private readonly HashService hashService;
-        private readonly EmailValidator emailValidator;
+        private readonly EmailValidatorService emailValidator;
 
         public LoginLogoutSignUpUC(IUnitOfWork unitOfWork, TokenService tokenService, HashService hashService,
-            EmailValidator emailValidator)
+            EmailValidatorService emailValidator)
         {
             this.unitOfWork = unitOfWork;
             this.tokenService = tokenService;
@@ -31,62 +31,84 @@ namespace UserService.Application.Usecases
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
+                // Debug point 6
                 return ServiceResult<LoginSignUpDTO>.Failure("Email và mật khẩu không được để trống.", ServiceErrorType.ValidationError);
             }
 
             try
             {
+                // Debug point 7: Kiểm tra giá trị của 'email' trước khi query DB
                 Account? account = await this.unitOfWork.AccountRepository()
-                                                    .GetAll()
-                                                    .FirstOrDefaultAsync(a => a.Email == email)
-                                                    .ConfigureAwait(false);
+                                                        .GetAll()
+                                                        .FirstOrDefaultAsync(a => a.Email == email)
+                                                        .ConfigureAwait(false);
 
                 if (account == null)
                 {
+                    // Debug point 8: Tài khoản không tìm thấy
                     return ServiceResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", ServiceErrorType.NotFound);
                 }
 
+                // Debug point 9: Kiểm tra xem 'password' và 'account.Password' có khớp không
                 if (!hashService.VerifyHash(password, account.Password))
                 {
+                    // Debug point 10: Mật khẩu không đúng
                     return ServiceResult<LoginSignUpDTO>.Failure("Email hoặc mật khẩu không đúng.", ServiceErrorType.InvalidCredentials);
                 }
 
                 if (account.Status == "Locked")
                 {
+                    // Debug point 11: Tài khoản bị khóa
                     return ServiceResult<LoginSignUpDTO>.Failure("Tài khoản của bạn bị khóa.", ServiceErrorType.AccountLocked);
                 }
 
+                // Bước 1: Lấy Customer ID
                 int? customerId = this.unitOfWork.CustomerRepository()
                     .GetAll()
                     .Where(c => c.AccountID == account.ID)
                     .Select(c => c.ID)
                     .FirstOrDefault();
 
-                string accessToken = tokenService.GenerateAccessToken(new JWTClaim
-                (
-                    account.ID, account.Role, customerId
-                ));
+                // Bước 2: Tạo Access Token
+                string accessToken = tokenService.GenerateAccessToken(new JWTClaim(account.ID, account.Role, customerId));
+
+                // Debug point 12: KIỂM TRA GIÁ TRỊ CỦA `accessToken` ở đây.
+                // Nếu nó là null/rỗng, đây là vấn đề.
+
+                // Bước 3: Tạo Refresh Token
                 string refreshTokenString = tokenService.GenerateRefreshToken();
+
+                // Debug point 13: KIỂM TRA GIÁ TRỊ CỦA `refreshTokenString`.
+                // Nếu nó là null/rỗng, đây là vấn đề.
 
                 string hashRefreshTokenString = hashService.Hash(refreshTokenString);
 
+                // Debug point 14: KIỂM TRA GIÁ TRỊ CỦA `hashRefreshTokenString`.
+
+                // Bước 4: Lưu Refresh Token vào DB
                 RefreshToken refreshToken = await this.unitOfWork.RefreshTokenRepository().Add(new RefreshToken
                 {
                     TokenHash = hashRefreshTokenString,
                     ExpiresAt = DateTime.UtcNow.AddDays(7),
                     CreatedAt = DateTime.UtcNow,
-                    Account = account,
+                    Account = account, // Cần đảm bảo rằng Account được tải đầy đủ (hoặc chỉ AccountID)
                     IsRevoked = false
                 }).ConfigureAwait(false);
 
+                // Debug point 15: Kiểm tra 'refreshToken' sau khi thêm vào repository.
+                // Đảm bảo nó không null và có ID hợp lệ sau khi Commit.
+
                 await this.unitOfWork.Commit().ConfigureAwait(false);
+
+                // Bước 5: Trả về Access Token và Refresh Token
                 return ServiceResult<LoginSignUpDTO>.Success(new LoginSignUpDTO
                 (
-                    account, accessToken, refreshToken
+                    account, accessToken, refreshToken // Trả về AccessToken (string) và RefreshToken (đối tượng)
                 ));
             }
             catch (Exception ex)
             {
+                // Debug point 16: Đặt breakpoint ở đây. Xem `ex` để biết chi tiết lỗi.
                 Console.Error.WriteLine($"An unexpected error occurred during login for email: {email}, error : {ex}");
                 return ServiceResult<LoginSignUpDTO>.Failure(
                     "An unexpected internal error occurred during login .",
@@ -103,7 +125,7 @@ namespace UserService.Application.Usecases
                    .Failure("No sign up information provided to add.", ServiceErrorType.ValidationError);
             }
 
-            if (!(await emailValidator.CheckEmailValid(signUpRequest.Email).ConfigureAwait(false)).Status)
+            if (!(await emailValidator.CheckEmailValid(signUpRequest.Email).ConfigureAwait(false)).IsValid)
             {
                 return ServiceResult<LoginSignUpDTO>
                  .Failure("Email is not valid.", ServiceErrorType.ValidationError);

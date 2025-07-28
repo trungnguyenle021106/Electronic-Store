@@ -73,7 +73,7 @@ export class UserComponent {
             }
           },
           error: (error) => {
-            console.error('Error loading orders:', error);
+            console.error('Error loading accounts:', error);
           }
         }
       );
@@ -135,8 +135,8 @@ export class UserComponent {
         this.loadUsers();
       },
       error: (error) => {
-        console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
-        this.openErrorDialog("300ms", "150ms", "Lỗi cập nhật đơn hàng", error.message)
+        console.error('Lỗi khi cập nhật trạng thái tài khoản:', error);
+        this.openErrorDialog("300ms", "150ms", "Lỗi cập nhật tài khoản", error.message)
       }
     });
   }
@@ -160,7 +160,7 @@ export class UserComponent {
     this.accountId = orderId;
     this.status = newStatus;
 
-    this.openConfirmDialog("300ms", "150ms", "cập nhật trạng thái đơn hàng");
+    this.openConfirmDialog("300ms", "150ms", "cập nhật trạng thái tài khoản");
   }
 
   ngOnDestroy(): void {

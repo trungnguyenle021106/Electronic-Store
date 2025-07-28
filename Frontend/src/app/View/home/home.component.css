@@ -169,9 +169,11 @@
 
 .products {
   display: flex;
-  overflow-x: auto;
+  overflow-x: auto; /* Giữ nguyên để cuộn ngang */
   gap: 16px;
   padding: 20px 0;
+  /* Thêm để đảm bảo các items có chiều cao bằng nhau trong cùng một "hàng" ảo */
+  align-items: stretch;
 }
 
 .product-card {
@@ -181,16 +183,20 @@
   flex-shrink: 0;
   padding: 10px;
   width: 239.4px;
-  height: 342.2px;
+  /* Bỏ height cố định để thẻ có thể tự điều chỉnh chiều cao theo nội dung của thẻ cao nhất */
+  /* height: 342.2px; */ /* <-- XÓA DÒNG NÀY */
   cursor: pointer;
   font-family: Inter, sans-serif;
+  
+  /* Thêm Flexbox vào đây để kiểm soát nội dung bên trong thẻ */
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 
 .product-card img {
   width: 100%;
@@ -201,7 +207,31 @@
   font-size: 14px;
   font-weight: 600;
   margin: 5px 0;
+  /* Cho phép tiêu đề mở rộng để chiếm không gian và giới hạn số dòng */
+  flex-grow: 1; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Giới hạn tiêu đề tối đa 2 dòng */
+  -webkit-box-orient: vertical;
+   line-clamp: 2; /* Thuộc tính chuẩn */
 }
+
+/* Thêm CSS cho phần giá và nút mua ngay để đẩy chúng xuống cuối thẻ */
+.product-card .price {
+  margin-top: auto; /* Đẩy phần giá xuống cuối thẻ */
+}
+
+.product-card .checkout-btn {
+  /* Có thể thêm margin-top nếu muốn khoảng cách với giá */
+  margin-top: 10px; /* Ví dụ */
+}
+
+/* .title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 0;
+} */
 
 /* .features {
   background: #f1f1f1;

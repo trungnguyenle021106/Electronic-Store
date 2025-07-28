@@ -39,7 +39,7 @@ builder.Services.AddTransient<AuthHeaderHandler>();
 builder.Services.AddHttpClient<ProductService>()
     .ConfigureHttpClient(httpClient =>
     {
-        httpClient.BaseAddress = new Uri("http://localhost:5272/");
+        httpClient.BaseAddress = new Uri("http://product-service:8080/");
     })
     // Thêm AuthHeaderHandler vào pipeline của HttpClient này
     .AddHttpMessageHandler<AuthHeaderHandler>()
@@ -72,6 +72,21 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
 {
     options.PayloadSerializerOptions.PropertyNamingPolicy = null; // Giữ nguyên tên thuộc tính (PascalCase) cho SignalR
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
+                      policyBuilder =>
+                      {
+                          policyBuilder.SetIsOriginAllowed(origin => true)
+                          //policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") 
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod()
+                                 .AllowCredentials(); 
+
+                      });
+});
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -155,6 +170,24 @@ builder.Services.AddAuthorization(options =>
 
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<OrderService.Infrastructure.Data.DBContext.OrderContext>();
+        // Đây là dòng quan trọng để áp dụng tất cả các migrations đang chờ xử lý
+        // và tạo database nếu nó chưa tồn tại.
+        context.Database.Migrate();
+        Console.WriteLine("[DEBUG] Database migrations applied successfully for OrderService DB.");
+    }
+    catch (Exception ex)
+    {
+        // Ghi log lỗi nếu có vấn đề trong quá trình migrations
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "[DEBUG] An error occurred while applying migrations to OrderService DB.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -165,6 +198,6 @@ if (app.Environment.IsDevelopment())
         c.DocumentTitle = "ORDER APIS";
     });
 }
-
+app.UseCors("AllowSpecificOrigin");
 app.MapOrderEndpoints();
 app.Run();

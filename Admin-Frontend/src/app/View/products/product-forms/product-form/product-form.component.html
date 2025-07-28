@@ -1,4 +1,10 @@
 <div class="container">
+    <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner [diameter]="50" color="primary"></mat-spinner>
+        <p>Đang tải dữ liệu, vui lòng chờ...</p>
+    </div>
+
+
     <div class="main-content">
         <form [formGroup]="productForm" class="form-container">
             <div class="form-title">{{describeAction}}</div>
@@ -108,7 +114,7 @@
         <div class="bottom-ad">
             <app-select-product-properties [isSelectedPropertyForm]="false"
                 (selectedItemSender)="OnItemSelected($event)" [unSelectedItemReceiver]="senderUnSelectedItem"
-                [curItemID]="curProductID" [typeService]="'Product'"> 
+                [curItemID]="curProductID" [typeService]="'Product'">
             </app-select-product-properties>
         </div>
 

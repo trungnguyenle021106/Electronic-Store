@@ -11,7 +11,9 @@ using UserService.Application.Service;
 using UserService.Application.UnitOfWorks;
 using UserService.Application.Usecases;
 using UserService.Domain.Interface.UnitOfWork;
+using UserService.Infrastructure.Cache_Service;
 using UserService.Infrastructure.Data.DBContext;
+using UserService.Infrastructure.SendEmail;
 using UserService.Infrastructure.Setting;
 using UserService.Infrastructure.Verify_Email;
 using UserService.Interface_Adapters;
@@ -49,14 +51,16 @@ builder.Services.AddScoped<LoginLogoutSignUpUC>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<HashService>();
 builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<EmailValidator>();
+builder.Services.AddScoped<EmailValidatorService>();
 
 builder.Services.AddSingleton<IAuthorizationHandler, AdminOrSelfAccountIDHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, SelfAccountIDHandler>();
 builder.Services.AddSingleton(jwtSettingsInstance);
 
 builder.Services.AddSingleton<HandleResultApi>();
-
+builder.Services.AddMemoryCache(); // Đăng ký dịch vụ IMemoryCache
+builder.Services.AddScoped<CacheVerifyCodeService>(); // Đăng ký CacheVerifyCodeService, nó sẽ nhận IMemoryCache
+builder.Services.AddTransient<SendEmailService>();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = null;
@@ -67,12 +71,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowSpecificOrigin", // Tên của chính sách CORS
                       policyBuilder =>
                       {
-                          // Sử dụng các tham số riêng biệt cho WithOrigins
-                          // hoặc một mảng các chuỗi nếu bạn có nhiều origins
-                          policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") // SỬA LỖI TẠI ĐÂY
+                          policyBuilder.SetIsOriginAllowed(origin => true)
+                          //policyBuilder.WithOrigins("http://localhost:4300", "http://localhost:4200") 
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
-                                 .AllowCredentials(); // Bỏ comment nếu bạn cần hỗ trợ cookie/credentials
+                                 .AllowCredentials(); 
                                 
                       });
 });
@@ -166,6 +169,24 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<UserService.Infrastructure.Data.DBContext.UserContext>();
+        // Đây là dòng quan trọng để áp dụng tất cả các migrations đang chờ xử lý
+        // và tạo database nếu nó chưa tồn tại.
+        context.Database.Migrate();
+        Console.WriteLine("[DEBUG] Database migrations applied successfully for UserService DB.");
+    }
+    catch (Exception ex)
+    {
+        // Ghi log lỗi nếu có vấn đề trong quá trình migrations
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "[DEBUG] An error occurred while applying migrations to UserService DB.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

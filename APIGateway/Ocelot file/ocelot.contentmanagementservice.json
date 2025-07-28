@@ -5,8 +5,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI TỪ "localhost"
+          "Port": 8080 // ĐÃ THAY ĐỔI TỪ 5271
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
@@ -18,8 +18,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}/product-properties",
@@ -31,8 +31,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
@@ -44,8 +44,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
@@ -57,8 +57,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
@@ -70,8 +70,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5271
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
         }
       ],
       "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",

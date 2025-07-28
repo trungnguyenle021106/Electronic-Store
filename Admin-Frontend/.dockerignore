@@ -1,0 +1,34 @@
+# Node.js modules (dependencies)
+node_modules/
+npm-debug.log
+.npm/
+
+# Build artifacts and temporary files
+dist/             # Thư mục chứa kết quả build của Angular (npm run build)
+.angular/         # Thư mục tạm thời của Angular CLI (cache, generated files)
+coverage/         # Thư mục chứa kết quả kiểm thử unit test
+tmp/              # Các file tạm thời
+*.log             # Các file log
+
+# IDE and Editor files
+.vscode/          # Cấu hình Visual Studio Code
+.idea/            # Cấu hình JetBrains IDEs (WebStorm, IntelliJ IDEA)
+*.suo             # Visual Studio Solution User Options
+*.user            # Visual Studio User Options
+*.sln.docstates   # Visual Studio Solution Document States
+
+# Version control (Git)
+.git/
+.gitignore
+
+# Docker specific files (often placed in the root of the build context)
+Dockerfile
+.dockerignore
+
+# Environment variables (security sensitive)
+.env              # Các file .env thường chứa biến môi trường nhạy cảm
+.env.* # Các biến môi trường khác
+
+# Other commonly ignored files
+.DS_Store         # macOS specific file
+Thumbs.db         # Windows specific file
