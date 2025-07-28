@@ -211,7 +211,6 @@ namespace ProductService.Application.Usecases
                         ).
                         Where(item =>
                         (item.Product.Name != null && item.Product.Name.ToLower().Contains(searchLower)) ||
-                        (item.Product.Description != null && item.Product.Description.ToLower().Contains(searchLower)) ||
                         (item.Product.Quantity.ToString().Contains(searchLower)) ||
                         (item.Product.Price.ToString().Contains(searchLower)) ||
                         (item.Product.Status != null && item.Product.Status.ToLower().Contains(searchLower)) ||

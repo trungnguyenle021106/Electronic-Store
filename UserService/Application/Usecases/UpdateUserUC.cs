@@ -73,7 +73,8 @@ namespace UserService.Application.Usecases
                 {
                     return ServiceResult<Account>.Failure("Account not found.", ServiceErrorType.NotFound);
                 }
-                account.Password = newPassword;
+
+                account.Password = hashService.Hash(newPassword);
 
                 await unitOfWork.Commit().ConfigureAwait(false);
 
