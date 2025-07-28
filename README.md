@@ -1,7 +1,7 @@
-Electronic-Store
+#Electronic-Store
 This is a comprehensive e-commerce platform designed for selling electronic products such as laptops, keyboards, headphones, mice, and more. The system focuses on a direct payment process (no online payment gateway) and offers robust management modules for products, orders, and user accounts. It also allows for flexible content management through configurable Filter entities, enabling easy expansion to various product types.
 
-Features
+#Features
 This platform offers a rich set of features to manage and operate an online electronics store:
 
 Comprehensive Product Management:
@@ -32,7 +32,7 @@ Direct Payment Integration:
 
 Supports an in-person/direct payment process (no online payment gateway integrated).
 
-Architecture
+#Architecture
 The project is built upon a modern Microservice Architecture to ensure scalability, independence, and maintainability. Each Microservice adheres to the principles of Clean Architecture, promoting clear separation of concerns and ease of testing.
 
 Ocelot API Gateway: Serves as the single entry point for all frontend requests, routing them efficiently to the appropriate Microservices.
@@ -51,7 +51,7 @@ Content/Filter Service: Manages Filter entities for dynamic content control.
 
 Design Patterns: The system extensively utilizes Unit of Work and Repository patterns for effective and maintainable database interactions within each service.
 
-Technologies Used
+#Technologies Used
 This project leverages a modern stack for both backend and frontend development, along with robust database and deployment tools.
 
 Backend (ASP.NET Core .NET 8):
@@ -78,11 +78,11 @@ Angular 19: The primary framework for the user interface.
 
 Angular Material: UI component library for a modern and responsive design.
 
-Database:
+#Database:
 
 Microsoft SQL Server: The relational database management system used.
 
-Tools & Environment:
+#Tools & Environment:
 
 Docker: Used for containerizing and orchestrating both API services and the frontend application.
 
