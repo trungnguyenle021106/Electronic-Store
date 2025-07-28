@@ -20,11 +20,11 @@ Nền tảng này cung cấp bộ tính năng phong phú để quản lý và v�
 Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đại để đảm bảo khả năng mở rộng, độc lập và dễ bảo trì. Mỗi service sử dụng Clean Architecture.
 + Ocelot API Gateway: Đóng vai trò là điểm vào duy nhất cho tất cả các yêu cầu từ Frontend, định tuyến chúng hiệu quả đến các Microservice phù hợp.
 + Các Microservice chính:
-  + Product Service: Quản lý thông tin sản phẩm và các thuộc tính sản phẩm.
-  + Order Service: Xử lý quy trình đặt hàng và trạng thái đơn hàng.
-  + User Service: Quản lý tài khoản người dùng, xác thực (JWT) và phân quyền.
-  + Content Management Service: Quản lý các thực thể Filter để kiểm soát nội dung động.
-+ Mẫu thiết kế (Design Patterns): Hệ thống sử dụng rộng rãi các mẫu Unit of Work và Repository để tương tác với cơ sở dữ liệu.
+  + Product Service: Quản lý thông tin sản phẩm và các thuộc tính sản phẩm. Chứa và xử lý liên quan đến các thực thể Product, ProductType, ProductBrand, ProductProperty, ProductPropertyDetail
+  + Order Service: Xử lý quy trình đặt hàng và trạng thái đơn hàng. Chứa và xử lý liên quan đến các thực thể Order, OrderDetail
+  + User Service: Quản lý tài khoản người dùng, xác thực (JWT) và phân quyền. Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
+  + Content Management Service: Quản lý các thực thể Filter để kiểm soát nội dung động. Chứa và xử lý liên quan đến các thực thể Filter, FilterDetail
++ Mẫu thiết kế (Design Patterns): Hệ thống sử dụng rộng rãi các mẫu Unit of Work và Repository để tương tác với cơ sở dữ liệu. 
   
 ## Công nghệ sử dụng
 + Backend (ASP.NET Core .NET 8):
