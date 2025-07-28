@@ -50,7 +50,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 1. Clone Repository
 2. Cấu hình:
   + Tạo các cơ sở dữ liệu  ProductDb, OrderDb, UserDb, ContentDb trên phiên bản SQL Server cho từng dịch vụ bằng cách thủ công hoặc sử dụng Migration, cấu hình chuỗi kết nối đặt ở file env
-  + Cấu hình cho JWT trong file env
+  + Cấu hình cho JWT trong file env về issuer, signingkey, audience (Thêm AccessTokenExpirationMinutes trong user service) 
   + Đăng ký tài khoản Verifalia, lấy khóa API và cấu hình tại file appsetting.json
   + Đăng ký AWS S3 và tạo bucket, sử dụng Shared AWS credentials file và cấu hình tại file docker compose
   + Cập nhật chi tiết máy chủ SMTP của bạn (host, port, username, password) trong appsettings.json.
