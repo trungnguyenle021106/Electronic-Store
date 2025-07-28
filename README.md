@@ -22,7 +22,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 + Các Microservice chính:
   + Product Service: Quản lý thông tin sản phẩm và các thuộc tính sản phẩm. Chứa và xử lý liên quan đến các thực thể Product, ProductType, ProductBrand, ProductProperty, ProductPropertyDetail
   + Order Service: Xử lý quy trình đặt hàng và trạng thái đơn hàng. Chứa và xử lý liên quan đến các thực thể Order, OrderDetail
-  + User Service: Quản lý tài khoản người dùng, xác thực (JWT) và phân quyền. Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
+  + User Service: Quản lý tài khoản người dùng, xác thực (JWT). Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
   + Content Management Service: Quản lý các thực thể Filter để kiểm soát nội dung động. Chứa và xử lý liên quan đến các thực thể Filter, FilterDetail
 + Mẫu thiết kế (Design Patterns): Hệ thống sử dụng rộng rãi các mẫu Unit of Work và Repository để tương tác với cơ sở dữ liệu. 
   
