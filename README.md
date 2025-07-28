@@ -42,7 +42,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 + Cơ sở dữ liệu:
   + Microsoft SQL Server
 + Công cụ & Môi trường:
-  + Docker: Được sử dụng để đóng gói và điều phối cả các dịch vụ API và ứng dụng frontend.
+  + Docker: Được sử dụng để đóng gói và điều phối các dịch vụ API và Frontend.
 + Visual Studio 2022 / Visual Studio Code
 + Swagger UI (để kiểm thử và tài liệu hóa API)
 
