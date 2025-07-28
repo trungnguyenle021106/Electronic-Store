@@ -1,4 +1,4 @@
-<img width="1904" height="858" alt="image" src="https://github.com/user-attachments/assets/70e6c3d4-6409-462a-952e-f0bce5b98f6f" /># Cửa hàng bán đồ điện tử
+# Cửa hàng bán đồ điện tử
 Web được thiết kế để bán các sản phẩm điện tử như laptop, bàn phím, tai nghe, chuột và nhiều sản phẩm khác, có thể mở rộng bán nhiều loại sản phẩm nhờ cấu trúc thực thể thuộc tính sản phẩm (product property). Web có quản lý cho sản phẩm, đơn hàng, tài khoản người dùng và quản lý nội dung trang linh hoạt thông qua các thực thể Filter có thể cấu hình, giúp dễ dàng mở rộng sang các loại sản phẩm đa dạng.
 
 ## Tính năng
@@ -45,7 +45,37 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
   + Docker: Được sử dụng để đóng gói và điều phối cả các dịch vụ API và ứng dụng frontend.
 + Visual Studio 2022 / Visual Studio Code
 + Swagger UI (để kiểm thử và tài liệu hóa API)
+
+## Các bước cài đặt
+1. Clone Repository
+2. Cấu hình:
+  + Tạo các cơ sở dữ liệu  ProductDb, OrderDb, UserDb, ContentDb trên phiên bản SQL Server cho từng dịch vụ bằng cách thủ công hoặc sử dụng Migration, cấu hình chuỗi kết nối đặt ở file env
+  + Cấu hình cho JWT trong file env
+  + Đăng ký tài khoản Verifalia, lấy khóa API và cấu hình tại file appsetting.json
+  + Đăng ký AWS S3 và tạo bucket, sử dụng Shared AWS credentials file và cấu hình tại file docker compose
+  + Cập nhật chi tiết máy chủ SMTP của bạn (host, port, username, password) trong appsettings.json.
+3. Build : Chạy lệnh docker compose up --build hoặc docker compose up --build -d tại thư mục gốc dự án
+
+Kiểm tra các container đang chạy: docker ps
 ## MỘT SỐ HÌNH ẢNH CỦA TRANG 
 + TRANG ADMIN
 <img width="1904" height="858" alt="image" src="https://github.com/user-attachments/assets/639380e1-34f5-40c0-8cae-2af191b42dfd" />
+<img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/6c5bba94-483e-4356-9fd0-d878f330f38f" />
+<img width="1689" height="759" alt="image" src="https://github.com/user-attachments/assets/87461789-5073-4e14-8ef9-ac73ee15a668" />
+<img width="1653" height="462" alt="image" src="https://github.com/user-attachments/assets/6db3118b-b417-454b-b7a8-d314cae5a1f8" />
++ TRANG CHÍNH
+<img width="1918" height="721" alt="image" src="https://github.com/user-attachments/assets/3ff4a2ec-56fe-4646-8a34-de9b1057e747" />
+<img width="1909" height="636" alt="image" src="https://github.com/user-attachments/assets/e7d0a8d9-fac5-4281-9cc4-152534a21a2d" />
+<img width="1523" height="926" alt="image" src="https://github.com/user-attachments/assets/be8c0150-128c-4a8a-8efc-ba7561b238c8" />
+<img width="1561" height="946" alt="image" src="https://github.com/user-attachments/assets/edc43767-909a-4f72-9a08-7ed5b2c7f801" />
+<img width="1407" height="949" alt="image" src="https://github.com/user-attachments/assets/772da138-e170-43e9-8d98-cf6cde2dc4f4" />
+<img width="1245" height="453" alt="image" src="https://github.com/user-attachments/assets/cec9af69-13bd-4551-9780-efe237611c97" />
+<img width="1287" height="761" alt="image" src="https://github.com/user-attachments/assets/2149f131-cf4b-4f57-8818-6e4da49eab8e" />
+<img width="1277" height="637" alt="image" src="https://github.com/user-attachments/assets/e6c09428-8f15-4d32-90dd-81967bd2f7d3" />
+<img width="1256" height="586" alt="image" src="https://github.com/user-attachments/assets/1b4e14ac-ccc2-485d-9173-b34c75ed177b" />
+<img width="1004" height="908" alt="image" src="https://github.com/user-attachments/assets/a9c19796-e4a7-49c1-b8dc-2227b4707985" />
+<img width="573" height="764" alt="image" src="https://github.com/user-attachments/assets/21ace258-376d-49c8-9609-104fc9d3be3a" />
+
+
+
 
