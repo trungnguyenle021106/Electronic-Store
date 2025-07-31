@@ -29,6 +29,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
   
 ## Công nghệ sử dụng
 + Backend (ASP.NET Core .NET 8):
+  + Rest API
   + ASP.NET Core .NET 8: Framework chính cho tất cả các Microservice.
   + JWT (JSON Web Tokens): Để xác thực người dùng an toàn.
   + SignalR: Kích hoạt giao tiếp thời gian thực cho các tính năng như cập nhật đơn hàng.
