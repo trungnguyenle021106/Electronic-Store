@@ -1,6 +1,15 @@
 # Cửa hàng bán đồ điện tử
 Web được thiết kế để bán các sản phẩm điện tử như laptop, bàn phím, tai nghe, chuột và nhiều sản phẩm khác, có thể mở rộng bán nhiều loại sản phẩm nhờ cấu trúc thực thể thuộc tính sản phẩm (product property). Web có quản lý cho sản phẩm, đơn hàng, tài khoản người dùng, thống kê và quản lý nội dung trang linh hoạt thông qua các thực thể Filter có thể cấu hình, giúp dễ dàng mở rộng sang các loại sản phẩm đa dạng.
 
+## Mục lục
+- [Tính năng](#tính-năng)
+- [Kiến trúc](#kiến-trúc)
+- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
+- [Các bước cài đặt](#các-bước-cài-đặt)
+- [Một số hình ảnh web](#một-số-hình-ảnh-web)
+  - [TRANG ADMIN](#trang-admin)
+  - [TRANG CHÍNH](#trang-chính)
+
 ## Tính năng
 Nền tảng này cung cấp bộ tính năng phong phú để quản lý và vận hành một cửa hàng điện tử trực tuyến:
 + Quản lý sản phẩm toàn diện:
