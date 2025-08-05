@@ -83,22 +83,22 @@ services:
 
   admin-frontend:
     build:
-      context: ./Admin-Frontend
+      context: ./Admin-Frontend 
       dockerfile: Dockerfile
     container_name: electronic-store-admin-frontend
     ports:
-      - "4300:4300"
+      - "4300:4300" 
     volumes:
       - ./Admin-Frontend:/app  
       - /app/node_modules     
     depends_on:
-      - api-gateway
+      - api-gateway 
 
   main-frontend:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-    container_name: electronic-store-main-frontend
+    container_name: electronic-store-main-frontend 
     ports:
       - "4200:4200"
     volumes:

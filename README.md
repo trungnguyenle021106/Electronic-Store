@@ -22,12 +22,14 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 + Các Microservice chính:
   + Product Service: Quản lý thông tin sản phẩm và các thuộc tính sản phẩm. Chứa và xử lý liên quan đến các thực thể Product, ProductType, ProductBrand, ProductProperty, ProductPropertyDetail
   + Order Service: Xử lý quy trình đặt hàng và trạng thái đơn hàng. Chứa và xử lý liên quan đến các thực thể Order, OrderDetail
-  + User Service: Quản lý tài khoản người dùng, xác thực (JWT) và phân quyền. Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
+  + User Service: Quản lý tài khoản người dùng, xác thực (JWT). Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
   + Content Management Service: Quản lý các thực thể Filter để kiểm soát nội dung động. Chứa và xử lý liên quan đến các thực thể Filter, FilterDetail
 + Mẫu thiết kế (Design Patterns): Hệ thống sử dụng rộng rãi các mẫu Unit of Work và Repository để tương tác với cơ sở dữ liệu. 
++ Rest API
   
 ## Công nghệ sử dụng
 + Backend (ASP.NET Core .NET 8):
+  + Rest API
   + ASP.NET Core .NET 8: Framework chính cho tất cả các Microservice.
   + JWT (JSON Web Tokens): Để xác thực người dùng an toàn.
   + SignalR: Kích hoạt giao tiếp thời gian thực cho các tính năng như cập nhật đơn hàng.
@@ -42,7 +44,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 + Cơ sở dữ liệu:
   + Microsoft SQL Server
 + Công cụ & Môi trường:
-  + Docker: Được sử dụng để đóng gói và điều phối cả các dịch vụ API và ứng dụng frontend.
+  + Docker: Được sử dụng để đóng gói và điều phối các dịch vụ API và Frontend.
 + Visual Studio 2022 / Visual Studio Code
 + Swagger UI (để kiểm thử và tài liệu hóa API)
 
@@ -57,12 +59,12 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 3. Build : Chạy lệnh docker compose up --build hoặc docker compose up --build -d tại thư mục gốc dự án
 
 ## Một số hình ảnh web
-+ TRANG ADMIN
+### TRANG ADMIN
 <img width="1904" height="858" alt="image" src="https://github.com/user-attachments/assets/639380e1-34f5-40c0-8cae-2af191b42dfd" />
 <img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/6c5bba94-483e-4356-9fd0-d878f330f38f" />
 <img width="1689" height="759" alt="image" src="https://github.com/user-attachments/assets/87461789-5073-4e14-8ef9-ac73ee15a668" />
 <img width="1653" height="462" alt="image" src="https://github.com/user-attachments/assets/6db3118b-b417-454b-b7a8-d314cae5a1f8" />
-+ TRANG CHÍNH
+### TRANG CHÍNH
 <img width="1918" height="721" alt="image" src="https://github.com/user-attachments/assets/3ff4a2ec-56fe-4646-8a34-de9b1057e747" />
 <img width="1909" height="636" alt="image" src="https://github.com/user-attachments/assets/e7d0a8d9-fac5-4281-9cc4-152534a21a2d" />
 <img width="1523" height="926" alt="image" src="https://github.com/user-attachments/assets/be8c0150-128c-4a8a-8efc-ba7561b238c8" />

@@ -42,7 +42,7 @@ import { OrderComponent } from './View/orders/order/order.component';
 import { OrderDetailComponent } from './View/orders/order-detail/order-detail.component';
 import { UserComponent } from './View/users/user/user.component';
 import { CustomerComponent } from './View/users/customer/customer.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 import { AnalyticsComponent } from './View/analytics/analytics.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';

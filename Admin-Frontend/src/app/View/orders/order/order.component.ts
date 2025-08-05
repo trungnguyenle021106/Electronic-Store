@@ -80,6 +80,7 @@ export class OrderComponent {
       .subscribe(
         {
           next: (response) => {
+            console.log(response)
             this.dataSource.data = response.Items; // Cập nhật dữ liệu cho MatTable
             this.tempOrders = JSON.parse(JSON.stringify(response.Items));
             if (this.paginator) {
@@ -139,6 +140,7 @@ export class OrderComponent {
       width: '300px', // Tăng width để dễ nhìn hơn
       enterAnimationDuration,
       exitAnimationDuration,
+      // ✨ TRUYỀN PHƯƠNG THỨC VÀO ĐÂY QUA THUỘC TÍNH 'data' ✨
       data: {
         actionName: actionName,
       }
@@ -227,7 +229,7 @@ export class OrderComponent {
           console.error('Lỗi trong quá trình xử lý thống kê:', error);
         }
       });
-    }
+  }
   }
 
 
