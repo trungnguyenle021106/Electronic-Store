@@ -1,5 +1,5 @@
 # Cửa hàng bán đồ điện tử
-Web được thiết kế để bán các sản phẩm điện tử như laptop, bàn phím, tai nghe, chuột và nhiều sản phẩm khác, có thể mở rộng bán nhiều loại sản phẩm nhờ cấu trúc thực thể thuộc tính sản phẩm (product property). Web có quản lý cho sản phẩm, đơn hàng, tài khoản người dùng và quản lý nội dung trang linh hoạt thông qua các thực thể Filter có thể cấu hình, giúp dễ dàng mở rộng sang các loại sản phẩm đa dạng.
+Web được thiết kế để bán các sản phẩm điện tử như laptop, bàn phím, tai nghe, chuột và nhiều sản phẩm khác, có thể mở rộng bán nhiều loại sản phẩm nhờ cấu trúc thực thể thuộc tính sản phẩm (product property). Web có quản lý cho sản phẩm, đơn hàng, tài khoản người dùng, thống kê và quản lý nội dung trang linh hoạt thông qua các thực thể Filter có thể cấu hình, giúp dễ dàng mở rộng sang các loại sản phẩm đa dạng.
 
 ## Tính năng
 Nền tảng này cung cấp bộ tính năng phong phú để quản lý và vận hành một cửa hàng điện tử trực tuyến:
@@ -63,10 +63,11 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 
 ## Một số hình ảnh web
 ### TRANG ADMIN
-<img width="1904" height="858" alt="image" src="https://github.com/user-attachments/assets/639380e1-34f5-40c0-8cae-2af191b42dfd" />
+<img width="1906" height="802" alt="image" src="https://github.com/user-attachments/assets/5253f1a6-66e0-462f-84e4-394e74de1fb5" />
 <img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/6c5bba94-483e-4356-9fd0-d878f330f38f" />
 <img width="1689" height="759" alt="image" src="https://github.com/user-attachments/assets/87461789-5073-4e14-8ef9-ac73ee15a668" />
 <img width="1653" height="462" alt="image" src="https://github.com/user-attachments/assets/6db3118b-b417-454b-b7a8-d314cae5a1f8" />
+<img width="1677" height="922" alt="image" src="https://github.com/user-attachments/assets/c9d9f94d-ce96-4444-96cc-7bcd5784cad7" />
 ### TRANG CHÍNH
 <img width="1918" height="721" alt="image" src="https://github.com/user-attachments/assets/3ff4a2ec-56fe-4646-8a34-de9b1057e747" />
 <img width="1909" height="636" alt="image" src="https://github.com/user-attachments/assets/e7d0a8d9-fac5-4281-9cc4-152534a21a2d" />
