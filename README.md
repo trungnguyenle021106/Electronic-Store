@@ -67,6 +67,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 <img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/6c5bba94-483e-4356-9fd0-d878f330f38f" />
 <img width="1689" height="759" alt="image" src="https://github.com/user-attachments/assets/87461789-5073-4e14-8ef9-ac73ee15a668" />
 <img width="1653" height="462" alt="image" src="https://github.com/user-attachments/assets/6db3118b-b417-454b-b7a8-d314cae5a1f8" />
+<img width="1652" height="405" alt="image" src="https://github.com/user-attachments/assets/d8da7b6c-a41b-42b3-b026-be5dfbffb529" />
 <img width="1689" height="646" alt="image" src="https://github.com/user-attachments/assets/268e96a0-49b2-43f5-9191-88a357424e53" />
 <img width="1677" height="922" alt="image" src="https://github.com/user-attachments/assets/c9d9f94d-ce96-4444-96cc-7bcd5784cad7" />
 ### TRANG CHÍNH
