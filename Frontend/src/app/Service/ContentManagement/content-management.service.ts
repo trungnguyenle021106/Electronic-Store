@@ -1,0 +1,66 @@
+import { Injectable } from '@angular/core';
+import { Filter } from '../../Model/Filter/Filter';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import { PagedResult } from '../../Model/PagedResult';
+
+import { ProductProperty } from '../../Model/Product/ProductProperty';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ContentManagementService {
+  private baseApiUrl = 'http://localhost:5293/gateway/content-management-apis';
+
+  constructor(private http: HttpClient) { }
+
+  // Phương thức để gửi POST request
+
+  getPagedFilters(
+    currentPage?: number | null,
+    pageSize?: number | null,
+    searchText: string = '',
+    filter: string = ''
+  ): Observable<PagedResult<Filter>> {
+
+    let params = new HttpParams()
+    // Khởi tạo HttpParams
+    if (currentPage && pageSize) {
+      params = params.set('page', currentPage.toString()) // Chuyển số sang chuỗi
+      params = params.set('pageSize', pageSize.toString()); // Chuyển số sang chuỗi
+    }
+
+    // Thêm searchText vào params nếu nó có giá trị (không rỗng, không khoảng trắng)
+    if (searchText && searchText.trim().length > 0) {
+      params = params.set('searchText', searchText.trim()); // Sử dụng trim() để loại bỏ khoảng trắng thừa
+    }
+
+    // Thêm filter vào params nếu nó có giá trị (không rỗng, không khoảng trắng)
+    if (filter && filter.trim().length > 0) {
+      params = params.set('filter', filter.trim()); // Sử dụng trim() để loại bỏ khoảng trắng thừa
+    }
+
+    // Gửi request GET với các HttpParams đã xây dựng
+    // Angular sẽ tự động nối các params này vào URL dưới dạng query string
+    return this.http.get<PagedResult<Filter>>(
+      `${this.baseApiUrl}/filters`,
+      { params: params, withCredentials: true }
+    );
+  }
+
+  deleteFilter(id: number) {
+    let apiUrl: string = `${this.baseApiUrl}/filters/${id}`;
+    return this.http.delete<Filter>(apiUrl, { withCredentials: true });
+  }
+
+  getFilterByID(id: number) {
+    let apiUrl: string = `${this.baseApiUrl}/filters/${id}`;
+    return this.http.get<Filter>(apiUrl, { withCredentials: true });
+  }
+
+  getAllPropertiesOfFilter(id: number) {
+    let apiUrl: string = `${this.baseApiUrl}/filters/${id}/product-properties`;
+    return this.http.get<ProductProperty[]>(apiUrl, { withCredentials: true });
+  }
+}

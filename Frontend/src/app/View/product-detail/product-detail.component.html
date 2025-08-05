@@ -1,0 +1,80 @@
+<div class="product-container">
+    <div class="product-images">
+        <div class="main-image">
+            <img [src]="product?.Image" [alt]="product?.Name">
+        </div>
+        <!-- <div class="thumbnail-container">
+            <div class="thumbnail active">
+                <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__2_.jpg"
+                    alt="Thumbnail 1">
+            </div>
+            <div class="thumbnail">
+                <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__1_.jpg"
+                    alt="Thumbnail 2">
+            </div>
+            <div class="thumbnail">
+                <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__4_.jpg"
+                    alt="Thumbnail 3">
+            </div>
+            <div class="thumbnail">
+                <img src="https://anphat.com.vn/media/product/51645_laptop_asus_rog_strix_g16_g614ju_n3480w__3_.jpg"
+                    alt="Thumbnail 4">
+            </div>
+        </div> -->
+        <!-- <div class="list-product-container">
+            <div class="arrow-left-button">
+                <i class="fa-solid fa-chevron-left"></i>
+            </div>
+
+            <h2>Sản phẩm tương tự</h2>
+            <div class="product-list">
+                <div class="product-card">
+                    <img src="https://product.hstatic.net/200000722513/product/gaming-aspire-7-2025-a715-59g-bi__1__e47b793ac28543efbd433c1f47b71b9a.png"
+                        alt="Laptop 1" />
+                    <div class="product-title">Laptop gaming Acer Nitro 5 ANV15 51 53DM</div>
+                    <div class="final-price">22.990.000đ</div>
+                </div>
+
+                <div class="product-card">
+                    <img src="https://product.hstatic.net/200000722513/product/gaming-aspire-7-2025-a715-59g-bi__1__e47b793ac28543efbd433c1f47b71b9a.png"
+                        alt="Laptop 1" />
+                    <div class="product-title">Laptop gaming Acer Nitro 5 ANV15 51 53DM</div>
+                    <div class="final-price">22.990.000đ</div>
+                </div>
+            </div>
+
+            <div class="arrow-right-button">
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+        </div> -->
+    </div>
+    <div class="product-info">
+        <h1 class="product-title">{{product?.Name}}</h1>
+        <div class="product-price">{{product?.Price| currency:'VND':'symbol':'1.0-0'}}</div>
+        <button class="buy-button" (click)="OnclickBuy()">
+            <div class="button-title">THÊM VÀO GIỎ HÀNG</div>
+            <div class="button-subtitle">Giao tận nơi hoặc nhận tại cửa hàng</div>
+        </button>
+
+
+        <!-- Product Specifications -->
+        <div class="product-specs">
+            <h2 class="specs-title">Thông tin sản phẩm</h2>
+            <h3 class="specs-subtitle">Thông số kỹ thuật:</h3>
+            <table class="specs-table">
+                <tr *ngFor="let productProperty of productProperties">
+                    <td>{{productProperty.Name}}</td>
+                    <td>{{productProperty.Description}}</td>
+
+            </table>
+            <div class="detail-button-container" *ngIf="productProperties.length > 12 ">
+                <a class="detail-button">Xem cấu hình chi tiết</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="product-describe">
+    <div class="product-detail" [innerHTML]="product?.Description"></div>
+</div>

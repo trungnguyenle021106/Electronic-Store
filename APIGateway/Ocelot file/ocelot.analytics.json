@@ -1,0 +1,59 @@
+{
+  "Routes": [
+    //ANALYZE
+    {
+      "DownstreamPathTemplate": "/analytics/order-by-date",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "analytics-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/analytics-apis/order-by-date",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "analyticsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/analytics/product-statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "analytics-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/analytics-apis/product-statistics",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "analyticsapi"
+    },
+
+    // GET ANALYTICS
+    {
+      "DownstreamPathTemplate": "/analytics/order-by-date",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "analytics-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/analytics-apis/order-by-date",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "analyticsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/analytics/product-statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "analytics-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/analytics-apis/product-statistics",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "analyticsapi"
+    }
+  ]
+}

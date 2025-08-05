@@ -1,0 +1,116 @@
+  .container {
+      max-width: 1400px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      height: auto;
+      /* Giữ nguyên, container sẽ tự co giãn */
+  }
+
+
+  .search-notice {
+    font-size: 30px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 100px;
+  }
+
+
+  .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+      background-color: white;
+      border-bottom: 1px solid #ddd;
+      justify-content: center;
+  }
+
+  .filters select,
+  .filters button {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: white;
+      cursor: pointer;
+  }
+
+  .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      padding: 20px 0;
+
+      /* THAY ĐỔI QUAN TRỌNG: Căn giữa các mục lưới khi chúng không lấp đầy */
+      justify-content: center;
+  }
+
+  .product-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      /* VỚI auto-fit VÀ justify-content: center, bạn có thể cân nhắc đặt lại max-width cho card */
+      max-width: 280px;
+      /* Ví dụ: giới hạn chiều rộng tối đa của card nếu nó giãn quá to */
+      /* Điều chỉnh 280px này sao cho hợp lý với thiết kế của bạn */
+  }
+
+  .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card img {
+      width: 100%;
+      border-radius: 6px;
+  }
+
+  .title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 5px 0;
+      font-family: Inter, sans-serif;
+  }
+
+  .features {
+      background: #f1f1f1;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 6px 0;
+      font-family: Inter, sans-serif;
+  }
+
+  .price {
+      font-size: 18px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+  }
+
+  .new-price {
+      color: red;
+      font-weight: bold;
+      margin-right: 6px;
+  }
+
+  .checkout-btn {
+      display: block;
+      background: #e60000;
+      color: #fff;
+      text-align: center;
+      padding: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 4px;
+  }

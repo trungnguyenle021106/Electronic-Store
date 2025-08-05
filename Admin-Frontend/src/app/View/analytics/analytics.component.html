@@ -1,0 +1,58 @@
+<div class="dashboard-container">
+  <div class="date-picker-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Chọn khoảng thời gian</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate placeholder="Ngày bắt đầu" [(ngModel)]="startDate">
+        <input matEndDate placeholder="Ngày kết thúc" [(ngModel)]="endDate">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="fetchData()" [disabled]="loading">
+      <span *ngIf="!loading">Lấy dữ liệu</span>
+      <mat-spinner *ngIf="loading" [diameter]="20"></mat-spinner>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Đang tải dữ liệu...</p>
+  </div>
+
+  <div class="chart-container">
+    <h2>Thống kê đơn hàng</h2>
+    <div class="chart">
+      <canvas *ngIf="hasOrderData" baseChart [data]="ordersLineChartData" [options]="chartOptions" [legend]="true"
+        [type]="'line'">
+      </canvas>
+      <div *ngIf="!hasOrderData && !loading" class="no-data-message">
+        Không có dữ liệu đơn hàng trong khoảng thời gian này.
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <h2>Tỷ lệ hủy đơn hàng</h2>
+    <div class="chart">
+      <canvas *ngIf="hasOrderData" baseChart [data]="ordersPieChartData" [options]="chartOptions" [legend]="true"
+        [type]="'pie'">
+      </canvas>
+      <div *ngIf="!hasOrderData && !loading" class="no-data-message">
+        Không có dữ liệu đơn hàng trong khoảng thời gian này.
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <h2>Thống kê sản phẩm</h2>
+    <div class="chart">
+      <canvas *ngIf="hasProductData" baseChart [data]="productsBarChartData" [options]="chartOptions" [legend]="true"
+        [type]="'bar'">
+      </canvas>
+      <div *ngIf="!hasProductData && !loading" class="no-data-message">
+        Không có dữ liệu sản phẩm trong khoảng thời gian này.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/filters",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI TỪ "localhost"
+          "Port": 8080 // ĐÃ THAY ĐỔI TỪ 5271
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters/{filterID}/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}/product-properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters/{filterID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters/{filterID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "SwaggerKey": "bannersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/filters/{filterID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "content-management-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/content-management-apis/filters/{filterID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "bannersapi"
+    }
+  ]
+}

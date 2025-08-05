@@ -1,0 +1,222 @@
+ /* Main Content */
+ .main-content {
+     position: relative;
+     padding: 20px;
+     display: flex;
+     flex-direction: column;
+     height: 100%;
+ }
+
+ .main-header {
+     height: 71px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+ }
+
+ .main-header .tabs {
+     display: flex;
+     gap: 20px;
+ }
+
+ .main-header .actions {
+     display: flex;
+     gap: 10px;
+ }
+
+ .main-header .actions input,
+ .main-header .actions select {
+     padding: 10px;
+     border: 1px solid #bdc3c7;
+     border-radius: 5px;
+ }
+
+ .main-header .actions input {
+     width: 500px;
+ }
+
+ .main-header .actions select {
+     width: 250px;
+ }
+
+ /* Table Container with Scroll */
+ .table-container {
+     display: flex;
+     flex-direction: column;
+     min-width: 300px;
+ }
+
+ .mat-table {
+     overflow: auto;
+     max-height: 500px;
+ }
+
+
+
+ .data-table .actions .edit {
+     background-color: #1abc9c;
+     color: white;
+ }
+
+ .data-table .actions .delete {
+     background-color: #e74c3c;
+     color: white;
+ }
+
+ s .data-table .actions button:hover {
+     opacity: 0.9;
+ }
+
+ .overlay {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     z-index: 999;
+     opacity: 1;
+     transition: opacity 0.3s ease;
+ }
+
+ .form-property {
+     position: fixed;
+     z-index: 1000;
+     top: 50%;
+     left: 55%;
+     transform: translate(-50%, -50%);
+ }
+
+ /* Confirm Form (Modal) - Làm đẹp giao diện */
+ .confirm-form-modal {
+     position: absolute;
+     /* Đặt tuyệt đối trong form-container */
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     /* Căn giữa */
+     z-index: 1000;
+     /* Nằm trên overlay */
+
+     background-color: white;
+     padding: 24px;
+     border-radius: 8px;
+     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+     /* Đổ bóng mạnh hơn */
+     min-width: 300px;
+     max-width: 90%;
+     /* Đảm bảo responsive */
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+     /* Khoảng cách giữa các phần tử chính */
+ }
+
+ .confirm-form-modal h2 {
+     font-size: 20px;
+     font-weight: 500;
+     color: #333;
+     margin-top: 0;
+     margin-bottom: 8px;
+ }
+
+ .confirm-form-modal p {
+     font-size: 16px;
+     color: #555;
+     margin-bottom: 0;
+ }
+
+ .confirm-form-modal mat-dialog-actions {
+     display: flex;
+     justify-content: flex-end;
+     /* Căn nút sang phải */
+     gap: 8px;
+     /* Khoảng cách giữa các nút */
+     padding-top: 16px;
+     /* Khoảng cách từ nội dung đến nút */
+ }
+
+
+  table.mat-mdc-table { /* Thay đổi từ mat-table sang mat-mdc-table */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th.mat-mdc-header-cell { /* Thay đổi từ mat-header-cell sang mat-mdc-header-cell */
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: 600;
+    font-size: 20px;
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+td.mat-mdc-cell { /* Thay đổi từ mat-cell sang mat-mdc-cell */
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    color: black;
+    font-size: 18px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+th.mat-column-Image, /* Đây là class tự động thêm vào th/td */
+td.mat-column-Image {
+    width: 100px;
+    height: 100px;
+    max-width: 200px;
+    text-align: center;
+}
+
+td.mat-mdc-cell img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+    /* THAY ĐỔI Ở ĐÂY để ảnh to hơn */
+    width: 100px!important;  /* Ví dụ: Tăng kích thước ảnh lên 80px */
+    height: 100px !important;; /* Ví dụ: Tăng kích thước ảnh lên 80px */
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+td.mat-mdc-cell button.mat-mdc-raised-button { /* Thêm mat-mdc-raised-button */
+    margin-right: 8px;
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+/* Ẩn margin-right cho nút cuối cùng trong ô Actions */
+td.mat-mdc-cell button.mat-mdc-raised-button:last-child {
+    margin-right: 0;
+}
+
+/* Hiệu ứng hover cho các hàng */
+tr.mat-mdc-row:hover { /* Thay đổi từ mat-row sang mat-mdc-row */
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Hàng cuối cùng không có border-bottom */
+tr.mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: none;
+}
+
+/* Định dạng cho paginator */
+.mat-mdc-paginator { /* Thay đổi từ mat-paginator sang mat-mdc-paginator */
+    background-color: #fdfdfd;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+    padding: 0 16px;
+    color: #555;
+}
+
+/* Điều chỉnh khoảng cách và căn chỉnh trong paginator */
+.mat-mdc-paginator-container { /* Thường thì cũng có tiền tố mdc */
+    justify-content: center;
+}

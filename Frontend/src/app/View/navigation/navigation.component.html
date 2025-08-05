@@ -1,0 +1,86 @@
+<div class="navbar">
+  <div class="overlay" *ngIf="isDisplayOverlay" (click)="DisplayOverlay(false)"></div>
+  <div routerLink="/" class="navbar-logo">
+    <img src="https://file.hstatic.net/200000636033/file/logo_fd11946b31524fbe98765f34f3de0628.svg" alt="Logo">
+  </div>
+
+  <div class="navbar-menu-button" (click)="ClickCategory(true)">
+    <i class="fas fa-bars"></i>
+    <span>Danh mục</span>
+
+    <div class="sidebar" *ngIf="isClickedCategory">
+      <div (click)="CloseCategory(); $event.stopPropagation();" class="menu-item" [routerLink]="['/product']"
+        [queryParams]="{ ProductTypeName: 'Laptop' , FilterID :GetFilterID('Laptop') }"><span><i>💻</i>
+          Laptop</span> ➤</div>
+      <div (click)="CloseCategory() ; $event.stopPropagation()" class="menu-item" [routerLink]="['/product']"
+        [queryParams]="{ ProductTypeName: 'Màn hình' , FilterID :GetFilterID('Màn hình') }"><span><i
+            class="fa-solid fa-desktop"></i> Màn hình</span> ➤</div>
+      <div (click)="CloseCategory() ; $event.stopPropagation()" class="menu-item" [routerLink]="['/product']"
+        [queryParams]="{ ProductTypeName: 'Tai nghe' ,FilterID :GetFilterID('Tai nghe') }"><span><i>🎧</i> Tai
+          Nghe</span> ➤</div>
+      <div (click)="CloseCategory() ; $event.stopPropagation()" class="menu-item" [routerLink]="['/product']"
+        [queryParams]="{ ProductTypeName: 'Bàn phím', FilterID :GetFilterID('Bàn phím') }"><span><i>⌨️</i> Bàn
+          phím</span> ➤</div>
+      <div (click)="CloseCategory() ; $event.stopPropagation()" class="menu-item" [routerLink]="['/product']"
+        [queryParams]="{ ProductTypeName: 'Chuột' , FilterID :GetFilterID('Chuột') }"><span><i>🖱️</i>
+          Chuột</span> ➤</div>
+    </div>
+
+  </div>
+
+  <div class="navbar-search">
+    <input type="text" placeholder="Bạn cần tìm gì?" [(ngModel)]="searchValue">
+
+    <button (click)="onSearch()">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+  <div class="navbar-icons">
+    <div (click)="OnclickSearchOrder()" class="navbar-icon"><i class="fas fa-clipboard-list"></i> <span>Tra cứu<br>đơn
+        hàng</span></div>
+    <div class="navbar-icon-wrapper" routerLink="/cart">
+      <div class="navbar-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Giỏ<br>hàng</span>
+      </div>
+      <div class="cart-badge" *ngIf="totalCartItems > 0">{{ totalCartItems }}</div>
+    </div>
+    <div class="navbar-login" *ngIf="(isLoggedIn | async) === false">
+      <i class="fas fa-user"></i> <span>Đăng nhập</span>
+
+      <div class="login-dropdown">
+        <div class="login-message">
+          👋 <span>Xin chào, vui lòng đăng nhập</span>
+        </div>
+        <div class="login-buttons">
+          <div class="btn btn-login" (click)="ClickLogin(true)">ĐĂNG NHẬP</div>
+          <div class="btn btn-register" (click)="ClickRegister(true)">ĐĂNG KÝ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-login" *ngIf="(isLoggedIn | async) === true">
+      <i class="fas fa-user"></i>
+      <span>Xin chào, {{customerName}}</span>
+
+      <div class="login-dropdown">
+
+        <ul class="dropdown-menu">
+          <li routerLink="/account/information"> 👋 <span>Xin chào, {{customerName}}</span></li>
+          <li routerLink="/account/order"><i class="fas fa-clipboard-list"></i> Đơn hàng của tôi</li>
+          <li (click)="OnClickLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" *ngIf="isClickedRegister">
+  <app-sign-up *ngIf="isDisplayOverlay" (statusSignUpEmitter)="DisplayOverlay($event)"></app-sign-up>
+</div>
+
+<div class="modal" *ngIf="isClickedLogin">
+  <app-login *ngIf="isDisplayOverlay" 
+  (statusLoginEmitter)="DisplayOverlay($event)"
+  (statusSignUpEmitter)="ClickRegister($event)"></app-login>
+</div>

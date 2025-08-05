@@ -1,0 +1,135 @@
+/* Container chính bao bọc mọi thứ */
+.main-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+/* Header Controls (Tìm kiếm và Lọc) */
+.header-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+/* Wrapper cho thanh tìm kiếm */
+.search-bar-wrapper {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    background-color: #f8f8f8;
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 0;
+    font-size: 16px;
+    background-color: transparent;
+}
+
+.search-input::placeholder {
+    color: #aaa;
+}z
+
+.search-icon {
+    margin-left: 8px;
+    color: #888;
+    cursor: default;
+}
+
+
+/* Wrapper cho select lọc */
+.filter-select-wrapper {
+    width: 250px;
+    /* Chiều rộng cố định cho bộ lọc */
+    flex-shrink: 0;
+    /* Ngăn không cho nó co lại */
+}
+
+.filter-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.4H18.6c-5%200-9.3%201.8-13.2%206.4-3.9%204.6-5.8%2010.5-5.8%2017.4v75.9c0%206.9%201.9%2012.8%205.8%2017.4s8.2%206.4%2013.2%206.4h255.2c5%200%209.3-1.8%2013.2-6.4s5.8-10.5%205.8-17.4V86.8c-.1-6.9-2-12.8-5.9-17.4z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    cursor: pointer;
+}
+
+/* Bảng Material */
+.table-container {
+    overflow: auto;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+}
+
+/* KHÔNG CÒN CẦN CSS cho mat-checkbox trong bảng */
+/* Xóa các kiểu liên quan đến .mat-row:hover và cursor nếu bạn không muốn click cả hàng */
+
+/* Kiểu cho nút Chọn trong bảng */
+.action-button {
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.action-button.selected-row-button {
+    background-color: #28a745;
+    /* Màu xanh lá cây khi đã chọn */
+    border-color: #28a745;
+}
+
+.action-button.selected-row-button:hover {
+    background-color: #218838;
+    border-color: #218838;
+}

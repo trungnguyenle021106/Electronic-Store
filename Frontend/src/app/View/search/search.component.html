@@ -1,0 +1,53 @@
+<div class="container">
+
+    <div class="search-notice">
+        <p>TÌM KIẾM</p>
+        <p>Tìm kiếm theo từ khóa <span>{{searchValue}}</span></p>
+    </div>
+
+    <div class="filters">
+        <select [(ngModel)]="productStatusSort" (change)="onSearch()">
+            <option value="">Tình trạng sản phẩm</option>
+            <option value="Còn hàng">Còn hàng</option>
+            <option value="Hết hàng">Hết hàng</option>
+        </select>
+        <select [(ngModel)]="productPriceSortOrder" (change)="onSearch()">
+            <option value="increase">Giá tăng dần</option>
+            <option value="decrease">Giá giảm dần</option>
+        </select>
+        <select [(ngModel)]="productBrandSort" (change)="onSearch()">
+            <option value="">Hãng</option>
+            <option *ngFor="let ele of productBrands" [value]="ele.Name">
+                {{ele.Name}}
+            </option>
+        </select>
+        <select [(ngModel)]="productTypeSort" (change)="onSearch()">
+            <option value="">Loại</option>
+            <option *ngFor="let ele of productTypes" [value]="ele.Name">
+                {{ele.Name}}
+            </option>
+        </select>
+        <!-- <select>
+            <option>Xếp theo: Nổi bật</option>
+        </select> -->
+    </div>
+
+    <div class="products" *ngIf="products.length !=0">
+        <div class="product-card" *ngFor="let product of products" [routerLink]="['/product-detail', product.ID]">
+            <img [src]="product.Image" [alt]="product.Name">
+            <div class="title">{{product.Name}}</div>
+
+            <div class="price">
+                <div>
+                    <span class="new-price">{{product.Price | currency:'VND':'symbol':'1.0-0'}}</span>
+                </div>
+            </div>
+
+            <a href="#" class="checkout-btn">Mua ngay</a>
+        </div>
+    </div>
+
+    <h1 style="text-align: center;" *ngIf="products.length ==0 && canShowNotFound">Không tìm thấy sản phẩm
+    </h1>
+
+</div>

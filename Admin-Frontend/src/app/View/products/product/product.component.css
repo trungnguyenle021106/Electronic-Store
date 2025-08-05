@@ -1,0 +1,152 @@
+ /* Main Content */
+ .main-content {
+     padding: 20px;
+     display: flex;
+     flex-direction: column;
+ }
+
+ .main-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+ }
+
+ .main-header .tabs {
+     display: flex;
+     gap: 20px;
+ }
+
+ .main-header .tabs button {
+     background-color: #ecf0f1;
+     border: 1px solid #bdc3c7;
+     padding: 10px 20px;
+     border-radius: 5px;
+     cursor: pointer;
+ }
+
+ .main-header .tabs button.active {
+     background-color: #1abc9c;
+     color: white;
+     border: none;
+ }
+
+ .main-header .actions {
+     display: flex;
+     gap: 10px;
+ }
+
+ .main-header .actions input,
+ .main-header .actions select {
+     padding: 10px;
+     border: 1px solid #bdc3c7;
+     border-radius: 5px;
+ }
+
+ .main-header .actions input {
+     width: 500px;
+ }
+
+ .main-header .actions select {
+     width: 250px;
+ }
+
+ /* Table Container with Scroll */
+.table-container {
+    max-height: 90vh;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    margin: 20px;
+    /* padding: 10px; */
+}
+
+/* Mat-elevation-z8 (class này vẫn giữ nguyên) */
+.mat-elevation-z8 {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+
+ table.mat-mdc-table { /* Thay đổi từ mat-table sang mat-mdc-table */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th.mat-mdc-header-cell { /* Thay đổi từ mat-header-cell sang mat-mdc-header-cell */
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: 600;
+    font-size: 20px;
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+td.mat-mdc-cell { /* Thay đổi từ mat-cell sang mat-mdc-cell */
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    color: black;
+    font-size: 18px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+th.mat-column-Image, /* Đây là class tự động thêm vào th/td */
+td.mat-column-Image {
+    width: 100px;
+    height: 100px;
+    max-width: 200px;
+    text-align: center;
+}
+
+td.mat-mdc-cell img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+    /* THAY ĐỔI Ở ĐÂY để ảnh to hơn */
+    width: 100px!important;  /* Ví dụ: Tăng kích thước ảnh lên 80px */
+    height: 100px !important;; /* Ví dụ: Tăng kích thước ảnh lên 80px */
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+td.mat-mdc-cell button.mat-mdc-raised-button { /* Thêm mat-mdc-raised-button */
+    margin-right: 8px;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+/* Ẩn margin-right cho nút cuối cùng trong ô Actions */
+td.mat-mdc-cell button.mat-mdc-raised-button:last-child {
+    margin-right: 0;
+}
+
+/* Hiệu ứng hover cho các hàng */
+tr.mat-mdc-row:hover { /* Thay đổi từ mat-row sang mat-mdc-row */
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Hàng cuối cùng không có border-bottom */
+tr.mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: none;
+}
+
+/* Định dạng cho paginator */
+.mat-mdc-paginator { /* Thay đổi từ mat-paginator sang mat-mdc-paginator */
+    background-color: #fdfdfd;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+    padding: 0 16px;
+    color: #555;
+}
+
+/* Điều chỉnh khoảng cách và căn chỉnh trong paginator */
+.mat-mdc-paginator-container { /* Thường thì cũng có tiền tố mdc */
+    justify-content: center;
+}

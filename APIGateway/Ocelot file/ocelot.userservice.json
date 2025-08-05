@@ -1,0 +1,258 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}/customer-information",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI TỪ "localhost"
+          "Port": 8080 // ĐÃ THAY ĐỔI TỪ 5273
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/{accountID}/customer-information",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}/customer-information",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/{customerID}/customer-information",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/me",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/me",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/{accountID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/{customerID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/customers/{customerID}",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/accounts/{accountID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/{accountID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/logout/specific",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/logout/specific",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/status",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/status",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/tokens/refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/tokens/refresh",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/auth/sign-up",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/auth/sign-up",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+
+    // FORGET PASSWROD
+
+
+    {
+      "DownstreamPathTemplate": "/accounts/forget-password",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/forget-password",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+
+    {
+      "DownstreamPathTemplate": "/accounts/forget-password/check-verify-code",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/forget-password/check-verify-code",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    },
+
+    {
+      "DownstreamPathTemplate": "/accounts/forget-password/resend-code",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user-apis/accounts/forget-password/resend-code",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "usersapi"
+    }
+  ]
+}

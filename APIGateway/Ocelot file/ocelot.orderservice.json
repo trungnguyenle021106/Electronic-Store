@@ -1,0 +1,121 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/orders/me",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI TỪ "localhost"
+          "Port": 8080 // ĐÃ THAY ĐỔI TỪ 5064
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/me",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{orderID}/order-items",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/{orderID}/order-items",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{orderID}/products",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/{orderID}/products",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{orderID}/order-details",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/{orderID}/order-details",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/{customerID}/orders",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/customers/{customerID}/orders",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{orderID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/{orderID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "ordersapi"
+    },
+    {
+      "DownstreamPathTemplate": "/orders/{orderID}/status",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/order-apis/orders/{orderID}/status",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "ordersapi"
+    }
+  ]
+}

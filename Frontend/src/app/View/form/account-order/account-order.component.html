@@ -1,0 +1,45 @@
+<div class="order-header-tabs-container">
+    <div class="order-header">Quản lý đơn hàng</div>
+
+    <div class="tabs">
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'TẤT CẢ'}" (click)="selectStatus('TẤT CẢ')">TẤT CẢ
+        </div>
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'Đang chờ xử lý'}"
+            (click)="selectStatus('Đang chờ xử lý')">ĐANG CHỜ XỬ LÝ</div>
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'Đang xử lý'}" (click)="selectStatus('Đang xử lý')">
+            ĐANG XỬ LÝ</div>       
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'Đã giao đi'}" (click)="selectStatus('Đã giao đi')">
+            ĐANG VẬN CHUYỂN</div>
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'Hoàn thành'}" (click)="selectStatus('Hoàn thành')">
+            HOÀN THÀNH</div>
+        <div class="tab" [ngClass]="{'active': selectedStatus === 'Đã hủy'}" (click)="selectStatus('Đã hủy')">HUỶ</div>
+    </div>
+</div>
+
+<div class="search-box">
+    <input type="text" placeholder="🔍 Tìm đơn hàng theo Mã đơn hàng" [(ngModel)]="searchKeyword" (keyup.enter)="applySearch()">
+    <span class="line"></span>
+    <button (click)="applySearch()">Tìm đơn hàng</button>
+</div>
+<div class="order-list-container ">
+    <div class="empty-state" *ngIf="isEmptyOrder">
+        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" alt="Không có đơn hàng">
+        <p>Quý khách chưa có đơn hàng nào.</p>
+        <button>TIẾP TỤC MUA HÀNG</button>
+    </div>
+
+    <h2 *ngIf="!isEmptyOrder">TẤT CẢ ĐƠN HÀNG</h2>
+    <div class="order-cards" *ngIf="!isEmptyOrder">
+        <div class="order-card" *ngFor="let order of orders">
+            <div class="order-info">
+                <p>Mã đơn hàng: <span>#{{ order.ID }}</span></p>
+                <p>Ngày đặt: <span>{{ order.OrderDate | date:'dd/MM/yyyy' }}</span></p>
+            </div>
+            <div class="order-status">
+                <p><strong>{{ order.Status }}</strong></p>
+                <p class="total">{{ order.Total  | currency:'VND':'symbol':'1.0-0' }}</p> 
+                <button (click)="OnclickDetail(order)" class="btn-detail">Xem chi tiết</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,314 @@
+{
+  "Routes": [
+    //Product
+    {
+      "DownstreamPathTemplate": "/products/latest",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/latest",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/{productID}/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}/product-properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/{productID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/{productID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/update-quantity",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/update-quantity",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/products/{productID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+    //Product Property
+    {
+      "DownstreamPathTemplate": "/products/{productID}/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/products/{productID}/product-properties",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-property-names",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-property-names",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties/{productPropertyID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-properties/{productPropertyID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-properties/{productPropertyID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+
+    //Product Brand
+    {
+      "DownstreamPathTemplate": "/product-brands",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-brands",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/productBrands/{productBrandID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-brands/{productBrandID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-brands/{productBrandID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+    //Product Type
+    {
+      "DownstreamPathTemplate": "/product-types",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types/{productTypeID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "SwaggerKey": "productsapi"
+    },
+    {
+      "DownstreamPathTemplate": "/product-types/{productTypeID}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-types/{productTypeID}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    },
+
+
+    // Product property details
+    {
+      "DownstreamPathTemplate": "/product-property-details",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service", // ĐÃ THAY ĐỔI
+          "Port": 8080 // ĐÃ THAY ĐỔI
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/product-apis/product-property-details",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "SwaggerKey": "productsapi"
+    }
+  ]
+}

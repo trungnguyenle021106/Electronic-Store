@@ -1,0 +1,285 @@
+.container {
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+}
+
+.sidebar {
+  width: 220px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+/*  Menu khi hover vào phần tử left side bar  */
+.sub-menu {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin: auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+
+}
+
+.sub-menu-column h3 {
+  color: #e60012;
+  font-size: 30px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.sub-menu-column ul {
+    font-size: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sub-menu-column ul li {
+  margin-bottom: 8px;
+  color: #333;
+  cursor: pointer;
+}
+
+.sub-menu-column ul li:hover {
+  color: red;
+}
+
+/*  Menu khi hover vào phần tử left side bar  */
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.menu-item:hover {
+  background: #f0f0f0;
+}
+
+.menu-item:hover .sub-menu {
+  display: block;
+}
+
+.menu-item i {
+  margin-right: 10px;
+}
+
+.main-content {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top-section {
+  display: flex;
+  gap: 10px;
+}
+
+.banner {
+  flex: 2;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+}
+
+.side-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-images img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+
+
+
+
+
+
+.container-list-product {
+  max-width: 1500px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.header-list-product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.header-list-product h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.nav-list-product {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  font-size: 14px;
+
+}
+
+.nav-list-product a {
+  font-size: 20px;
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-list-product a:last-child {
+  color: #007aff;
+  font-weight: bold;
+}
+
+.products {
+  display: flex;
+  overflow-x: auto; /* Giữ nguyên để cuộn ngang */
+  gap: 16px;
+  padding: 20px 0;
+  /* Thêm để đảm bảo các items có chiều cao bằng nhau trong cùng một "hàng" ảo */
+  align-items: stretch;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  flex-shrink: 0;
+  padding: 10px;
+  width: 239.4px;
+  /* Bỏ height cố định để thẻ có thể tự điều chỉnh chiều cao theo nội dung của thẻ cao nhất */
+  /* height: 342.2px; */ /* <-- XÓA DÒNG NÀY */
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+  
+  /* Thêm Flexbox vào đây để kiểm soát nội dung bên trong thẻ */
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 0;
+  /* Cho phép tiêu đề mở rộng để chiếm không gian và giới hạn số dòng */
+  flex-grow: 1; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Giới hạn tiêu đề tối đa 2 dòng */
+  -webkit-box-orient: vertical;
+   line-clamp: 2; /* Thuộc tính chuẩn */
+}
+
+/* Thêm CSS cho phần giá và nút mua ngay để đẩy chúng xuống cuối thẻ */
+.product-card .price {
+  margin-top: auto; /* Đẩy phần giá xuống cuối thẻ */
+}
+
+.product-card .checkout-btn {
+  /* Có thể thêm margin-top nếu muốn khoảng cách với giá */
+  margin-top: 10px; /* Ví dụ */
+}
+
+/* .title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 0;
+} */
+
+/* .features {
+  background: #f1f1f1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+  font-family: Inter, sans-serif;
+  color: gray;
+} */
+
+/* .features span::before {
+  content: '🔋';
+  margin-right: 2px;
+}
+
+.features span:nth-child(2)::before {
+  content: '🔌';
+}
+
+.features span:nth-child(3)::before {
+  content: '💡';
+} */
+
+.price {
+  font-size: 18px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+
+.new-price {
+  color: red;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.checkout-btn {
+  display: block;
+  background: #e60000;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 4px;
+}

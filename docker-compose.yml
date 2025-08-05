@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  product-service:
+    build:
+      context: .
+      dockerfile: ProductService/Dockerfile
+    ports:
+      - "5272:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ACCESS_KEY_ID=USE YOUR ACCESSKEY IF WANT YOU ARE USING MY PROJECT
+      - AWS_SECRET_ACCESS_KEY= USE YOUR SECRETKEY IF YOU ARE WANT USING MY PROJECT
+      - AWS_REGION=ap-southeast-2
+    depends_on:
+      - sqlserver
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: APIGateway/Dockerfile
+    ports:
+      - "5293:8080"
+      - "8083:8081"
+    env_file:
+      - ./UserService/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+      - content-management-service
+
+  user-service:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+    ports:
+      - "5273:8080"
+      - "8085:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+    depends_on:
+      - sqlserver
+
+  order-service:
+    build:
+      context: .
+      dockerfile: OrderService/Dockerfile
+    ports:
+      - "5064:8080"
+      - "8087:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+
+  content-management-service:
+    build:
+      context: .
+      dockerfile: ContentManagementService/Dockerfile
+    ports:
+      - "5271:8080"
+      - "8089:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: AnalyticService/Dockerfile
+    ports:
+      - "5274:8080"
+      - "8091:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver  
+
+  admin-frontend:
+    build:
+      context: ./Admin-Frontend
+      dockerfile: Dockerfile
+    container_name: electronic-store-admin-frontend
+    ports:
+      - "4300:4300"
+    volumes:
+      - ./Admin-Frontend:/app  
+      - /app/node_modules     
+    depends_on:
+      - api-gateway
+
+  main-frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: electronic-store-main-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./Frontend:/app    
+      - /app/node_modules    
+    depends_on:
+      - api-gateway
+
+
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql_server_2022
+    ports:
+      - "1434:1433"
+    environment:
+      SA_PASSWORD: "0937210476A@a" 
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "0937210476A@a", "-Q", "SELECT 1"] 
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sqlserver_data:
