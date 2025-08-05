@@ -15,7 +15,9 @@ Nền tảng này cung cấp bộ tính năng phong phú để quản lý và v�
   + Gửi email qua máy chủ SMTP (Quên mật khẩu).
 + Quản lý nội dung động:
   + Khả năng quản lý và hiển thị nội dung trang động thông qua các thực thể Filter linh hoạt.
-     
++ Thống kê :
+  + Thống kê doanh thu, số lượng đơn hàng, tỷ lệ hủy đơn hàng trong khoảng thời gian
+  + Thống kê các sản phẩm bán chạy 
 ## Kiến trúc
 Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đại để đảm bảo khả năng mở rộng, độc lập và dễ bảo trì. Mỗi service sử dụng Clean Architecture.
 + Ocelot API Gateway: Đóng vai trò là điểm vào duy nhất cho tất cả các yêu cầu từ Frontend, định tuyến chúng hiệu quả đến các Microservice phù hợp.
@@ -24,6 +26,7 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
   + Order Service: Xử lý quy trình đặt hàng và trạng thái đơn hàng. Chứa và xử lý liên quan đến các thực thể Order, OrderDetail
   + User Service: Quản lý tài khoản người dùng, xác thực (JWT). Chứa và xử lý liên quan đến các thực thể Account, Customer, RefreshToken
   + Content Management Service: Quản lý các thực thể Filter để kiểm soát nội dung động. Chứa và xử lý liên quan đến các thực thể Filter, FilterDetail
+  + Analytic Serrvice : Thống kê doanh thu, số lượng đơn hàng, tỷ lệ hủy đơn hàng, sản phẩm bán chạy . Chứa và xử lý liên quan đến các thực thể OrderByDate, ProductStatistics
 + Mẫu thiết kế (Design Patterns): Hệ thống sử dụng rộng rãi các mẫu Unit of Work và Repository để tương tác với cơ sở dữ liệu. 
 + Rest API
   
