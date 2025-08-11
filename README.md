@@ -9,6 +9,7 @@ Web được thiết kế để bán các sản phẩm điện tử như laptop,
 - [Một số hình ảnh web](#một-số-hình-ảnh-web)
   - [TRANG ADMIN](#trang-admin)
   - [TRANG CHÍNH](#trang-chính)
+- [API](#api)
 
 ## Tính năng
 Nền tảng này cung cấp bộ tính năng phong phú để quản lý và vận hành một cửa hàng điện tử trực tuyến:
@@ -93,6 +94,12 @@ Dự án được xây dựng dựa trên Kiến trúc Microservice hiện đạ
 <img width="1004" height="908" alt="image" src="https://github.com/user-attachments/assets/a9c19796-e4a7-49c1-b8dc-2227b4707985" />
 <img width="573" height="764" alt="image" src="https://github.com/user-attachments/assets/21ace258-376d-49c8-9609-104fc9d3be3a" />
 
+## API
+<img width="1305" height="928" alt="image" src="https://github.com/user-attachments/assets/e4db3aca-754b-4333-8ab5-d2be2c62b0b1" />
+<img width="1315" height="782" alt="image" src="https://github.com/user-attachments/assets/e4002451-fa31-4474-9ecd-0d4cbb8785f5" />
+<img width="1343" height="787" alt="image" src="https://github.com/user-attachments/assets/f3061869-24f6-4f4d-8a97-1c26313296ef" />
+<img width="985" height="917" alt="image" src="https://github.com/user-attachments/assets/ca0dce97-ba27-4a67-8862-423250145174" />
+<img width="970" height="922" alt="image" src="https://github.com/user-attachments/assets/c0f558fb-d03e-4344-bf2f-9a5fb608584d" />
 
 
 
