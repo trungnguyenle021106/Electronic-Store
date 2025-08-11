@@ -2,6 +2,7 @@
 using CommonDto.ResultDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.OpenApi.Models;
 using ProductService.Application.Usecases;
 using ProductService.Domain.DTO.Request;
 using ProductService.Domain.Entities;
@@ -49,13 +50,21 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await ProductBrandHubContext.Clients.All.SendAsync(
-                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.ListItem[0],
-                       "ProductBrandAdded" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductBrandChanged",
+                        result.ListItem[0],
+                        "ProductBrandAdded"
+                        );
                 }
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Tạo nhiều thương hiệu sản phẩm";
+                operation.Description = "Tạo một hoặc nhiều thương hiệu sản phẩm mới.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
 
         public static void CreateProductType(this WebApplication app)
@@ -67,13 +76,21 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await ProductTypeHubContext.Clients.All.SendAsync(
-                       "ProductTypeChanged",
-                       result.ListItem[0],
-                       "ProductTypeAdded"
-                       );
+                        "ProductTypeChanged",
+                        result.ListItem[0],
+                        "ProductTypeAdded"
+                        );
                 }
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Tạo nhiều loại sản phẩm";
+                operation.Description = "Tạo một hoặc nhiều loại sản phẩm mới.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
 
         public static void CreateProduct(this WebApplication app)
@@ -94,7 +111,16 @@ namespace ProductService.Interface_Adapters.APIs
                 ServiceResult<Product> result = await createProductUC.
                 CreateProduct(productEntity, createProductReq.ProductPropertyIDs, createProductReq.File);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).DisableAntiforgery().RequireAuthorization("OnlyAdmin");
+            })
+            .DisableAntiforgery()
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Tạo một sản phẩm mới";
+                operation.Description = "Tạo một sản phẩm với thông tin, thuộc tính và hình ảnh.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
 
         public static void AddPropertiesToProduct(this WebApplication app)
@@ -104,7 +130,16 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<ProductPropertyDetail> result = await createProductUC.AddPropertiesToProduct(productId, productProperties);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Thêm thuộc tính vào sản phẩm";
+                operation.Description = "Thêm một danh sách các thuộc tính vào một sản phẩm cụ thể.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của sản phẩm.";
+                return operation;
+            });
         }
 
         public static void CreateProductProperty(this WebApplication app)
@@ -116,20 +151,25 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await productPropertyHubContext.Clients.All.SendAsync(
-                       "ProductPropertyChanged",
-                       result.ListItem[0],
-                       "ProductPropertyAdded"
-                       );
+                        "ProductPropertyChanged",
+                        result.ListItem[0],
+                        "ProductPropertyAdded"
+                        );
                 }
-
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Tạo nhiều thuộc tính sản phẩm";
+                operation.Description = "Tạo một hoặc nhiều thuộc tính sản phẩm mới.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
-
         #endregion
 
         #region Get Product USECASE
-
         public static void MapGetProductUseCaseAPIs(this WebApplication app)
         {
             GetPagedProductTypes(app);
@@ -149,6 +189,14 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<Product> result = await getProductUC.Get10LatestProduct(productTypeName);
                 return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy 10 sản phẩm mới nhất";
+                operation.Description = "Lấy danh sách 10 sản phẩm mới nhất, có thể lọc theo loại sản phẩm.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "Tên loại sản phẩm để lọc (nếu có).";
+                return operation;
             });
         }
 
@@ -158,6 +206,14 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<ProductProperty> result = await getProductUC.GetAllPropertiesOfProduct(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy tất cả thuộc tính của một sản phẩm";
+                operation.Description = "Lấy danh sách các thuộc tính của một sản phẩm cụ thể.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của sản phẩm.";
+                return operation;
             });
         }
 
@@ -167,6 +223,14 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<Product> result = await getProductUC.GetProductByID(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy thông tin sản phẩm theo ID";
+                operation.Description = "Lấy thông tin chi tiết của một sản phẩm dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của sản phẩm.";
+                return operation;
             });
         }
 
@@ -176,7 +240,13 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<string> result = await getProductUC.GetAllUniquePropertyNames();
                 return handleResultApi.MapServiceResultToHttp(result);
-
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy tất cả tên thuộc tính sản phẩm duy nhất";
+                operation.Description = "Lấy danh sách tất cả các tên thuộc tính sản phẩm không trùng lặp.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
             });
         }
 
@@ -190,9 +260,15 @@ namespace ProductService.Interface_Adapters.APIs
                 productQueryParameter.ProductBrandName, productQueryParameter.ProductTypeName, productQueryParameter.ProductStatus,
                 productQueryParameter.ProductPropertyIds, productQueryParameter.IsIncrease);
                 return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy danh sách sản phẩm được phân trang";
+                operation.Description = "Lấy danh sách sản phẩm với các tùy chọn phân trang, tìm kiếm và lọc nâng cao.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
             });
         }
-
 
         public static void GetPagedProductProperties(this WebApplication app)
         {
@@ -207,8 +283,18 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<PagedResult<ProductProperty>> result =
                     await getProductUC.GetPagedProductProperties(page, pageSize, searchText, filter);
-
                 return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy danh sách thuộc tính sản phẩm được phân trang";
+                operation.Description = "Lấy danh sách các thuộc tính sản phẩm với các tùy chọn phân trang, tìm kiếm và lọc.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "Số trang cần lấy.";
+                operation.Parameters[1].Description = "Số lượng mục trên mỗi trang.";
+                operation.Parameters[2].Description = "Văn bản tìm kiếm (nếu có).";
+                operation.Parameters[3].Description = "Bộ lọc tùy chỉnh (nếu có).";
+                return operation;
             });
         }
 
@@ -227,7 +313,6 @@ namespace ProductService.Interface_Adapters.APIs
                 {
                     ServiceResult<PagedResult<ProductType>> result =
                     await getProductUC.GetPagedProductTypes((int)page, (int)pageSize, searchText, filter);
-
                     return handleResultApi.MapServiceResultToHttp(result);
                 }
                 else
@@ -235,8 +320,14 @@ namespace ProductService.Interface_Adapters.APIs
                     ServiceResult<PagedResult<ProductType>> result = await getProductUC.GetPagedProductTypes();
                     return handleResultApi.MapServiceResultToHttp(result);
                 }
-
-            }); // Giữ nguyên chính sách ủy quyền
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy danh sách loại sản phẩm được phân trang";
+                operation.Description = "Lấy danh sách các loại sản phẩm với các tùy chọn phân trang, tìm kiếm và lọc.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
 
         public static void GetPagedProductBrands(this WebApplication app)
@@ -254,7 +345,6 @@ namespace ProductService.Interface_Adapters.APIs
                 {
                     ServiceResult<PagedResult<ProductBrand>> result =
                     await getProductUC.GetPagedProductBrands((int)page, (int)pageSize, searchText, filter);
-
                     return handleResultApi.MapServiceResultToHttp(result);
                 }
                 else
@@ -262,9 +352,15 @@ namespace ProductService.Interface_Adapters.APIs
                     ServiceResult<PagedResult<ProductBrand>> result = await getProductUC.GetPagedProductBrands();
                     return handleResultApi.MapServiceResultToHttp(result);
                 }
-            }); // Giữ nguyên chính sách ủy quyền
+            })
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Lấy danh sách thương hiệu sản phẩm được phân trang";
+                operation.Description = "Lấy danh sách các thương hiệu sản phẩm với các tùy chọn phân trang, tìm kiếm và lọc.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
-
 
         public static void CheckExistProduct(this WebApplication app)
         {
@@ -273,26 +369,43 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<Product> result = await getProductUC.CheckExistProducts(productIDS);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization();
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Kiểm tra sự tồn tại của sản phẩm";
+                operation.Description = "Kiểm tra xem các sản phẩm với ID được cung cấp có tồn tại hay không.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
         #endregion
-
         #region Update Product USECASE
         public static void MapUpdateProductUseCaseAPIs(this WebApplication app)
         {
             UpdateProduct(app);
             UpdateProductProperty(app);
             UpdateProductsQuantity(app);
+            UpdateProductBrand(app);
+            UpdateProductType(app);
         }
 
         public static void UpdateProductsQuantity(this WebApplication app)
         {
-            app.MapPatch("/products/update-quantity", async(UpdateProductUC updateProductUC, [FromBody] List<OrderProduct> orderProducts,
+            app.MapPatch("/products/update-quantity", async (UpdateProductUC updateProductUC, [FromBody] List<OrderProduct> orderProducts,
                 HandleResultApi handleResultApi) =>
             {
                 ServiceResult<Product> result = await updateProductUC.UpdateProductsQuantity(orderProducts);
-                return handleResultApi.MapServiceResultToHttp(result);  
-            }).RequireAuthorization("OnlyAdmin");
+                return handleResultApi.MapServiceResultToHttp(result);
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Cập nhật số lượng sản phẩm";
+                operation.Description = "Cập nhật số lượng của nhiều sản phẩm dựa trên danh sách sản phẩm trong đơn hàng.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
 
         public static void UpdateProduct(this WebApplication app)
@@ -314,7 +427,17 @@ namespace ProductService.Interface_Adapters.APIs
                 };
                 ServiceResult<Product> result = await updateProductUC.UpdateProduct(productEntity, updateProductReq.ProductPropertyIDs, updateProductReq.File);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).DisableAntiforgery().RequireAuthorization("OnlyAdmin");
+            })
+            .DisableAntiforgery()
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Cập nhật sản phẩm theo ID";
+                operation.Description = "Cập nhật thông tin chi tiết của một sản phẩm, bao gồm cả hình ảnh và thuộc tính.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của sản phẩm cần cập nhật.";
+                return operation;
+            });
         }
 
         public static void UpdateProductType(this WebApplication app)
@@ -326,15 +449,23 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await ProductTypeHubContext.Clients.All.SendAsync(
-                       "ProductTypeChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.Item,
-                       "ProductTypeUpdated" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductTypeChanged",
+                        result.Item,
+                        "ProductTypeUpdated"
+                        );
                 }
-
                 return handleResultApi.MapServiceResultToHttp(result);
 
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Cập nhật loại sản phẩm theo ID";
+                operation.Description = "Cập nhật thông tin của một loại sản phẩm dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của loại sản phẩm cần cập nhật.";
+                return operation;
+            });
         }
 
         public static void UpdateProductBrand(this WebApplication app)
@@ -346,15 +477,22 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await productBrandHubContext.Clients.All.SendAsync(
-                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.Item,
-                       "ProductBrandUpdated" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductBrandChanged",
+                        result.Item,
+                        "ProductBrandUpdated"
+                        );
                 }
-
                 return handleResultApi.MapServiceResultToHttp(result);
-
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Cập nhật thương hiệu sản phẩm theo ID";
+                operation.Description = "Cập nhật thông tin của một thương hiệu sản phẩm dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của thương hiệu sản phẩm cần cập nhật.";
+                return operation;
+            });
         }
 
         public static void UpdateProductProperty(this WebApplication app)
@@ -366,15 +504,22 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await productPropertyHubContext.Clients.All.SendAsync(
-                       "ProductPropertyChanged",
-                       result.Item,
-                       "ProductPropertyUpdated" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductPropertyChanged",
+                        result.Item,
+                        "ProductPropertyUpdated"
+                        );
                 }
-
                 return handleResultApi.MapServiceResultToHttp(result);
-
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Cập nhật thuộc tính sản phẩm theo ID";
+                operation.Description = "Cập nhật thông tin của một thuộc tính sản phẩm dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của thuộc tính sản phẩm cần cập nhật.";
+                return operation;
+            });
         }
         #endregion
 
@@ -391,11 +536,20 @@ namespace ProductService.Interface_Adapters.APIs
         public static void DeleteProduct(this WebApplication app)
         {
             app.MapDelete("/products/{productID}", async (DeleteProductUC deleteProductUC, HandleResultApi handleResultApi,
-           int productID) =>
+            int productID) =>
             {
                 ServiceResult<Product> result = await deleteProductUC.DeleteProduct(productID);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Xóa sản phẩm theo ID";
+                operation.Description = "Xóa một sản phẩm cụ thể dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của sản phẩm cần xóa.";
+                return operation;
+            });
         }
 
         public static void DeleteProductType(this WebApplication app)
@@ -407,14 +561,22 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await ProductTypeHubContext.Clients.All.SendAsync(
-                       "ProductTypeChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.Item,
-                       "ProductTypeDeleted" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductTypeChanged",
+                        result.Item,
+                        "ProductTypeDeleted"
+                        );
                 }
                 return handleResultApi.MapServiceResultToHttp(result);
-
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Xóa loại sản phẩm theo ID";
+                operation.Description = "Xóa một loại sản phẩm cụ thể dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của loại sản phẩm cần xóa.";
+                return operation;
+            });
         }
 
         public static void DeleteProductBrand(this WebApplication app)
@@ -426,16 +588,23 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await ProductBrandHubContext.Clients.All.SendAsync(
-                       "ProductBrandChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.Item,
-                       "ProductBrandDeleted" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductBrandChanged",
+                        result.Item,
+                        "ProductBrandDeleted"
+                        );
                 }
                 return handleResultApi.MapServiceResultToHttp(result);
-
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Xóa thương hiệu sản phẩm theo ID";
+                operation.Description = "Xóa một thương hiệu sản phẩm cụ thể dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của thương hiệu sản phẩm cần xóa.";
+                return operation;
+            });
         }
-
 
         public static void DeleteProductProperty(this WebApplication app)
         {
@@ -446,14 +615,22 @@ namespace ProductService.Interface_Adapters.APIs
                 if (result.IsSuccess)
                 {
                     await productPropertyHubContext.Clients.All.SendAsync(
-                       "ProductPropertyChanged", // Tên event mà client Angular sẽ lắng nghe
-                       result.Item,
-                       "ProductPropertyDeleted" // Thêm một tin nhắn kèm theo
-                       );
+                        "ProductPropertyChanged",
+                        result.Item,
+                        "ProductPropertyDeleted"
+                        );
                 }
                 return handleResultApi.MapServiceResultToHttp(result);
-
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Xóa thuộc tính sản phẩm theo ID";
+                operation.Description = "Xóa một thuộc tính sản phẩm cụ thể dựa trên ID.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                operation.Parameters[0].Description = "ID của thuộc tính sản phẩm cần xóa.";
+                return operation;
+            });
         }
 
         public static void DeleteProductPropertyDetails(this WebApplication app)
@@ -463,7 +640,15 @@ namespace ProductService.Interface_Adapters.APIs
             {
                 ServiceResult<ProductPropertyDetail> result = await deleteProductUC.DeleteProductPropertyDetails(productPropertyDetails);
                 return handleResultApi.MapServiceResultToHttp(result);
-            }).RequireAuthorization("OnlyAdmin");
+            })
+            .RequireAuthorization("OnlyAdmin")
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Xóa các chi tiết thuộc tính sản phẩm";
+                operation.Description = "Xóa một danh sách các chi tiết thuộc tính sản phẩm.";
+                operation.Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } };
+                return operation;
+            });
         }
         #endregion
     }
